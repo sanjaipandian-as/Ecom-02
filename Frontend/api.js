@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an instance of axios with a base URL
 const API = axios.create({
-    baseURL: 'https://zippydemoecom.onrender.com/api',
+    baseURL: 'https://e-com-ga19.onrender.com/api',
 });
 
 // Add a request interceptor to include the auth token in headers
