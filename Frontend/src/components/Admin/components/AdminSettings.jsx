@@ -67,7 +67,6 @@ const AdminSettings = ({ onNavigate }) => {
         e.preventDefault();
         setLoading(true);
         try {
-            // Simulate API call
             await new Promise(resolve => setTimeout(resolve, 800));
             toast.success('Your profile has been updated!');
         } catch (error) {
@@ -90,7 +89,6 @@ const AdminSettings = ({ onNavigate }) => {
 
         setLoading(true);
         try {
-            // Simulate API call
             await new Promise(resolve => setTimeout(resolve, 800));
             toast.success('Your password has been securely updated.');
             setAdminData(prev => ({
@@ -134,29 +132,29 @@ const AdminSettings = ({ onNavigate }) => {
         { id: 'categories', label: 'Taxonomy', description: 'An overview of your product organization structure.', icon: MdCategory }
     ];
 
-    // Refined Professional Styles
-    const inputClasses = "w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-rose-500 focus:ring-4 focus:ring-rose-500/10 transition-all duration-300 outline-none text-slate-900 font-bold placeholder:text-slate-400 placeholder:font-medium text-base md:text-sm hover:border-slate-300";
-    const labelClasses = "block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-2.5 ml-1";
-    const buttonClasses = "group relative flex items-center justify-center gap-2 px-8 py-3.5 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-rose-600 hover:shadow-xl hover:shadow-rose-500/20 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer overflow-hidden";
-    const cardClasses = "bg-white p-6 md:p-10 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-500";
+    // Refined Professional Styles (Straight corners)
+    const inputClasses = "w-full px-5 py-4 rounded-none bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10 transition-all outline-none text-slate-900 font-semibold placeholder:text-slate-400 placeholder:font-medium text-base md:text-sm hover:border-slate-350";
+    const labelClasses = "block text-[11px] font-bold text-slate-550 uppercase tracking-widest mb-2.5 ml-1";
+    const buttonClasses = "group relative flex items-center justify-center gap-2 px-8 py-3.5 bg-slate-900 text-white rounded-none font-bold text-xs uppercase tracking-widest hover:bg-indigo-650 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer overflow-hidden border border-slate-900 shadow-sm";
+    const cardClasses = "bg-white p-6 md:p-10 rounded-none border border-slate-200 shadow-sm transition-shadow duration-300";
 
     const activeTabInfo = tabs.find(t => t.id === activeTab);
 
     return (
-        <div className="min-h-screen bg-slate-50/50 font-body selection:bg-rose-100 selection:text-rose-900">
-            <div className="max-w-6xl mx-auto px-4 py-6 md:px-8 md:py-12">
+        <div className="min-h-screen bg-slate-50/50 font-body">
+            <div className="max-w-6xl mx-auto px-4 py-6 md:px-8 md:py-12 animate-fadeIn">
 
                 {/* Header Section with Back Button */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 animate-slideUp">
                     <div>
                         <button
                             onClick={() => onNavigate && onNavigate('Dashboard')}
-                            className="inline-flex items-center gap-2 text-slate-400 font-bold text-xs uppercase tracking-widest hover:text-rose-600 mb-4 transition-colors group"
+                            className="inline-flex items-center gap-2 text-slate-400 font-bold text-xs uppercase tracking-widest hover:text-indigo-600 mb-4 transition-colors group"
                         >
                             <MdArrowForward className="rotate-180 group-hover:-translate-x-1 transition-transform" />
                             Back to Dashboard
                         </button>
-                        <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight font-hero mb-2">Settings</h1>
+                        <h1 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight font-hero mb-2">Settings</h1>
                         <p className="text-slate-500 font-medium text-base md:text-lg max-w-2xl">
                             Configure your admin experience and storefront preferences.
                         </p>
@@ -167,7 +165,7 @@ const AdminSettings = ({ onNavigate }) => {
 
                     {/* Left Sidebar: Navigation */}
                     <div className="lg:col-span-4 space-y-8 animate-slideUp" style={{ animationDelay: '0.1s' }}>
-                        <div className="bg-white rounded-[2rem] p-4 border border-slate-100 shadow-sm lg:sticky lg:top-24">
+                        <div className="bg-white rounded-none p-4 border border-slate-200 shadow-sm lg:sticky lg:top-24">
                             <nav className="space-y-1">
                                 {tabs.map((tab) => {
                                     const Icon = tab.icon;
@@ -177,20 +175,20 @@ const AdminSettings = ({ onNavigate }) => {
                                             key={tab.id}
                                             onClick={() => setActiveTab(tab.id)}
                                             className={`
-                                                w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-left transition-all duration-300 group
+                                                w-full flex items-center gap-4 px-6 py-4 rounded-none text-left transition-all duration-200 group
                                                 ${isActive
-                                                    ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
+                                                    ? 'bg-slate-900 text-white shadow-sm scale-[1.01]'
                                                     : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}
                                             `}
                                         >
-                                            <Icon className={`text-xl ${isActive ? 'text-rose-400' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                                            <Icon className={`text-xl ${isActive ? 'text-indigo-400' : 'text-slate-400 group-hover:text-slate-650'}`} />
                                             <div>
                                                 <span className={`block text-sm font-bold tracking-tight ${isActive ? 'text-white' : 'text-slate-700'}`}>
                                                     {tab.label}
                                                 </span>
                                             </div>
                                             {isActive && (
-                                                <MdArrowForward className="ml-auto text-rose-400 animate-pulse" />
+                                                <MdArrowForward className="ml-auto text-indigo-400" />
                                             )}
                                         </button>
                                     );
@@ -198,10 +196,10 @@ const AdminSettings = ({ onNavigate }) => {
                             </nav>
                         </div>
 
-                        {/* Mobile-only Context Info (Hidden on Desktop, as it's clear from selection) */}
+                        {/* Mobile-only Context Info */}
                         <div className="lg:hidden px-4">
-                            <h2 className="text-xl font-black text-slate-900 mb-2 font-hero">{activeTabInfo?.label}</h2>
-                            <p className="text-sm text-slate-500 font-medium">{activeTabInfo?.description}</p>
+                            <h2 className="text-xl font-bold text-slate-900 mb-2 font-hero">{activeTabInfo?.label}</h2>
+                            <p className="text-sm text-slate-550 font-medium">{activeTabInfo?.description}</p>
                         </div>
                     </div>
 
@@ -209,9 +207,9 @@ const AdminSettings = ({ onNavigate }) => {
                     <div className="lg:col-span-8 animate-slideUp" style={{ animationDelay: '0.2s' }}>
 
                         {/* Desktop Context Info */}
-                        <div className="hidden lg:block mb-8">
-                            <h2 className="text-2xl font-black text-slate-900 mb-2 font-hero">{activeTabInfo?.label}</h2>
-                            <p className="text-base text-slate-500 font-medium">{activeTabInfo?.description}</p>
+                        <div className="hidden lg:block mb-8 animate-fadeIn">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-2 font-hero">{activeTabInfo?.label}</h2>
+                            <p className="text-base text-slate-550 font-medium">{activeTabInfo?.description}</p>
                         </div>
 
                         {/* Profile Tab */}
@@ -219,12 +217,12 @@ const AdminSettings = ({ onNavigate }) => {
                             <div className={cardClasses}>
                                 <form onSubmit={handleProfileUpdate} className="space-y-8">
                                     <div className="flex items-center gap-6 mb-8 group cursor-pointer">
-                                        <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 border-4 border-white shadow-xl shadow-slate-100 transition-transform duration-300 group-hover:scale-105 group-hover:shadow-rose-100 overflow-hidden relative">
-                                            <MdPerson className="text-4xl md:text-5xl relative z-10 transition-colors group-hover:text-rose-500" />
-                                            <div className="absolute inset-0 bg-rose-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                        <div className="w-20 h-20 md:w-24 md:h-24 rounded-none bg-slate-50 flex items-center justify-center text-slate-400 border-2 border-slate-200 shadow-sm transition-transform duration-300 group-hover:scale-102 overflow-hidden relative">
+                                            <MdPerson className="text-4xl md:text-5xl relative z-10 transition-colors group-hover:text-indigo-600" />
+                                            <div className="absolute inset-0 bg-indigo-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                         </div>
                                         <div>
-                                            <button type="button" className="text-rose-600 text-sm font-bold hover:text-rose-700 transition-colors">Change Profile Photo</button>
+                                            <button type="button" className="text-indigo-600 text-sm font-bold hover:text-indigo-755 transition-colors">Change Profile Photo</button>
                                             <p className="text-[10px] md:text-xs text-slate-400 mt-1.5 font-medium">Accepts JPG, GIF or PNG. Max size of 1MB.</p>
                                         </div>
                                     </div>
@@ -251,7 +249,7 @@ const AdminSettings = ({ onNavigate }) => {
                                             />
                                         </div>
                                     </div>
-                                    <div className="pt-6 border-t border-slate-50 flex justify-end">
+                                    <div className="pt-6 border-t border-slate-200 flex justify-end">
                                         <button type="submit" disabled={loading} className={buttonClasses}>
                                             <MdSave className="text-lg group-hover:rotate-12 transition-transform duration-300" />
                                             <span>{loading ? 'Saving...' : 'Save Changes'}</span>
@@ -297,9 +295,9 @@ const AdminSettings = ({ onNavigate }) => {
                                             />
                                         </div>
                                     </div>
-                                    <div className="pt-6 border-t border-slate-50 flex justify-end">
+                                    <div className="pt-6 border-t border-slate-200 flex justify-end">
                                         <button type="submit" disabled={loading} className={buttonClasses}>
-                                            <MdLock className="text-lg group-hover:scale-110 transition-transform duration-300" />
+                                            <MdLock className="text-lg group-hover:scale-105 transition-transform duration-300" />
                                             <span>{loading ? 'Updating...' : 'Update Password'}</span>
                                         </button>
                                     </div>
@@ -315,7 +313,7 @@ const AdminSettings = ({ onNavigate }) => {
                                         <label className={labelClasses}>Store Name</label>
                                         <input
                                             type="text"
-                                            defaultValue="Grow We Go"
+                                            defaultValue="Hey Azhagi"
                                             className={inputClasses}
                                         />
                                     </div>
@@ -332,7 +330,7 @@ const AdminSettings = ({ onNavigate }) => {
                                             <label className={labelClasses}>Contact Email</label>
                                             <input
                                                 type="email"
-                                                defaultValue="support@growwego.com"
+                                                defaultValue="support@nexenecom.com"
                                                 className={inputClasses}
                                             />
                                         </div>
@@ -345,7 +343,7 @@ const AdminSettings = ({ onNavigate }) => {
                                             />
                                         </div>
                                     </div>
-                                    <div className="pt-6 border-t border-slate-50 flex justify-end">
+                                    <div className="pt-6 border-t border-slate-200 flex justify-end">
                                         <button className={buttonClasses}>
                                             <MdSave className="text-lg group-hover:rotate-12 transition-transform duration-300" />
                                             <span>Save Settings</span>
@@ -358,11 +356,11 @@ const AdminSettings = ({ onNavigate }) => {
                         {/* Notifications Tab */}
                         {activeTab === 'notifications' && (
                             <div className={cardClasses}>
-                                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 ml-1">Email Alerts</h3>
+                                <h3 className="text-xs font-bold text-slate-550 uppercase tracking-widest mb-6 ml-1 font-hero">Email Alerts</h3>
                                 <div className="space-y-4 mb-8">
                                     {Object.entries(notifications).filter(([key]) => key.startsWith('email')).map(([key, value]) => (
-                                        <div key={key} className="flex items-center justify-between p-5 bg-slate-50 rounded-2xl transition-colors hover:bg-slate-100/80 group">
-                                            <span className="font-bold text-slate-700 text-sm group-hover:text-slate-900 transition-colors">
+                                        <div key={key} className="flex items-center justify-between p-5 bg-slate-50 border border-slate-200 rounded-none transition-colors hover:bg-slate-100/50 group">
+                                            <span className="font-bold text-slate-700 text-sm group-hover:text-slate-900 transition-colors font-hero">
                                                 {key.replace('email', '').replace(/([A-Z])/g, ' $1').trim()}
                                             </span>
                                             <label className="relative inline-flex items-center cursor-pointer">
@@ -372,13 +370,13 @@ const AdminSettings = ({ onNavigate }) => {
                                                     onChange={(e) => setNotifications({ ...notifications, [key]: e.target.checked })}
                                                     className="sr-only peer"
                                                 />
-                                                <div className="w-12 h-7 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all after:duration-300 peer-checked:bg-rose-600 peer-checked:shadow-lg peer-checked:shadow-rose-500/30"></div>
+                                                <div className="w-12 h-7 bg-slate-300 peer-focus:outline-none rounded-none peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-none after:h-5 after:w-5 after:transition-all after:duration-200 peer-checked:bg-indigo-650"></div>
                                             </label>
                                         </div>
                                     ))}
                                 </div>
 
-                                <div className="pt-6 border-t border-slate-50 flex justify-end">
+                                <div className="pt-6 border-t border-slate-200 flex justify-end">
                                     <button onClick={handleNotificationUpdate} disabled={loading} className={buttonClasses}>
                                         <MdSave className="text-lg group-hover:rotate-12 transition-transform duration-300" />
                                         <span>Save Preferences</span>
@@ -392,10 +390,10 @@ const AdminSettings = ({ onNavigate }) => {
                             <div className="space-y-6">
                                 <div className={cardClasses}>
                                     <div className="flex justify-between items-center mb-6">
-                                        <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Current Categories</h3>
+                                        <h3 className="text-xs font-bold text-slate-550 uppercase tracking-widest ml-1 font-hero">Current Categories</h3>
                                         <button
                                             onClick={handleManageCategoriesRedirect}
-                                            className="flex items-center gap-2 text-rose-600 font-bold text-xs uppercase tracking-widest hover:underline group"
+                                            className="flex items-center gap-2 text-indigo-600 font-bold text-xs uppercase tracking-widest hover:underline group"
                                         >
                                             <span>Manage Taxonomy</span>
                                             <MdArrowForward className="group-hover:translate-x-1 transition-transform" />
@@ -405,17 +403,17 @@ const AdminSettings = ({ onNavigate }) => {
                                     <div className="max-h-[500px] overflow-y-auto custom-scrollbar">
                                         {loadingCategories ? (
                                             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                                {[1, 2, 3].map(i => <div key={i} className="h-28 bg-slate-50 rounded-2xl animate-pulse"></div>)}
+                                                {[1, 2, 3].map(i => <div key={i} className="h-28 bg-slate-50 rounded-none animate-pulse border border-slate-200"></div>)}
                                             </div>
                                         ) : categories.length === 0 ? (
-                                            <div className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                                            <div className="text-center py-12 bg-slate-50 rounded-none border border-dashed border-slate-200">
                                                 <p className="text-slate-400 font-bold">No categories found</p>
                                             </div>
                                         ) : (
                                             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                                 {categories.map((cat, index) => (
-                                                    <div key={index} className="flex flex-col items-center justify-center p-6 bg-slate-50 rounded-2xl border border-slate-100 hover:border-rose-200 hover:bg-white hover:shadow-lg hover:shadow-rose-500/10 transition-all duration-300 group cursor-default text-center">
-                                                        <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-slate-400 mb-4 shadow-sm group-hover:text-rose-600 group-hover:scale-110 transition-all duration-300 overflow-hidden">
+                                                    <div key={index} className="flex flex-col items-center justify-center p-6 bg-slate-50 rounded-none border border-slate-200 hover:border-indigo-300 hover:bg-white hover:shadow-sm transition-all duration-300 group cursor-default text-center">
+                                                        <div className="w-14 h-14 rounded-none bg-white border border-slate-200 flex items-center justify-center text-slate-400 mb-4 shadow-sm group-hover:text-indigo-600 group-hover:scale-102 transition-all duration-300 overflow-hidden">
                                                             {cat.icon ? <img src={cat.icon} className="w-full h-full object-cover" alt={cat.name} /> : <MdCategory className="text-2xl" />}
                                                         </div>
                                                         <span className="font-bold text-slate-700 text-xs group-hover:text-slate-900 transition-colors line-clamp-2">{cat.name}</span>

@@ -10,6 +10,7 @@ import {
   deleteProduct,
   getProductById,
   getAllProductsCount,
+  toggleTopSellingProduct,
 } from "../controllers/adminProductController.js";
 
 const router = express.Router();
@@ -25,6 +26,9 @@ router.get("/count", authenticate, isAdmin, getAllProductsCount);
 
 // Get product by ID
 router.get("/:productId", authenticate, isAdmin, getProductById);
+
+// Toggle homepage top selling section
+router.patch("/:productId/top-selling", authenticate, isAdmin, toggleTopSellingProduct);
 
 // Update product (with optional image upload)
 router.put("/:productId", authenticate, isAdmin, upload.array("images", 5), updateProduct);

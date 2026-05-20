@@ -60,7 +60,7 @@ const useDocumentTitle = () => {
             '/Affiliate': 'Affiliate Program',
             '/BrandRegistry': 'Brand Registry',
             '/advertise': 'Advertise Your Products',
-            '/sell': 'Sell on AJIZZ FASHIONS',
+            '/sell': 'Sell on Anti Turnish Jewellery',
 
             // Footer Links
             '/careers': 'Careers',
@@ -71,7 +71,7 @@ const useDocumentTitle = () => {
             '/legal': 'Legal Information',
         };
 
-        let pageTitle = 'AJIZZ FASHIONS';
+        let pageTitle = 'Anti Turnish Jewellery';
 
         // Check for exact route match first
         if (routeTitles[path]) {
@@ -107,7 +107,7 @@ const useDocumentTitle = () => {
             pageTitle = settingsTitles[settingsPage] || 'Settings';
         }
 
-        document.title = `${pageTitle} - AJIZZ FASHIONS`;
+        document.title = `${pageTitle} - Anti Turnish Jewellery`;
     }, [location.pathname]);
 };
 

@@ -15,7 +15,7 @@ export const searchProducts = async (req, res) => {
     const products = await Product.find(
       {
         $text: { $search: q },
-        is_deleted: false
+        is_deleted: { $ne: true }
       }
     )
       .skip(skip)
@@ -25,7 +25,7 @@ export const searchProducts = async (req, res) => {
     // Count total results
     const total = await Product.countDocuments({
       $text: { $search: q },
-      is_deleted: false
+      is_deleted: { $ne: true }
     });
 
     return res.json({
@@ -51,7 +51,7 @@ export const searchSuggestions = async (req, res) => {
 
     const suggestions = await Product.find({
       name: { $regex: q, $options: "i" },
-      is_deleted: false
+      is_deleted: { $ne: true }
     })
       .select("name")
       .limit(5);

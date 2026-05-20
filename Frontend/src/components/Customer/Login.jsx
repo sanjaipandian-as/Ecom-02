@@ -1,7 +1,24 @@
-import { useState } from 'react';
-import { FaEye, FaEyeSlash, FaGoogle, FaFacebook } from 'react-icons/fa';
+import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+    FaArrowRight,
+    FaEye,
+    FaEyeSlash,
+    FaFacebook,
+    FaGoogle,
+    FaLock,
+    FaCheckCircle,
+    FaShieldAlt,
+    FaUserCircle
+} from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import API from '../../../api';
+
+const featurePoints = [
+    'Fast checkout and order tracking',
+    'Saved addresses and secure account access',
+    'Personalized recommendations from your buying history'
+];
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -13,17 +30,19 @@ const Login = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
+    const emailLooksValid = useMemo(() => /\S+@\S+\.\S+/.test(email), [email]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setSuccess('');
 
+        const storage = rememberMe ? localStorage : sessionStorage;
+        const secondaryStorage = rememberMe ? sessionStorage : localStorage;
         const existingRole = sessionStorage.getItem('userRole') || localStorage.getItem('userRole');
         const token = sessionStorage.getItem('token') || localStorage.getItem('token');
 
-        // Fix for "undefined" role issue: if data is present but role is undefined/corrupt
         if (token && (!existingRole || existingRole === 'undefined')) {
-            console.warn('Detected corrupt login state (role undefined). Clearing storage.');
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('user');
             sessionStorage.removeItem('userRole');
@@ -34,18 +53,18 @@ const Login = () => {
             localStorage.removeItem('loginTime');
         } else if (existingRole && existingRole !== 'customer' && existingRole !== 'undefined') {
             const roleNames = {
-                'seller': 'Seller',
-                'admin': 'Admin'
+                seller: 'Seller',
+                admin: 'Admin'
             };
             toast.error(`You are already logged in as ${roleNames[existingRole] || 'another user'}. Please logout and try again.`, {
-                position: "top-center",
+                position: 'top-center',
                 autoClose: 4000,
             });
             return;
         }
 
         if (!acceptPolicy) {
-            setError('You must accept the Privacy Policy to continue');
+            setError('Please accept the Privacy Policy and Terms & Conditions to continue.');
             return;
         }
 
@@ -58,19 +77,22 @@ const Login = () => {
             });
 
             if (response.data.token) {
-                // Store authentication data
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
-                localStorage.setItem('userRole', 'customer');
-                // Store login timestamp for 24-hour auto-logout
-                localStorage.setItem('loginTime', new Date().getTime().toString());
+                secondaryStorage.removeItem('token');
+                secondaryStorage.removeItem('user');
+                secondaryStorage.removeItem('userRole');
+                secondaryStorage.removeItem('loginTime');
 
-                setSuccess('Login successful! Redirecting...');
+                storage.setItem('token', response.data.token);
+                storage.setItem('user', JSON.stringify(response.data.user));
+                storage.setItem('userRole', 'customer');
+                storage.setItem('loginTime', new Date().getTime().toString());
+
+                setSuccess('Login successful. Taking you to your account...');
                 toast.success('Login successful!');
 
                 setTimeout(() => {
                     window.location.href = '/';
-                }, 1500);
+                }, 1200);
             }
         } catch (err) {
             console.error('Login error:', err);
@@ -82,140 +104,199 @@ const Login = () => {
         }
     };
 
-    const inputClasses = "w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-gray-400";
-    const labelClasses = "block text-xs sm:text-sm font-medium text-gray-700 mb-1.5";
+    const inputClasses = 'w-full rounded-2xl border border-stone-200 bg-white px-4 py-3.5 text-sm text-stone-900 outline-none transition-all placeholder:text-stone-400 focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10';
 
     return (
-        <div className="min-h-screen bg-white flex justify-center py-6 sm:py-8 md:py-12 px-3 sm:px-4 lg:px-8">
-            <div className="w-full max-w-md space-y-6 sm:space-y-8">
-                <div className="text-center space-y-1.5 sm:space-y-2">
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
-                        Welcome Back
-                    </h1>
-                    <p className="text-sm sm:text-base md:text-lg text-gray-500">
-                        Sign in to your AJIZZ FASHIONS account
-                    </p>
-                </div>
-
-                {error && (
-                    <div className="bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg">
-                        <p className="text-xs sm:text-sm font-medium">{error}</p>
-                    </div>
-                )}
-
-                {success && (
-                    <div className="bg-green-50 border border-green-200 text-green-700 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg">
-                        <p className="text-xs sm:text-sm font-medium">{success}</p>
-                    </div>
-                )}
-
-                <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                    <button type="button" className="flex items-center justify-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95">
-                        <FaGoogle className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
-                        <span className="text-xs sm:text-sm font-semibold text-gray-700">Google</span>
-                    </button>
-                    <button type="button" className="flex items-center justify-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95">
-                        <FaFacebook className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
-                        <span className="text-xs sm:text-sm font-semibold text-gray-700">Facebook</span>
-                    </button>
-                </div>
-
-                <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-200"></div>
-                    </div>
-                    <div className="relative flex justify-center text-xs sm:text-sm">
-                        <span className="px-3 sm:px-4 bg-white text-gray-500">Or continue with email</span>
-                    </div>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
-                    <div>
-                        <label htmlFor="email" className={labelClasses}>Email Address</label>
-                        <input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className={inputClasses}
-                            placeholder="john@example.com"
-                            required
-                        />
+        <div className="h-screen w-full overflow-hidden bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_45%,#f6fbf7_100%)]">
+            <div className="grid h-full w-full overflow-hidden bg-white lg:grid-cols-[1.05fr_0.95fr]">
+                <section className="relative hidden h-screen overflow-hidden bg-[#1f3b2d] p-10 text-white lg:flex lg:flex-col lg:justify-between">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.18),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(129,199,132,0.2),transparent_28%)]" />
+                    <div className="relative">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.3em]">
+                            Hey Azhagi Customer Access
+                        </div>
+                        <h1 className="mt-8 max-w-md text-5xl font-bold leading-[1.02] tracking-tight">
+                            Sign in to continue your shopping journey.
+                        </h1>
+                        <p className="mt-5 max-w-xl text-base leading-7 text-white/78">
+                            Everything important stays in one place, from your cart and order history to product recommendations tailored to what you buy most.
+                        </p>
                     </div>
 
-                    <div>
-                        <label htmlFor="password" className={labelClasses}>Password</label>
-                        <div className="relative">
-                            <input
-                                type={showPassword ? 'text' : 'password'}
-                                id="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className={`${inputClasses} pr-10 sm:pr-11`}
-                                placeholder="Enter your password"
-                                required
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute inset-y-0 right-0 pr-3 sm:pr-4 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer active:scale-95"
-                            >
-                                {showPassword ? <FaEyeSlash className="w-4 h-4 sm:w-5 sm:h-5" /> : <FaEye className="w-4 h-4 sm:w-5 sm:h-5" />}
+                    <div className="relative space-y-5">
+                        {featurePoints.map((point) => (
+                            <div key={point} className="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/6 p-4 backdrop-blur-sm">
+                                <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-full bg-white/14">
+                                    <FaCheckCircle className="text-[#b7f3c0]" />
+                                </div>
+                                <p className="text-sm font-medium leading-6 text-white/88">{point}</p>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                <section className="flex h-screen items-center justify-center overflow-y-auto px-5 py-6 sm:px-8 lg:px-10">
+                    <div className="w-full max-w-xl">
+                        <div className="mb-8 flex items-center justify-between">
+                            <div>
+                                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-stone-500">Welcome Back</p>
+                                <h2 className="mt-2 text-3xl font-bold tracking-tight text-stone-950 sm:text-4xl">Customer login</h2>
+                            </div>
+                            <div className="hidden h-14 w-14 items-center justify-center rounded-full bg-stone-100 text-[#1f3b2d] sm:flex">
+                                <FaUserCircle className="text-2xl" />
+                            </div>
+                        </div>
+
+                        <div className="mb-8 rounded-[28px] border border-stone-200 bg-stone-50 p-4 sm:p-5">
+                            <div className="flex items-start gap-3">
+                                <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#1f3b2d] shadow-sm">
+                                    <FaShieldAlt />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-semibold text-stone-900">Secure sign-in</p>
+                                    <p className="mt-1 text-sm leading-6 text-stone-500">
+                                        Your session stays protected and you can choose whether to keep this device signed in.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {error && (
+                            <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                                {error}
+                            </div>
+                        )}
+
+                        {success && (
+                            <div className="mb-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+                                {success}
+                            </div>
+                        )}
+
+                        <div className="mb-6 grid grid-cols-2 gap-3">
+                            <button type="button" className="flex items-center justify-center gap-2 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm font-semibold text-stone-700 transition-all hover:border-stone-300 hover:bg-stone-50 active:scale-[0.98]">
+                                <FaGoogle className="text-red-500" />
+                                Google
+                            </button>
+                            <button type="button" className="flex items-center justify-center gap-2 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm font-semibold text-stone-700 transition-all hover:border-stone-300 hover:bg-stone-50 active:scale-[0.98]">
+                                <FaFacebook className="text-blue-600" />
+                                Facebook
                             </button>
                         </div>
+
+                        <div className="relative mb-6">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-stone-200" />
+                            </div>
+                            <div className="relative flex justify-center">
+                                <span className="bg-white px-4 text-xs font-medium uppercase tracking-[0.22em] text-stone-400">Or continue with email</span>
+                            </div>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            <div>
+                                <label htmlFor="email" className="mb-2 block text-sm font-semibold text-stone-700">Email address</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className={inputClasses}
+                                    placeholder="you@example.com"
+                                    required
+                                />
+                                {email && (
+                                    <p className={`mt-2 text-xs font-medium ${emailLooksValid ? 'text-emerald-600' : 'text-amber-600'}`}>
+                                        {emailLooksValid ? 'Email looks good.' : 'Please enter a valid email address.'}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div>
+                                <div className="mb-2 flex items-center justify-between">
+                                    <label htmlFor="password" className="block text-sm font-semibold text-stone-700">Password</label>
+                                    <a href="#" className="text-xs font-semibold uppercase tracking-[0.18em] text-[#1f3b2d] hover:text-[#315542]">
+                                        Forgot password
+                                    </a>
+                                </div>
+                                <div className="relative">
+                                    <FaLock className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" />
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        id="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className={`${inputClasses} pl-11 pr-12`}
+                                        placeholder="Enter your password"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 transition-colors hover:text-stone-700"
+                                    >
+                                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-3 rounded-[24px] border border-stone-200 bg-stone-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+                                <label className="flex items-center gap-3 text-sm font-medium text-stone-700">
+                                    <input
+                                        type="checkbox"
+                                        checked={rememberMe}
+                                        onChange={(e) => setRememberMe(e.target.checked)}
+                                        className="h-4 w-4 rounded border-stone-300 text-[#1f3b2d] focus:ring-[#1f3b2d]"
+                                    />
+                                    Keep me signed in on this device
+                                </label>
+                                <span className="text-xs font-medium uppercase tracking-[0.18em] text-stone-400">
+                                    {rememberMe ? 'Saved in browser' : 'Session only'}
+                                </span>
+                            </div>
+
+                            <label className="flex items-start gap-3 text-sm leading-6 text-stone-600">
+                                <input
+                                    type="checkbox"
+                                    checked={acceptPolicy}
+                                    onChange={(e) => setAcceptPolicy(e.target.checked)}
+                                    className="mt-1 h-4 w-4 rounded border-stone-300 text-[#1f3b2d] focus:ring-[#1f3b2d]"
+                                    required
+                                />
+                                <span>
+                                    I agree to the{' '}
+                                    <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="font-semibold text-[#1f3b2d] underline">
+                                        Privacy Policy
+                                    </a>
+                                    {' '}and{' '}
+                                    <a href="/terms-and-conditions" target="_blank" rel="noopener noreferrer" className="font-semibold text-[#1f3b2d] underline">
+                                        Terms & Conditions
+                                    </a>
+                                    .
+                                </span>
+                            </label>
+
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className={`flex w-full items-center justify-center gap-3 rounded-2xl px-5 py-4 text-sm font-semibold text-white shadow-lg transition-all active:scale-[0.99] ${loading
+                                    ? 'cursor-not-allowed bg-[#6f8f7a]'
+                                    : 'bg-[#1f3b2d] hover:bg-[#315542]'
+                                    }`}
+                            >
+                                {loading ? 'Signing in...' : 'Sign in to account'}
+                                {!loading && <FaArrowRight className="text-xs" />}
+                            </button>
+                        </form>
+
+                        <p className="mt-7 text-center text-sm text-stone-500">
+                            New here?{' '}
+                            <Link to="/Register" className="font-semibold text-[#1f3b2d] hover:text-[#315542]">
+                                Create an account
+                            </Link>
+                        </p>
                     </div>
-
-                    <div className="flex items-center justify-between">
-                        <label className="flex items-center gap-2 cursor-pointer group">
-                            <input
-                                type="checkbox"
-                                checked={rememberMe}
-                                onChange={(e) => setRememberMe(e.target.checked)}
-                                className="w-4 h-4 sm:w-5 sm:h-5 rounded border-gray-300 text-primary focus:ring-primary"
-                            />
-                            <span className="text-xs sm:text-sm text-gray-600 group-hover:text-gray-900 transition-colors">Remember me</span>
-                        </label>
-                        <a href="#" className="text-xs sm:text-sm font-semibold text-primary hover:text-primary/80">
-                            Forgot Password?
-                        </a>
-                    </div>
-
-                    <div className="mt-4">
-                        <label className="flex items-start gap-2.5 sm:gap-3 cursor-pointer group">
-                            <input
-                                type="checkbox"
-                                checked={acceptPolicy}
-                                onChange={(e) => setAcceptPolicy(e.target.checked)}
-                                className="w-4 h-4 sm:w-5 sm:h-5 rounded border-gray-300 text-primary focus:ring-primary mt-0.5"
-                                required
-                            />
-                            <span className="text-xs sm:text-sm text-gray-600">
-                                I agree to the{' '}
-                                <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:text-primary/80 underline">Privacy Policy</a>
-                                {' and '}
-                                <a href="/terms-and-conditions" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:text-primary/80 underline">Terms & Conditions</a>
-                            </span>
-                        </label>
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className={`w-full font-semibold text-sm sm:text-base md:text-lg py-3 sm:py-3.5 md:py-4 rounded-lg focus:outline-none focus:ring-4 focus:ring-pink-500/20 transition-all shadow-sm active:scale-95 ${loading
-                            ? 'bg-pink-400 text-white cursor-not-allowed'
-                            : 'bg-pink-600 text-white hover:bg-pink-700'
-                            }`}
-                    >
-                        {loading ? 'Signing In...' : 'Sign In'}
-                    </button>
-                </form>
-
-                <p className="text-center text-xs sm:text-sm text-gray-500">
-                    Don't have an account?{' '}
-                    <a href="/Register" className="font-semibold text-primary hover:text-primary/80">
-                        Sign Up
-                    </a>
-                </p>
+                </section>
             </div>
         </div>
     );

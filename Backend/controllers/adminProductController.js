@@ -296,9 +296,39 @@ export const getProductById = async (req, res) => {
 // ⭐ GET PRODUCTS COUNT
 export const getAllProductsCount = async (req, res) => {
   try {
-    const totalProducts = await Product.countDocuments({ is_deleted: false });
+    const totalProducts = await Product.countDocuments({ is_deleted: { $ne: true } });
     return res.json({ totalProducts });
   } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+// Toggle homepage top selling visibility
+export const toggleTopSellingProduct = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { showInTopSelling } = req.body;
+
+    if (typeof showInTopSelling !== "boolean") {
+      return res.status(400).json({ message: "showInTopSelling must be a boolean" });
+    }
+
+    const product = await Product.findByIdAndUpdate(
+      productId,
+      { $set: { showInTopSelling } },
+      { new: true, runValidators: true }
+    );
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    return res.json({
+      message: `Product ${showInTopSelling ? "added to" : "removed from"} top selling section`,
+      product,
+    });
+  } catch (err) {
+    console.error("Toggle top selling product error:", err);
     return res.status(500).json({ error: err.message });
   }
 };

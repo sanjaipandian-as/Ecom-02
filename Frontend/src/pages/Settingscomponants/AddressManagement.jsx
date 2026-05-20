@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { FaMapMarkerAlt, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSave } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSave, FaHome } from 'react-icons/fa';
 import API from '../../../api';
 import Skeleton from '../../components/Common/Skeleton';
-
 
 const AddressManagement = () => {
     const [addresses, setAddresses] = useState([]);
@@ -19,14 +18,13 @@ const AddressManagement = () => {
         landmark: ''
     });
 
-    const inputClasses = "w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E91E63]/30 focus:border-[#E91E63] transition-all placeholder:text-gray-400 bg-white hover:border-gray-300";
-    const labelClasses = "block text-sm font-semibold text-gray-700 mb-2.5";
+    const inputClasses = 'w-full rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-[#81C784] focus:ring-4 focus:ring-[#81C784]/15';
+    const labelClasses = 'mb-2 block text-sm font-semibold text-slate-700';
 
     useEffect(() => {
         fetchAddresses();
     }, []);
 
-    // Fetch all addresses
     const fetchAddresses = async () => {
         try {
             setLoadingAddresses(true);
@@ -40,7 +38,6 @@ const AddressManagement = () => {
         }
     };
 
-    // Add new address
     const handleAddAddress = async (e) => {
         e.preventDefault();
         try {
@@ -55,7 +52,6 @@ const AddressManagement = () => {
         }
     };
 
-    // Update address
     const handleUpdateAddress = async (e) => {
         e.preventDefault();
         try {
@@ -71,7 +67,6 @@ const AddressManagement = () => {
         }
     };
 
-    // Delete address
     const handleDeleteAddress = async (addressId) => {
         if (!confirm('Are you sure you want to delete this address?')) return;
         try {
@@ -84,7 +79,6 @@ const AddressManagement = () => {
         }
     };
 
-    // Set default address
     const handleSetDefaultAddress = async (addressId) => {
         try {
             await API.put(`/address/default/${addressId}`);
@@ -96,7 +90,6 @@ const AddressManagement = () => {
         }
     };
 
-    // Edit address
     const handleEditAddress = (address) => {
         setEditingAddress(address._id);
         setAddressForm({
@@ -111,7 +104,6 @@ const AddressManagement = () => {
         setShowAddressForm(true);
     };
 
-    // Reset form
     const resetAddressForm = () => {
         setAddressForm({
             fullname: '',
@@ -125,50 +117,73 @@ const AddressManagement = () => {
         setEditingAddress(null);
     };
 
+    const defaultAddress = addresses.find((address) => address.isDefault);
+    const statCards = [
+        { label: 'Saved Addresses', value: addresses.length },
+        { label: 'Default Address', value: defaultAddress ? '1 active' : 'Not set' },
+        { label: 'Coverage', value: addresses.length > 1 ? 'Multi-location' : 'Single location' }
+    ];
+
     return (
-        <div className="space-y-8">
-            <div className="flex items-center justify-between pb-6 border-b border-gray-100">
-                <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-[#E91E63]/10 rounded-xl flex items-center justify-center">
-                        <FaMapMarkerAlt className="w-6 h-6 text-[#E91E63]" />
-                    </div>
-                    <div>
-                        <h2 className="text-2xl font-bold text-gray-900">Delivery Addresses</h2>
-                        <p className="text-sm text-gray-500">Manage your saved addresses</p>
+        <div className="space-y-6">
+            <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+                <div className="rounded-[1.75rem] border border-slate-200 bg-[linear-gradient(135deg,_#0f172a_0%,_#1f2937_50%,_#81C784_185%)] p-6 text-white">
+                    <div className="flex items-start justify-between gap-4">
+                        <div>
+                            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
+                                <FaMapMarkerAlt className="text-[11px]" />
+                                Delivery Network
+                            </div>
+                            <h3 className="text-3xl font-bold tracking-tight">Address book</h3>
+                            <p className="mt-3 max-w-lg text-sm leading-6 text-slate-200">
+                                Keep your delivery destinations clean and organized so checkout stays fast and accurate.
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => {
+                                resetAddressForm();
+                                setShowAddressForm(true);
+                            }}
+                            className="inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+                        >
+                            <FaPlus className="text-xs" />
+                            Add Address
+                        </button>
                     </div>
                 </div>
-                <button
-                    onClick={() => {
-                        resetAddressForm();
-                        setShowAddressForm(true);
-                    }}
-                    className="px-6 py-3 bg-gradient-to-r from-[#E91E63] to-[#E91E63]/90 text-white font-semibold rounded-xl hover:from-[#E91E63]/90 hover:to-[#E91E63] transition-all shadow-lg shadow-[#E91E63]/30 flex items-center gap-2"
-                >
-                    <FaPlus className="w-4 h-4" />
-                    Add New Address
-                </button>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 xl:grid-cols-1">
+                    {statCards.map((card) => (
+                        <div key={card.label} className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5">
+                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{card.label}</p>
+                            <p className="mt-3 text-2xl font-bold text-slate-950">{card.value}</p>
+                        </div>
+                    ))}
+                </div>
             </div>
 
-            {/* Address Form */}
             {showAddressForm && (
-                <div className="bg-gradient-to-r from-[#E91E63]/5 to-secondary/5 rounded-2xl p-6 border-2 border-[#E91E63]/20">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-xl font-bold text-gray-900">
-                            {editingAddress ? 'Edit Address' : 'Add New Address'}
-                        </h3>
+                <div className="rounded-[1.75rem] border border-slate-200 bg-[linear-gradient(180deg,_#ffffff_0%,_#f8fbf8_100%)] p-6 shadow-sm">
+                    <div className="mb-6 flex items-center justify-between">
+                        <div>
+                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Address Form</p>
+                            <h3 className="mt-2 text-2xl font-bold text-slate-950">
+                                {editingAddress ? 'Edit saved address' : 'Add new address'}
+                            </h3>
+                        </div>
                         <button
                             onClick={() => {
                                 setShowAddressForm(false);
                                 resetAddressForm();
                             }}
-                            className="p-2 hover:bg-white rounded-lg transition-all"
+                            className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-500 transition hover:bg-slate-200"
                         >
-                            <FaTimes className="w-5 h-5 text-gray-600" />
+                            <FaTimes />
                         </button>
                     </div>
 
                     <form onSubmit={editingAddress ? handleUpdateAddress : handleAddAddress} className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                             <div>
                                 <label className={labelClasses}>Full Name</label>
                                 <input
@@ -206,13 +221,13 @@ const AddressManagement = () => {
                             </div>
 
                             <div>
-                                <label className={labelClasses}>Landmark (Optional)</label>
+                                <label className={labelClasses}>Landmark</label>
                                 <input
                                     type="text"
                                     value={addressForm.landmark}
                                     onChange={(e) => setAddressForm({ ...addressForm, landmark: e.target.value })}
                                     className={inputClasses}
-                                    placeholder="Near..."
+                                    placeholder="Nearby landmark"
                                 />
                             </div>
 
@@ -254,22 +269,22 @@ const AddressManagement = () => {
                             </div>
                         </div>
 
-                        <div className="flex gap-3 pt-4">
+                        <div className="flex flex-col gap-3 border-t border-slate-200 pt-6 sm:flex-row">
                             <button
                                 type="button"
                                 onClick={() => {
                                     setShowAddressForm(false);
                                     resetAddressForm();
                                 }}
-                                className="px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all"
+                                className="rounded-2xl border border-slate-200 px-5 py-3 font-semibold text-slate-700 transition hover:bg-slate-50"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
-                                className="flex-1 px-6 py-3 bg-gradient-to-r from-[#E91E63] to-[#E91E63]/90 text-white font-semibold rounded-xl hover:from-[#E91E63]/90 hover:to-[#E91E63] transition-all shadow-lg shadow-[#E91E63]/30"
+                                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#81C784] px-5 py-3 font-semibold text-slate-950 transition hover:bg-[#72b875]"
                             >
-                                <FaSave className="inline mr-2" />
+                                <FaSave className="text-sm" />
                                 {editingAddress ? 'Update Address' : 'Save Address'}
                             </button>
                         </div>
@@ -277,105 +292,110 @@ const AddressManagement = () => {
                 </div>
             )}
 
-            {/* Address List */}
             {loadingAddresses ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     {[...Array(2)].map((_, i) => (
-                        <div key={i} className="p-6 rounded-2xl border-2 border-gray-100 space-y-4">
+                        <div key={i} className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
                             <div className="flex items-center gap-3">
-                                <Skeleton className="w-10 h-10 rounded-lg" />
+                                <Skeleton className="h-12 w-12 rounded-2xl" />
                                 <div className="space-y-2">
                                     <Skeleton className="h-4 w-32" />
-                                    <Skeleton className="h-3 w-16" />
+                                    <Skeleton className="h-3 w-20" />
                                 </div>
                             </div>
-                            <div className="space-y-2">
+                            <div className="mt-5 space-y-2">
                                 <Skeleton className="h-4 w-full" />
                                 <Skeleton className="h-4 w-3/4" />
                                 <Skeleton className="h-4 w-1/2" />
                             </div>
-                            <div className="flex gap-2 pt-4 border-t border-gray-100">
-                                <Skeleton className="h-9 flex-1 rounded-lg" />
-                                <Skeleton className="h-9 flex-1 rounded-lg" />
-                                <Skeleton className="h-9 w-12 rounded-lg" />
+                            <div className="mt-5 flex gap-2">
+                                <Skeleton className="h-11 flex-1 rounded-2xl" />
+                                <Skeleton className="h-11 flex-1 rounded-2xl" />
                             </div>
                         </div>
                     ))}
                 </div>
             ) : addresses.length === 0 ? (
-
-                <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
-                    <FaMapMarkerAlt className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No addresses saved</h3>
-                    <p className="text-gray-600 mb-6">Add your first delivery address to get started</p>
+                <div className="rounded-[1.75rem] border border-dashed border-slate-300 bg-slate-50 px-6 py-14 text-center">
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-white text-slate-400 shadow-sm">
+                        <FaHome className="text-2xl" />
+                    </div>
+                    <h3 className="mt-5 text-xl font-bold text-slate-950">No addresses saved yet</h3>
+                    <p className="mt-2 text-sm text-slate-500">Add your first delivery address to streamline checkout.</p>
                     <button
                         onClick={() => {
                             resetAddressForm();
                             setShowAddressForm(true);
                         }}
-                        className="px-6 py-3 bg-gradient-to-r from-[#E91E63] to-[#E91E63]/90 text-white font-semibold rounded-xl hover:from-[#E91E63]/90 hover:to-[#E91E63] transition-all shadow-lg shadow-[#E91E63]/30"
+                        className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 font-semibold text-white transition hover:bg-slate-800"
                     >
-                        <FaPlus className="inline mr-2" />
+                        <FaPlus className="text-xs" />
                         Add Address
                     </button>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     {addresses.map((address) => (
                         <div
                             key={address._id}
-                            className={`p-6 rounded-2xl border-2 transition-all ${address.isDefault
-                                ? 'border-[#E91E63] bg-gradient-to-r from-[#E91E63]/5 to-secondary/5 shadow-lg shadow-[#E91E63]/10'
-                                : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
-                                }`}
+                            className={`rounded-[1.75rem] border p-6 transition-all ${
+                                address.isDefault
+                                    ? 'border-[#81C784]/40 bg-[linear-gradient(180deg,_rgba(129,199,132,0.09)_0%,_#ffffff_100%)] shadow-[0_20px_60px_-35px_rgba(129,199,132,0.55)]'
+                                    : 'border-slate-200 bg-white shadow-sm hover:-translate-y-0.5 hover:shadow-lg'
+                            }`}
                         >
-                            <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-start justify-between gap-4">
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${address.isDefault ? 'bg-[#E91E63]' : 'bg-gray-100'
-                                        }`}>
-                                        <FaMapMarkerAlt className={`w-5 h-5 ${address.isDefault ? 'text-white' : 'text-gray-600'
-                                            }`} />
+                                    <div
+                                        className={`flex h-12 w-12 items-center justify-center rounded-2xl ${
+                                            address.isDefault ? 'bg-slate-950 text-white' : 'bg-slate-100 text-slate-500'
+                                        }`}
+                                    >
+                                        <FaMapMarkerAlt className="text-base" />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-gray-900">{address.fullname}</h4>
-                                        {address.isDefault && (
-                                            <span className="inline-block px-2 py-1 bg-[#E91E63] text-white text-xs font-semibold rounded mt-1">
-                                                Default
-                                            </span>
-                                        )}
+                                        <h4 className="text-lg font-bold text-slate-950">{address.fullname}</h4>
+                                        <p className="text-sm text-slate-500">{address.phone}</p>
                                     </div>
                                 </div>
+                                {address.isDefault && (
+                                    <span className="rounded-full bg-[#81C784] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-950">
+                                        Default
+                                    </span>
+                                )}
                             </div>
 
-                            <div className="space-y-2 mb-4 text-sm text-gray-700">
+                            <div className="mt-5 rounded-[1.25rem] bg-slate-50 p-4 text-sm leading-6 text-slate-700">
                                 <p>{address.addressLine}</p>
-                                {address.landmark && <p className="text-gray-600">Landmark: {address.landmark}</p>}
-                                <p>{address.city}, {address.state} - {address.pincode}</p>
-                                <p className="font-semibold">Phone: {address.phone}</p>
+                                {address.landmark && <p className="text-slate-500">Landmark: {address.landmark}</p>}
+                                <p>
+                                    {address.city}, {address.state} - {address.pincode}
+                                </p>
                             </div>
 
-                            <div className="flex gap-2 pt-4 border-t border-gray-200">
+                            <div className="mt-5 flex flex-wrap gap-2">
                                 {!address.isDefault && (
                                     <button
                                         onClick={() => handleSetDefaultAddress(address._id)}
-                                        className="flex-1 px-4 py-2 bg-[#E91E63]/10 text-[#E91E63] font-semibold rounded-lg hover:bg-[#E91E63]/20 transition-all text-sm"
+                                        className="inline-flex items-center gap-2 rounded-2xl bg-[#81C784]/12 px-4 py-3 text-sm font-semibold text-[#2d6a31] transition hover:bg-[#81C784]/18"
                                     >
-                                        <FaCheck className="inline mr-1" />
+                                        <FaCheck className="text-xs" />
                                         Set Default
                                     </button>
                                 )}
                                 <button
                                     onClick={() => handleEditAddress(address)}
-                                    className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition-all text-sm"
+                                    className="inline-flex items-center gap-2 rounded-2xl bg-slate-100 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-200"
                                 >
-                                    <FaEdit className="inline mr-1" />
+                                    <FaEdit className="text-xs" />
                                     Edit
                                 </button>
                                 <button
                                     onClick={() => handleDeleteAddress(address._id)}
-                                    className="px-4 py-2 bg-red-50 text-red-600 font-semibold rounded-lg hover:bg-red-100 transition-all text-sm"
+                                    className="inline-flex items-center gap-2 rounded-2xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100"
                                 >
-                                    <FaTrash className="inline" />
+                                    <FaTrash className="text-xs" />
+                                    Delete
                                 </button>
                             </div>
                         </div>

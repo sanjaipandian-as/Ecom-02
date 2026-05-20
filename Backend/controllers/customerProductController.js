@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 import Product from "../models/Product.js";
+import Order from "../models/Order.js";
 
 // 1. Get all approved products
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find({ is_deleted: false });
+    const products = await Product.find({ is_deleted: { $ne: true } });
     return res.json(products);
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -24,7 +25,7 @@ export const getProductById = async (req, res) => {
 
     const product = await Product.findOne({
       _id: productId,
-      is_deleted: false
+      is_deleted: { $ne: true }
     });
 
     if (!product)
@@ -44,7 +45,7 @@ export const searchProducts = async (req, res) => {
     const { q } = req.query;
 
     const products = await Product.find({
-      is_deleted: false,
+      is_deleted: { $ne: true },
       name: { $regex: q, $options: "i" }
     });
 
@@ -61,7 +62,7 @@ export const filterByCategory = async (req, res) => {
     const { category } = req.params;
 
     const products = await Product.find({
-      is_deleted: false,
+      is_deleted: { $ne: true },
       "category.main_slug": category
     });
 
@@ -79,11 +80,11 @@ export const getPaginatedProducts = async (req, res) => {
     const limit = 10;
     const skip = (page - 1) * limit;
 
-    const products = await Product.find({ is_deleted: false })
+    const products = await Product.find({ is_deleted: { $ne: true } })
       .skip(skip)
       .limit(limit);
 
-    const total = await Product.countDocuments({ is_deleted: false });
+    const total = await Product.countDocuments({ is_deleted: { $ne: true } });
 
     return res.json({
       currentPage: page,
@@ -104,7 +105,7 @@ export const filterProducts = async (req, res) => {
     const skip = (page - 1) * limit;
 
     // Build query object
-    const query = { is_deleted: false };
+    const query = { is_deleted: { $ne: true } };
 
     // Category Filter
     if (req.query.category) {
@@ -318,12 +319,12 @@ export const getFilterOptions = async (req, res) => {
   try {
     // Get unique brands
     const brands = await Product.distinct('brand', {
-      is_deleted: false
+      is_deleted: { $ne: true }
     });
 
     // Get price range
     const priceStats = await Product.aggregate([
-      { $match: { is_deleted: false } },
+      { $match: { is_deleted: { $ne: true } } },
       {
         $group: {
           _id: null,
@@ -336,12 +337,12 @@ export const getFilterOptions = async (req, res) => {
 
     // Get unique age limits
     const ageLimits = await Product.distinct('safety.age_limit', {
-      is_deleted: false
+      is_deleted: { $ne: true }
     });
 
     // Get unique specification keys (for tags)
     const specifications = await Product.aggregate([
-      { $match: { is_deleted: false } },
+      { $match: { is_deleted: { $ne: true } } },
       { $unwind: '$specifications' },
       {
         $group: {
@@ -353,7 +354,7 @@ export const getFilterOptions = async (req, res) => {
 
     // Get unique categories with counts
     const categories = await Product.aggregate([
-      { $match: { is_deleted: false } },
+      { $match: { is_deleted: { $ne: true } } },
       {
         $group: {
           _id: {
@@ -367,7 +368,7 @@ export const getFilterOptions = async (req, res) => {
 
     // Check for eco-friendly and green cracker products
     const ecoFriendlyCount = await Product.countDocuments({
-      is_deleted: false,
+      is_deleted: { $ne: true },
       specifications: {
         $elemMatch: {
           key_slug: 'eco_friendly',
@@ -377,7 +378,7 @@ export const getFilterOptions = async (req, res) => {
     });
 
     const greenCrackerCount = await Product.countDocuments({
-      is_deleted: false,
+      is_deleted: { $ne: true },
       specifications: {
         $elemMatch: {
           key_slug: 'green_cracker',
@@ -388,7 +389,7 @@ export const getFilterOptions = async (req, res) => {
 
     // Get product counts by price ranges
     const priceRanges = await Product.aggregate([
-      { $match: { is_deleted: false } },
+      { $match: { is_deleted: { $ne: true } } },
       {
         $bucket: {
           groupBy: '$pricing.selling_price',
@@ -409,7 +410,7 @@ export const getFilterOptions = async (req, res) => {
         average: Math.round(priceStats[0]?.avgPrice || 25000)
       },
       priceRanges: [
-        { label: 'All Price', min: 0, max: null, count: await Product.countDocuments({ is_deleted: false }) },
+        { label: 'All Price', min: 0, max: null, count: await Product.countDocuments({ is_deleted: { $ne: true } }) },
         { label: 'Below ₹500', min: 0, max: 500, count: priceRanges.find(r => r._id === 0)?.count || 0 },
         { label: '₹1000 - ₹5000', min: 1000, max: 5000, count: priceRanges.find(r => r._id === 1000)?.count || 0 },
         { label: '₹5000 - ₹10000', min: 5000, max: 10000, count: priceRanges.find(r => r._id === 5000)?.count || 0 }
@@ -453,11 +454,115 @@ export const getProductsBySeller = async (req, res) => {
     const { sellerId } = req.params;
     const products = await Product.find({
       sellerId,
-      is_deleted: false
+      is_deleted: { $ne: true }
     }).sort({ createdAt: -1 });
     res.json(products);
   } catch (err) {
     console.error('Get products by seller error:', err);
     res.status(500).json({ error: err.message });
+  }
+};
+
+// 9. Homepage sections for curated and personalized products
+export const getHomepageSections = async (req, res) => {
+  try {
+    const topSellingProducts = await Product.find({
+      is_deleted: { $ne: true },
+      stock: { $gt: 0 },
+      showInTopSelling: true,
+    })
+      .sort({ updatedAt: -1, sold_count: -1 })
+      .limit(8);
+
+    const tokenUserId = req.role === "customer" ? req.user?._id?.toString() : null;
+    const canPersonalize = mongoose.Types.ObjectId.isValid(tokenUserId);
+
+    if (!canPersonalize) {
+      return res.json({
+        topSellingProducts,
+        recommendedProducts: [],
+      });
+    }
+
+    const completedStatuses = [
+      "paid",
+      "packed",
+      "shipped",
+      "delivered",
+      "return_requested",
+      "return_approved",
+      "refund_initiated",
+      "refunded",
+    ];
+
+    const orders = await Order.find({
+      customerId: tokenUserId,
+      status: { $in: completedStatuses },
+    }).populate("items.productId");
+
+    if (!orders.length) {
+      return res.json({
+        topSellingProducts,
+        recommendedProducts: [],
+      });
+    }
+
+    const purchasedProductIds = new Set();
+    const categoryScores = new Map();
+    const brandScores = new Map();
+
+    orders.forEach((order) => {
+      order.items.forEach((item) => {
+        const product = item.productId;
+        if (!product || product.is_deleted) return;
+
+        purchasedProductIds.add(product._id.toString());
+
+        const quantity = Number(item.quantity) || 1;
+        const categoryKey = product.category?.main_slug || product.category?.main || "";
+        const brandKey = product.brand || "";
+
+        if (categoryKey) {
+          categoryScores.set(categoryKey, (categoryScores.get(categoryKey) || 0) + quantity * 5);
+        }
+
+        if (brandKey) {
+          brandScores.set(brandKey, (brandScores.get(brandKey) || 0) + quantity * 3);
+        }
+      });
+    });
+
+    const candidateProducts = await Product.find({
+      is_deleted: { $ne: true },
+      stock: { $gt: 0 },
+      _id: { $nin: Array.from(purchasedProductIds) },
+    }).limit(48);
+
+    const recommendedProducts = candidateProducts
+      .map((product) => {
+        const categoryKey = product.category?.main_slug || product.category?.main || "";
+        const brandKey = product.brand || "";
+        const categoryScore = categoryScores.get(categoryKey) || 0;
+        const brandScore = brandScores.get(brandKey) || 0;
+        const popularityScore = Number(product.sold_count || 0);
+        const ratingScore = Number(product.averageRating || 0) * 2;
+
+        return {
+          product,
+          score: categoryScore + brandScore + popularityScore + ratingScore,
+        };
+      })
+      .filter((entry) => entry.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 8)
+      .map((entry) => entry.product);
+
+    return res.json({
+      topSellingProducts,
+      recommendedProducts,
+    });
+  } catch (err) {
+    console.error("Get homepage sections error:", err);
+    return res.status(500).json({ error: err.message });
   }
 };

@@ -1,4 +1,5 @@
 import express from "express";
+import { optionalAuthenticate } from "../middleware/auth.js";
 import {
   getAllProducts,
   getProductById,
@@ -7,12 +8,14 @@ import {
   getPaginatedProducts,
   filterProducts,
   getFilterOptions,
-  getProductsBySeller
+  getProductsBySeller,
+  getHomepageSections,
 } from "../controllers/customerProductController.js";
 
 const router = express.Router();
 
 router.get("/", getAllProducts);
+router.get("/homepage-sections", optionalAuthenticate, getHomepageSections);
 router.get("/product/:productId", getProductById);
 router.get("/search", searchProducts);
 router.get("/filter", filterProducts);

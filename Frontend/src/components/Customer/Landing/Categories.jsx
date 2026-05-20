@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback, useRef } from "react"
+import React, { useState, useEffect, useCallback, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react"
 import API from "../../../../api"
@@ -8,28 +8,17 @@ const Categories = () => {
     const [categories, setCategories] = useState([])
     const [loading, setLoading] = useState(true)
     const [index, setIndex] = useState(0)
-    const [visibleCards, setVisibleCards] = useState(1)
-    const [cardWidth, setCardWidth] = useState(280)
-    const [gap, setGap] = useState(24)
+    const [visibleCards, setVisibleCards] = useState(4)
+    const [cardWidth, setCardWidth] = useState(300)
+    const [gap, setGap] = useState(12)
     const scrollRef = useRef(null)
-
-    const categorySublabels = useMemo(() => ({
-        'skincare': 'radiate confidence',
-        'makeup': 'express your essence',
-        'haircare': 'nourish every strand',
-        'fragrance': 'find your signature',
-        'wellness': 'inner glow, outer beauty',
-        'bath & body': 'ultimate self-care ritual',
-        'tools & brushes': 'precision in every stroke',
-        'men': 'refined grooming essentials'
-    }), [])
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
                 setLoading(true)
                 const response = await API.get('/categories')
-                setCategories(response.data)
+                setCategories(response.data || [])
             } catch (error) {
                 console.error('Error fetching categories:', error)
             } finally {
@@ -42,33 +31,34 @@ const Categories = () => {
     useEffect(() => {
         const calculateLayout = () => {
             const width = window.innerWidth
-            const maxWidth = 1440 // max-w-8xl estimate
-            const effectiveWidth = Math.min(width, maxWidth)
-
-            let calculatedCardWidth = 320
-            let calculatedGap = 32 // matching gap-8
-            let totalPadding = 120 // lg:px-12 (96) + md:px-2 (16) + buffer
+            let calculatedCardWidth = 300
+            let calculatedGap = 12
+            let totalPadding = 96
 
             if (width < 640) {
-                calculatedCardWidth = 200
-                calculatedGap = 16
-                totalPadding = 48 // px-4 (32) + buffer
+                calculatedCardWidth = 220
+                calculatedGap = 8
+                totalPadding = 32
+                setVisibleCards(1)
             } else if (width < 768) {
                 calculatedCardWidth = 240
-                calculatedGap = 16
-                totalPadding = 80 // sm:px-8 (64) + buffer
+                calculatedGap = 12
+                totalPadding = 64
+                setVisibleCards(2)
             } else if (width < 1024) {
+                calculatedCardWidth = 260
+                calculatedGap = 12
+                totalPadding = 96
+                setVisibleCards(3)
+            } else {
                 calculatedCardWidth = 280
-                calculatedGap = 24
-                totalPadding = 96 // sm:px-8 (64) + md:px-2 (16) + buffer
+                calculatedGap = 12
+                totalPadding = 96
+                setVisibleCards(4)
             }
-
-            const availableWidth = effectiveWidth - totalPadding
-            const cards = Math.floor((availableWidth + calculatedGap) / (calculatedCardWidth + calculatedGap))
 
             setCardWidth(calculatedCardWidth)
             setGap(calculatedGap)
-            setVisibleCards(Math.max(1, cards))
         }
 
         let timeoutId
@@ -88,17 +78,16 @@ const Categories = () => {
     const scroll = useCallback((direction) => {
         if (scrollRef.current) {
             const containerWidth = scrollRef.current.offsetWidth;
-            const scrollAmount = direction === 'left' ? -containerWidth : containerWidth;
+            const scrollAmount = direction === 'left' ? -(cardWidth + gap) * 2 : (cardWidth + gap) * 2;
 
             scrollRef.current.scrollBy({
                 left: scrollAmount,
                 behavior: 'smooth'
             });
         }
-    }, []);
+    }, [cardWidth, gap]);
 
     const handleCategoryClick = useCallback((catName) => {
-        // Safe slug generation matching typical backend patterns
         const slug = catName.toLowerCase()
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/(^-|-$)+/g, '');
@@ -133,153 +122,139 @@ const Categories = () => {
         }
     }, [index, cardWidth, gap])
 
-    const totalSlides = Math.ceil(categories.length / visibleCards)
+    const totalSlides = Math.ceil(categories.length / visibleCards) || 1
 
     return (
-        <section className="w-full py-9 sm:py-16 md:py-24 px-0 overflow-hidden" style={{ background: '#FFFDFD' }}>
-            <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-12">
-                <div className="flex flex-col items-center text-center mb-10 sm:mb-14 md:mb-16">
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 tracking-tight" style={{ color: '#2E2E2E' }}>
-                        Curated <span style={{ color: '#E91E63' }}>Collections</span>
-                    </h2>
-                    <div className="w-20 h-1 rounded-full mb-4" style={{ backgroundColor: '#F8BBD0' }}></div>
-                    <p className="text-sm sm:text-lg text-gray-500 font-medium max-w-2xl px-4">
-                        Discover premium beauty & skincare essentials designed to enhance your natural radiance and confidence.
-                    </p>
+        <section className="w-full pt-6 pb-12 md:pt-8 md:pb-16 overflow-hidden" style={{ background: '#FFFDFD' }}>
+            <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-5 md:mb-6 px-2 gap-4">
+                    <div className="flex flex-col items-start text-left">
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-semibold mb-3 tracking-normal" style={{ color: '#2E2E2E' }}>
+                            Curated <span style={{ color: '#81C784' }}>Collections</span>
+                        </h2>
+                        <p className="text-gray-500 font-sans text-[15px] md:text-base max-w-xl leading-relaxed">
+                            Discover our handpicked selection of premium, anti-tarnish jewelry designed to bring timeless elegance and confidence to your everyday look.
+                        </p>
+                    </div>
+
+                    {/* Right side design to fill empty space */}
+                    <div className="hidden md:flex items-center gap-6 pb-1 animate-fade-in-up">
+                        <div className="flex flex-col text-right">
+                            <span className="text-[13px] font-bold tracking-widest uppercase text-[#2E2E2E]">Premium Quality</span>
+                            <span className="text-[11px] text-gray-400 font-medium">Anti-Tarnish & Hypoallergenic</span>
+                        </div>
+                        <div className="h-10 w-px bg-gray-200"></div>
+                        <button 
+                            onClick={() => navigate('/products')}
+                            className="group flex items-center gap-2 bg-white border-2 border-[#81C784] text-[#81C784] px-6 py-2.5 rounded-full text-sm font-bold hover:bg-[#81C784] hover:text-white transition-all shadow-sm"
+                        >
+                            Explore All <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        </button>
+                    </div>
                 </div>
 
-                <div className="relative group/nav px-0 md:px-2">
-                    {/* Navigation Arrows - Desktop Only */}
+                <div className="relative group/nav">
+                    {/* Navigation Arrows - Left */}
                     {!loading && categories.length > visibleCards && (
-                        <>
-                            <button
-                                onClick={() => scroll('left')}
-                                className="absolute -left-4 lg:-left-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-white/90 backdrop-blur-sm border-2 border-rose-100 rounded-full flex items-center justify-center text-rose-500 shadow-xl hover:bg-rose-500 hover:text-white hover:border-rose-500 transition-all duration-300 opacity-0 group-hover/nav:opacity-100 hidden md:flex"
-                                aria-label="Previous categories"
-                            >
-                                <ChevronLeft className="w-6 h-6" />
-                            </button>
-                            <button
-                                onClick={() => scroll('right')}
-                                className="absolute -right-4 lg:-right-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-white/90 backdrop-blur-sm border-2 border-rose-100 rounded-full flex items-center justify-center text-rose-500 shadow-xl hover:bg-rose-500 hover:text-white hover:border-rose-500 transition-all duration-300 opacity-0 group-hover/nav:opacity-100 hidden md:flex"
-                                aria-label="Next categories"
-                            >
-                                <ChevronRight className="w-6 h-6" />
-                            </button>
-                        </>
+                        <button
+                            onClick={() => scroll('left')}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/50 backdrop-blur-md rounded-full flex items-center justify-center text-gray-800 shadow-md hover:bg-white transition-all duration-300 opacity-0 group-hover/nav:opacity-100 hidden md:flex"
+                            aria-label="Previous categories"
+                        >
+                            <ChevronLeft className="w-5 h-5" />
+                        </button>
+                    )}
+
+                    {/* Navigation Arrows - Right */}
+                    {!loading && categories.length > visibleCards && (
+                        <button
+                            onClick={() => scroll('right')}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/50 backdrop-blur-md rounded-full flex items-center justify-center text-gray-800 shadow-md hover:bg-white transition-all duration-300 opacity-0 group-hover/nav:opacity-100 hidden md:flex"
+                            aria-label="Next categories"
+                        >
+                            <ChevronRight className="w-5 h-5" />
+                        </button>
                     )}
 
                     <div
                         ref={scrollRef}
-                        className="w-full overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory"
+                        className="w-full overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory flex py-4"
                         style={{
                             WebkitOverflowScrolling: 'touch',
                             scrollbarWidth: 'none',
-                            msOverflowStyle: 'none'
+                            msOverflowStyle: 'none',
+                            gap: `${gap}px`
                         }}
                     >
                         {loading ? (
-                            <div className="flex gap-4 md:gap-6 lg:gap-8">
-                                {[...Array(visibleCards + 1)].map((_, i) => (
-                                    <div
-                                        key={i}
-                                        className="flex-shrink-0 rounded-[24px] animate-pulse"
-                                        style={{
-                                            minWidth: `${cardWidth}px`,
-                                            height: '300px',
-                                            backgroundColor: '#FCE4EC'
-                                        }}
-                                    ></div>
-                                ))}
-                            </div>
+                            [...Array(visibleCards + 1)].map((_, i) => (
+                                <div
+                                    key={i}
+                                    className="flex-shrink-0 rounded-lg animate-pulse"
+                                    style={{
+                                        minWidth: `${cardWidth}px`,
+                                        height: '420px',
+                                        backgroundColor: '#f3f4f6'
+                                    }}
+                                ></div>
+                            ))
                         ) : categories.length === 0 ? (
                             <div className="py-20 text-center w-full">
-                                <p className="text-gray-400 font-medium italic text-lg">Our beauty vault is currently empty. Check back soon!</p>
+                                <p className="text-gray-400 font-medium italic text-lg">Our vault is currently empty. Check back soon!</p>
                             </div>
                         ) : (
-                            <div
-                                className="flex gap-4 md:gap-6 lg:gap-8 pb-4 md:pb-0"
-                                style={{
-                                    justifyContent: categories.length <= visibleCards ? 'center' : 'flex-start',
-                                    width: 'max-content',
-                                    minWidth: '100%'
-                                }}
-                            >
-                                {categories.map((cat, i) => (
-                                    <div
-                                        key={cat._id}
-                                        onClick={() => handleCategoryClick(cat.name)}
-                                        className="flex-shrink-0 bg-white border-2 rounded-[24px] transition-all duration-300 overflow-hidden cursor-pointer group snap-start relative shadow-sm hover:shadow-2xl hover:-translate-y-2 flex flex-col"
-                                        style={{
-                                            minWidth: `${cardWidth}px`,
-                                            width: `${cardWidth}px`,
-                                            height: '550px',
-                                            background: 'linear-gradient(135deg, #FFF5F7 0%, #FFFFFF 100%)',
-                                            borderColor: '#FCE4EC'
-                                        }}
-                                    >
-                                        <div className="w-full overflow-hidden bg-[#FDF2F5] relative flex-shrink-0" style={{ height: '320px' }}>
-                                            {cat.icon ? (
-                                                <img
-                                                    src={cat.icon}
-                                                    alt={cat.name}
-                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                                                    loading="lazy"
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-[#F8BBD0]">
-                                                    <span className="text-4xl font-black uppercase tracking-widest">{cat.name.charAt(0)}</span>
-                                                </div>
-                                            )}
-                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+                            categories.map((cat) => (
+                                <div
+                                    key={cat._id}
+                                    onClick={() => handleCategoryClick(cat.name)}
+                                    className="flex-shrink-0 relative transition-transform duration-300 overflow-hidden cursor-pointer group snap-start border border-gray-100 hover:shadow-2xl"
+                                    style={{
+                                        minWidth: `${cardWidth}px`,
+                                        width: `${cardWidth}px`,
+                                        height: '420px',
+                                        borderRadius: '6px'
+                                    }}
+                                >
+                                    {/* Full Height Background Image */}
+                                    {cat.icon ? (
+                                        <img
+                                            src={cat.icon}
+                                            alt={cat.name}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                                            loading="lazy"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">
+                                            <span className="text-4xl font-black uppercase tracking-widest">{cat.name.charAt(0)}</span>
                                         </div>
+                                    )}
 
-                                        <div className="p-6 flex flex-col items-center text-center flex-1 justify-between">
-                                            <div className="w-full">
-                                                <div className="mb-1">
-                                                    <h3 className="text-base sm:text-lg font-bold mb-1 transition-all duration-300 group-hover:text-[#E91E63] line-clamp-1" style={{ color: '#2E2E2E' }}>
-                                                        {cat.name}
-                                                    </h3>
-                                                    <div className="h-0.5 w-0 group-hover:w-full transition-all duration-500 bg-[#E91E63] mx-auto"></div>
-                                                </div>
+                                    {/* Gradient Overlay */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent opacity-90 transition-opacity duration-300 group-hover:opacity-100"></div>
 
-                                                <p className="text-[10px] sm:text-xs text-gray-500 italic mb-4 font-medium tracking-wide line-clamp-2">
-                                                    {categorySublabels[cat.name.toLowerCase()] || 'unveil your radiance'}
-                                                </p>
-                                            </div>
-
-                                            <button className="flex items-center gap-2 px-4 sm:px-6 py-2 bg-transparent border-2 border-[#F8BBD0] text-[#E91E63] rounded-full transition-all duration-300 font-bold text-[10px] sm:text-xs uppercase tracking-widest group-hover:bg-[#E91E63] group-hover:text-white group-hover:border-[#E91E63] mt-auto">
-                                                <span>Explore Now</span>
-                                                <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
-                                            </button>
-                                        </div>
+                                    {/* Text and Button Overlay */}
+                                    <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center z-10 transform transition-transform duration-300 group-hover:-translate-y-2">
+                                        <span className="text-white text-[14px] font-sans font-medium tracking-wide">Explore</span>
+                                        <span 
+                                            className="text-white text-[28px] italic mb-4 tracking-tight drop-shadow-md" 
+                                            style={{ fontFamily: 'Playfair Display, Georgia, serif' }}
+                                        >
+                                            {cat.name}
+                                        </span>
+                                        <button className="bg-[#faf3ce] text-[#1a382e] px-5 py-1.5 rounded-full text-[11px] font-bold flex items-center gap-1.5 hover:bg-white transition-colors uppercase tracking-widest shadow-md">
+                                            Shop <ArrowRight className="w-3 h-3 stroke-[1px]" />
+                                        </button>
                                     </div>
-                                ))}
-                            </div>
+                                </div>
+                            ))
                         )}
                     </div>
-
                 </div>
 
-                <div className="md:hidden flex justify-center items-center gap-2 mt-6 text-sm font-medium" style={{ color: '#E91E63' }}>
+                <div className="md:hidden flex justify-center items-center gap-2 mt-6 text-sm font-medium" style={{ color: '#81C784' }}>
                     <ChevronLeft className="w-4 h-4 animate-pulse" />
                     <span className="uppercase tracking-widest text-[10px]">Swipe to discover more</span>
                     <ChevronRight className="w-4 h-4 animate-pulse" />
-                </div>
-
-                <div className="hidden md:flex justify-center items-center gap-3 mt-10">
-                    {Array.from({ length: totalSlides }).map((_, i) => (
-                        <button
-                            key={i}
-                            onClick={() => handleDotClick(i * visibleCards)}
-                            className={`transition-all duration-500 ${i === Math.floor(index / visibleCards)
-                                ? 'w-10 h-2'
-                                : 'w-3 h-2 hover:bg-[#F8BBD0]'
-                                } rounded-full`}
-                            style={{ backgroundColor: i === Math.floor(index / visibleCards) ? '#E91E63' : '#E5E7EB' }}
-                            aria-label={`Go to slide ${i + 1}`}
-                        />
-                    ))}
                 </div>
             </div>
 
@@ -290,13 +265,6 @@ const Categories = () => {
                 .scrollbar-hide {
                     -ms-overflow-style: none;
                     scrollbar-width: none;
-                }
-                @keyframes sparkle {
-                    0%, 100% { transform: scale(1); }
-                    50% { transform: scale(1.05); }
-                }
-                .animate-sparkle {
-                    animation: sparkle 2s infinite ease-in-out;
                 }
             `}</style>
         </section>

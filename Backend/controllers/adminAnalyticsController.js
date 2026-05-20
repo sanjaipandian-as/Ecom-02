@@ -12,7 +12,7 @@ export const getAdminDashboard = async (req, res) => {
 
     // Count customers and products
     const totalCustomers = await Customer.countDocuments();
-    const totalProducts = await Product.countDocuments({ is_deleted: false });
+    const totalProducts = await Product.countDocuments({ is_deleted: { $ne: true } });
 
     // Total sales amount (sum of all paid orders)
     const totalSales = orders
@@ -136,7 +136,7 @@ export const getDailySales = async (req, res) => {
 
 export const getCategoryDistribution = async (req, res) => {
   try {
-    const products = await Product.find({ is_deleted: false }); // Only active products
+    const products = await Product.find({ is_deleted: { $ne: true } }); // Only active products
 
     const distribution = {};
 

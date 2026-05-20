@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FaBell, FaEnvelope, FaPhone, FaShoppingBag, FaGlobe, FaSave } from 'react-icons/fa';
+import { FaBell, FaEnvelope, FaPhone, FaShoppingBag, FaGlobe, FaSave, FaCheckCircle } from 'react-icons/fa';
 
 const NotificationSettings = () => {
     const [settings, setSettings] = useState({
@@ -10,13 +10,12 @@ const NotificationSettings = () => {
         newsletter: true
     });
 
-    // Load settings from localStorage on mount
     useEffect(() => {
         const savedSettings = localStorage.getItem('userSettings');
         if (savedSettings) {
             try {
                 const parsed = JSON.parse(savedSettings);
-                setSettings(prev => ({ ...prev, ...parsed }));
+                setSettings((prev) => ({ ...prev, ...parsed }));
             } catch (error) {
                 console.error('Error loading settings:', error);
             }
@@ -24,73 +23,124 @@ const NotificationSettings = () => {
     }, []);
 
     const handleChange = (field, value) => {
-        setSettings(prev => ({ ...prev, [field]: value }));
+        setSettings((prev) => ({ ...prev, [field]: value }));
     };
 
     const handleSaveSettings = () => {
-        // Save settings to localStorage
         localStorage.setItem('userSettings', JSON.stringify(settings));
         alert('Settings saved successfully!');
     };
 
     const notificationOptions = [
-        { key: 'emailNotifications', title: 'Email Notifications', desc: 'Receive notifications via email', icon: FaEnvelope },
-        { key: 'smsNotifications', title: 'SMS Notifications', desc: 'Receive notifications via SMS', icon: FaPhone },
-        { key: 'orderUpdates', title: 'Order Updates', desc: 'Get updates about your orders', icon: FaShoppingBag },
-        { key: 'promotions', title: 'Promotions & Offers', desc: 'Receive exclusive deals and offers', icon: FaGlobe },
-        { key: 'newsletter', title: 'Newsletter', desc: 'Stay updated with our newsletter', icon: FaBell }
+        { key: 'emailNotifications', title: 'Email Notifications', desc: 'Receive account and service alerts in your inbox.', icon: FaEnvelope },
+        { key: 'smsNotifications', title: 'SMS Notifications', desc: 'Get quick delivery and account updates by phone.', icon: FaPhone },
+        { key: 'orderUpdates', title: 'Order Updates', desc: 'Stay informed on order status, shipping, and delivery.', icon: FaShoppingBag },
+        { key: 'promotions', title: 'Promotions & Offers', desc: 'Receive curated deals, launches, and limited offers.', icon: FaGlobe },
+        { key: 'newsletter', title: 'Newsletter', desc: 'Get product stories, highlights, and seasonal updates.', icon: FaBell }
     ];
 
+    const enabledCount = notificationOptions.filter((item) => settings[item.key]).length;
+
     return (
-        <div className="space-y-8">
-            <div className="flex items-center gap-3 pb-6 border-b border-gray-100">
-                <div className="w-12 h-12 bg-[#E91E63]/10 rounded-xl flex items-center justify-center">
-                    <FaBell className="w-6 h-6 text-[#E91E63]" />
+        <div className="space-y-6">
+            <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+                <div className="rounded-[1.75rem] border border-slate-200 bg-[linear-gradient(135deg,_#0f172a_0%,_#1f2937_52%,_#81C784_185%)] p-6 text-white">
+                    <div className="flex items-start justify-between gap-4">
+                        <div>
+                            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
+                                <FaBell className="text-[11px]" />
+                                Communication Controls
+                            </div>
+                            <h3 className="text-3xl font-bold tracking-tight">Notification center</h3>
+                            <p className="mt-3 max-w-lg text-sm leading-6 text-slate-200">
+                                Choose the messages that matter most, and quiet the ones that do not.
+                            </p>
+                        </div>
+                        <div className="rounded-[1.5rem] border border-white/10 bg-white/10 px-5 py-4 backdrop-blur">
+                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">Enabled</p>
+                            <p className="mt-2 text-3xl font-bold text-white">{enabledCount}</p>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Notification Preferences</h2>
-                    <p className="text-sm text-gray-500">Choose how you want to be notified</p>
+
+                <div className="rounded-[1.75rem] border border-slate-200 bg-slate-50 p-6">
+                    <div className="flex items-start gap-3">
+                        <FaCheckCircle className="mt-1 text-[#2d6a31]" />
+                        <div>
+                            <h4 className="text-lg font-bold text-slate-950">Preference summary</h4>
+                            <p className="mt-2 text-sm leading-6 text-slate-600">
+                                Your notification choices are stored locally for now, giving customers quick control over account updates, marketing messages, and order alerts.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div className="space-y-4">
-                {notificationOptions.map((item) => {
-                    const ItemIcon = item.icon;
-                    return (
-                        <div key={item.key} className="flex items-center justify-between p-5 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-100 hover:border-[#E91E63]/20 transition-all group">
-                            <div className="flex items-center gap-4 flex-1">
-                                <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center shadow-sm group-hover:shadow transition-all">
-                                    <ItemIcon className="w-5 h-5 text-[#E91E63]" />
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-gray-900">{item.title}</h4>
-                                    <p className="text-sm text-gray-500">{item.desc}</p>
+            <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
+                <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Message Preferences</p>
+                        <h3 className="mt-2 text-2xl font-bold text-slate-950">Control every alert channel</h3>
+                    </div>
+                    <div className="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                        Turn channels on or off depending on how often you want to hear from us.
+                    </div>
+                </div>
+
+                <div className="space-y-4">
+                    {notificationOptions.map((item) => {
+                        const ItemIcon = item.icon;
+                        const isEnabled = settings[item.key];
+
+                        return (
+                            <div
+                                key={item.key}
+                                className={`rounded-[1.5rem] border p-5 transition-all ${
+                                    isEnabled
+                                        ? 'border-[#81C784]/35 bg-[linear-gradient(180deg,_rgba(129,199,132,0.08)_0%,_#ffffff_100%)]'
+                                        : 'border-slate-200 bg-slate-50/70'
+                                }`}
+                            >
+                                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                                    <div className="flex items-start gap-4">
+                                        <div
+                                            className={`flex h-12 w-12 items-center justify-center rounded-2xl ${
+                                                isEnabled ? 'bg-slate-950 text-white' : 'bg-white text-slate-500 shadow-sm'
+                                            }`}
+                                        >
+                                            <ItemIcon className="text-lg" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-lg font-semibold text-slate-950">{item.title}</h4>
+                                            <p className="mt-1 text-sm leading-6 text-slate-500">{item.desc}</p>
+                                        </div>
+                                    </div>
+
+                                    <label className="relative inline-flex cursor-pointer items-center self-start sm:self-center">
+                                        <input
+                                            type="checkbox"
+                                            checked={settings[item.key]}
+                                            onChange={(e) => handleChange(item.key, e.target.checked)}
+                                            className="peer sr-only"
+                                        />
+                                        <div className="h-8 w-16 rounded-full bg-slate-200 shadow-inner transition peer-checked:bg-slate-950 after:absolute after:left-1 after:top-1 after:h-6 after:w-6 after:rounded-full after:bg-white after:shadow after:transition-all peer-checked:after:translate-x-8" />
+                                    </label>
                                 </div>
                             </div>
-                            <label className="relative inline-flex items-center cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={settings[item.key]}
-                                    onChange={(e) => handleChange(item.key, e.target.checked)}
-                                    className="sr-only peer"
-                                />
-                                <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#E91E63]/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-[#E91E63] peer-checked:to-[#E91E63]/90 shadow-inner"></div>
-                            </label>
-                        </div>
-                    );
-                })}
-            </div>
+                        );
+                    })}
+                </div>
 
-            {/* Save Button */}
-            <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
-                <p className="text-sm text-gray-500">Changes will be saved to your account</p>
-                <button
-                    onClick={handleSaveSettings}
-                    className="px-8 py-3 bg-gradient-to-r from-[#E91E63] to-[#E91E63]/90 text-white font-semibold rounded-xl hover:from-[#E91E63] hover:to-[#E91E63]/80 transition-all shadow-lg shadow-[#E91E63]/30 hover:shadow-xl hover:shadow-[#E91E63]/40 flex items-center gap-2"
-                >
-                    <FaSave className="w-4 h-4" />
-                    Save Changes
-                </button>
+                <div className="mt-6 flex flex-col gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-sm text-slate-500">Save your selection to keep this communication setup active.</p>
+                    <button
+                        onClick={handleSaveSettings}
+                        className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#81C784] px-6 py-3.5 font-semibold text-slate-950 transition hover:bg-[#72b875]"
+                    >
+                        <FaSave className="text-sm" />
+                        Save Preferences
+                    </button>
+                </div>
             </div>
         </div>
     );

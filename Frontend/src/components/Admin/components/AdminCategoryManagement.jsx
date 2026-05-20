@@ -127,9 +127,9 @@ const AdminCategoryManagement = () => {
         c.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // Styling constants matching Pink Professional Theme
-    const inputStyle = "w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-bold focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all placeholder:text-slate-400 text-sm";
-    const labelStyle = "block text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1";
+    // Styling constants matching Slate/Indigo Professional Theme (Straight corners)
+    const inputStyle = "w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-none text-slate-700 font-bold focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-all placeholder:text-slate-400 text-sm";
+    const labelStyle = "block text-xs font-bold text-slate-550 uppercase tracking-widest mb-1.5 ml-1";
 
     return (
         <div className="min-h-screen bg-[#F8FAFC] font-body p-8 space-y-8">
@@ -137,8 +137,8 @@ const AdminCategoryManagement = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 animate-slideUp">
                 <div>
                     <div className="flex items-center gap-3">
-                        <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight font-hero">Category Management</h1>
-                        <span className="px-3 py-1 bg-rose-50 text-rose-600 text-[11px] font-bold uppercase tracking-widest rounded-full border border-rose-100 hidden md:inline-block">
+                        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight font-hero">Category Management</h1>
+                        <span className="px-3 py-1 bg-indigo-50 text-indigo-650 text-[11px] font-bold uppercase tracking-widest rounded-none border border-indigo-105 hidden md:inline-block">
                             Structure
                         </span>
                     </div>
@@ -148,7 +148,7 @@ const AdminCategoryManagement = () => {
                 </div>
                 <button
                     onClick={openCreateModal}
-                    className="flex items-center justify-center gap-2 px-6 py-3 bg-slate-900 hover:bg-rose-600 text-white font-bold rounded-2xl transition-all shadow-xl hover:shadow-rose-500/20 active:scale-95 text-xs uppercase tracking-widest w-full md:w-auto"
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-slate-900 hover:bg-indigo-650 text-white font-bold rounded-none transition-all active:scale-[0.98] text-xs uppercase tracking-widest w-full md:w-auto shadow-sm"
                 >
                     <MdAdd className="text-lg" />
                     <span>Add Category</span>
@@ -156,23 +156,23 @@ const AdminCategoryManagement = () => {
             </div>
 
             {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] animate-slideUp" style={{ animationDelay: '0.1s' }}>
+            <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 rounded-none border border-slate-200 shadow-sm animate-slideUp" style={{ animationDelay: '0.1s' }}>
                 <div className="relative w-full md:w-96 group">
-                    <MdSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-rose-500 transition-colors text-xl" />
+                    <MdSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors text-xl" />
                     <input
                         type="text"
                         placeholder="Search categories..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-14 pr-6 py-4 bg-slate-50 border-none rounded-2xl text-slate-700 font-bold placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-rose-500/10 transition-all outline-none"
+                        className="w-full pl-14 pr-6 py-4 bg-slate-50 border border-slate-200 rounded-none text-slate-700 font-semibold placeholder:text-slate-400 focus:bg-white focus:border-indigo-500 transition-all outline-none"
                     />
                 </div>
                 <button
                     onClick={fetchCategories}
-                    className="w-full md:w-auto p-4 bg-white border border-slate-200 text-slate-400 rounded-2xl hover:text-rose-600 hover:border-rose-200 transition-all active:scale-95 shadow-sm flex items-center justify-center"
+                    className="w-full md:w-auto p-4 bg-white border border-slate-200 text-slate-400 rounded-none hover:text-indigo-600 hover:border-indigo-300 transition-all active:scale-[0.98] shadow-sm flex items-center justify-center"
                     title="Refresh Data"
                 >
-                    <span className="md:hidden font-bold text-xs uppercase tracking-widest mr-2">Refresh</span>
+                    <span className="md:hidden font-bold text-xs uppercase tracking-widest mr-2 text-slate-600">Refresh</span>
                     <MdRefresh className="text-xl" />
                 </button>
             </div>
@@ -181,28 +181,28 @@ const AdminCategoryManagement = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-slideUp" style={{ animationDelay: '0.2s' }}>
                 {loading ? (
                     [...Array(4)].map((_, i) => (
-                        <div key={i} className="bg-white rounded-[2rem] h-64 border border-slate-100 p-4 animate-pulse"></div>
+                        <div key={i} className="bg-white rounded-none h-64 border border-slate-200 p-4 animate-pulse"></div>
                     ))
                 ) : filteredCategories.length === 0 ? (
-                    <div className="col-span-full bg-white rounded-[2rem] p-16 text-center border border-slate-100 shadow-sm">
-                        <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
+                    <div className="col-span-full bg-white rounded-none p-16 text-center border border-slate-200 shadow-sm">
+                        <div className="w-20 h-20 bg-slate-50 rounded-none border border-slate-200 flex items-center justify-center mx-auto mb-6 text-slate-350">
                             <FaLayerGroup className="text-4xl" />
                         </div>
-                        <h3 className="text-xl font-black text-slate-900 mb-2 font-hero">No Categories Found</h3>
+                        <h3 className="text-xl font-bold text-slate-900 mb-2 font-hero">No Categories Found</h3>
                         <p className="text-slate-500 text-sm font-medium">Create your first category to start organizing.</p>
                     </div>
                 ) : (
                     filteredCategories.map((category) => (
                         <div
                             key={category._id}
-                            className="group bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-slate-200 hover:-translate-y-1 transition-all duration-300"
+                            className="group bg-white rounded-none overflow-hidden border border-slate-200 shadow-sm hover:border-slate-400 transition-all duration-300"
                         >
-                            <div className="h-48 bg-slate-50 overflow-hidden relative">
+                            <div className="h-48 bg-slate-50 overflow-hidden relative border-b border-slate-200">
                                 {category.icon ? (
                                     <img
                                         src={category.icon}
                                         alt={category.name}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                         onError={(e) => { e.target.src = PlaceholderImage; e.target.onerror = null; }}
                                     />
                                 ) : (
@@ -212,17 +212,17 @@ const AdminCategoryManagement = () => {
                                     </div>
                                 )}
                                 {/* Desktop Overlay Actions */}
-                                <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex items-center justify-center gap-3">
+                                <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex items-center justify-center gap-3">
                                     <button
                                         onClick={() => handleEdit(category)}
-                                        className="p-3 bg-white text-slate-900 rounded-xl hover:scale-110 transition-transform shadow-lg"
+                                        className="p-3 bg-white text-slate-900 rounded-none hover:bg-indigo-650 hover:text-white transition-all shadow-md"
                                         title="Edit"
                                     >
                                         <MdEdit />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(category._id)}
-                                        className="p-3 bg-red-500 text-white rounded-xl hover:scale-110 transition-transform shadow-lg"
+                                        className="p-3 bg-[#EF4444] text-white rounded-none hover:bg-red-700 transition-all shadow-md"
                                         title="Delete"
                                     >
                                         <MdDelete />
@@ -231,7 +231,7 @@ const AdminCategoryManagement = () => {
                             </div>
 
                             <div className="p-6">
-                                <h3 className="text-lg font-black text-slate-900 mb-2 uppercase tracking-tight group-hover:text-rose-600 transition-colors font-hero truncate">
+                                <h3 className="text-lg font-bold text-slate-900 mb-2 uppercase tracking-tight group-hover:text-indigo-600 transition-colors font-hero truncate">
                                     {category.name}
                                 </h3>
                                 <div className="flex items-center gap-2">
@@ -242,16 +242,16 @@ const AdminCategoryManagement = () => {
                             </div>
 
                             {/* Mobile Bottom Actions */}
-                            <div className="flex md:hidden border-t border-slate-100 divide-x divide-slate-100">
+                            <div className="flex md:hidden border-t border-slate-200 divide-x divide-slate-200">
                                 <button
                                     onClick={() => handleEdit(category)}
-                                    className="flex-1 py-4 flex items-center justify-center gap-2 text-slate-600 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-colors active:bg-slate-100"
+                                    className="flex-1 py-4 flex items-center justify-center gap-2 text-slate-600 font-bold text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-colors active:bg-slate-100"
                                 >
                                     <MdEdit className="text-lg" /> Edit
                                 </button>
                                 <button
                                     onClick={() => handleDelete(category._id)}
-                                    className="flex-1 py-4 flex items-center justify-center gap-2 text-rose-600 font-black text-[10px] uppercase tracking-widest hover:bg-rose-50 transition-colors active:bg-rose-100"
+                                    className="flex-1 py-4 flex items-center justify-center gap-2 text-red-650 font-bold text-[10px] uppercase tracking-widest hover:bg-red-50 transition-colors active:bg-slate-100"
                                 >
                                     <MdDelete className="text-lg" /> Delete
                                 </button>
@@ -263,19 +263,19 @@ const AdminCategoryManagement = () => {
 
             {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-fadeIn">
-                    <div className="bg-[#F8FAFC] w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col relative animate-slideUp">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-fadeIn">
+                    <div className="bg-[#F8FAFC] w-full max-w-md rounded-none shadow-xl overflow-hidden flex flex-col relative animate-slideUp">
                         {/* Modal Header */}
-                        <div className="px-8 py-6 bg-white border-b border-slate-100 flex items-center justify-between">
+                        <div className="px-8 py-6 bg-white border-b border-slate-200 flex items-center justify-between">
                             <div>
-                                <h2 className="text-xl font-black text-slate-900 font-hero">
+                                <h2 className="text-xl font-bold text-slate-900 font-hero">
                                     {editMode ? 'Edit Category' : 'New Category'}
                                 </h2>
                                 <p className="text-xs font-medium text-slate-500 mt-1">Enter category details</p>
                             </div>
                             <button
                                 onClick={closeModal}
-                                className="p-3 bg-slate-50 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-2xl transition-colors"
+                                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-none transition-colors"
                             >
                                 <MdClose className="text-xl" />
                             </button>
@@ -292,7 +292,7 @@ const AdminCategoryManagement = () => {
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     className={inputStyle}
-                                    placeholder="e.g. Skin Care"
+                                    placeholder="e.g. Necklaces"
                                     required
                                 />
                             </div>
@@ -316,8 +316,8 @@ const AdminCategoryManagement = () => {
                                 </label>
                                 <div
                                     className={`
-                                        border-3 border-dashed rounded-[2rem] p-10 text-center transition-all cursor-pointer relative overflow-hidden group
-                                        ${imagePreview ? 'border-rose-200 bg-rose-50' : 'border-slate-200 hover:border-rose-400 hover:bg-slate-50'}
+                                        border-2 border-dashed rounded-none p-10 text-center transition-all cursor-pointer relative overflow-hidden group
+                                        ${imagePreview ? 'border-indigo-200 bg-indigo-50/20' : 'border-slate-200 hover:border-indigo-400 hover:bg-slate-50'}
                                     `}
                                 >
                                     {imagePreview ? (
@@ -335,19 +335,19 @@ const AdminCategoryManagement = () => {
                                                         setImagePreview(null);
                                                         setFormData({ ...formData, icon: null });
                                                     }}
-                                                    className="w-12 h-12 bg-white text-rose-600 rounded-full shadow-xl flex items-center justify-center mx-auto hover:scale-110 transition-transform"
+                                                    className="w-12 h-12 bg-white border border-slate-200 text-red-650 rounded-none shadow-md flex items-center justify-center mx-auto hover:bg-red-50 hover:scale-105 transition-all"
                                                 >
                                                     <MdDelete className="text-xl" />
                                                 </button>
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-900 mt-3">Remove Image</p>
+                                                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-900 mt-3">Remove Image</p>
                                             </div>
                                         </>
                                     ) : (
                                         <div className="pointer-events-none">
-                                            <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-300">
+                                            <div className="w-16 h-16 bg-slate-100 border border-slate-200 rounded-none flex items-center justify-center mx-auto mb-4 text-slate-350">
                                                 <MdImage className="text-3xl" />
                                             </div>
-                                            <p className="text-slate-400 text-xs font-black uppercase tracking-widest">Click to upload</p>
+                                            <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Click to upload</p>
                                         </div>
                                     )}
                                     <input
@@ -363,14 +363,14 @@ const AdminCategoryManagement = () => {
                                 <button
                                     type="button"
                                     onClick={closeModal}
-                                    className="flex-1 px-6 py-3 bg-slate-50 text-slate-600 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-100 transition-colors"
+                                    className="flex-1 px-6 py-3 bg-slate-50 text-slate-600 rounded-none border border-slate-200 font-bold text-xs uppercase tracking-widest hover:bg-slate-100 transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={submitting}
-                                    className="flex-1 px-6 py-3 bg-slate-900 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-rose-600 transition-all shadow-lg hover:shadow-rose-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex-1 px-6 py-3 bg-slate-900 text-white rounded-none font-bold text-xs uppercase tracking-widest hover:bg-indigo-650 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {submitting ? 'Saving...' : editMode ? 'Update' : 'Create'}
                                 </button>

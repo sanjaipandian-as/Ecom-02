@@ -7,7 +7,7 @@ export const addToCart = async (req, res) => {
     const customerId = req.user._id;
     const { productId, quantity } = req.body;
 
-    const product = await Product.findOne({ _id: productId, is_deleted: false });
+    const product = await Product.findOne({ _id: productId, is_deleted: { $ne: true } });
     if (!product) return res.status(404).json({ message: "Product not available" });
 
     // ⭐ CHECK STOCK

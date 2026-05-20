@@ -103,7 +103,7 @@ export const addProduct = async (req, res) => {
 export const getSellerProducts = async (req, res) => {
   try {
     // Use .lean() for faster read performance
-    const products = await Product.find({ is_deleted: false })
+    const products = await Product.find({ is_deleted: { $ne: true } })
       .sort({ createdAt: -1 })
       .lean();
 
@@ -310,13 +310,13 @@ export const getProductsForCustomers = async (req, res) => {
     const limit = 12;
     const skip = (page - 1) * limit;
 
-    const products = await Product.find({ is_deleted: false })
+    const products = await Product.find({ is_deleted: { $ne: true } })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .lean();
 
-    const totalProducts = await Product.countDocuments({ is_deleted: false });
+    const totalProducts = await Product.countDocuments({ is_deleted: { $ne: true } });
     const totalPages = Math.ceil(totalProducts / limit);
 
     res.status(200).json({
@@ -355,7 +355,7 @@ export const filterProductsForCustomers = async (req, res) => {
     const skip = (page - 1) * limit;
 
     // Build filter query
-    const filter = { is_deleted: false };
+    const filter = { is_deleted: { $ne: true } };
 
     if (minPrice || maxPrice) {
       filter['pricing.selling_price'] = {};

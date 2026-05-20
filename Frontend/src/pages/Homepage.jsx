@@ -4,6 +4,7 @@ import Searchbar from '../components/Customer/Topbar';
 import Settings from './Settings';
 import LandingPage from '../components/Customer/LandingPage';
 import Footer from '../components/Customer/Footer';
+import HomepageProductSections from '../components/Customer/HomepageProductSections';
 
 const Homepage = () => {
     const [filters, setFilters] = useState({
@@ -23,6 +24,7 @@ const Homepage = () => {
             {/* Main Content */}
             <div className="flex-1 w-full">
                 <LandingPage />
+                <HomepageProductSections />
                 <Products filters={filters} />
                 <Footer />
             </div>

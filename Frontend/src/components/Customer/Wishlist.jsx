@@ -1,10 +1,12 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaShoppingCart, FaTrash, FaArrowLeft, FaHeartBroken, FaTimes, FaCheckCircle, FaTag, FaStar } from 'react-icons/fa';
+import { FaShoppingCart, FaTrash, FaArrowLeft, FaTimes, FaCheckCircle, FaStar } from 'react-icons/fa';
 import { BsFillBagHeartFill } from 'react-icons/bs';
 import API from '../../../api';
 import Skeleton from '../Common/Skeleton';
 import placeholderImg from '../../assets/Placeholder.png';
+import Topbar from './Topbar';
+import Footer from './Footer';
 
 const Wishlist = () => {
     const navigate = useNavigate();
@@ -103,309 +105,216 @@ const Wishlist = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col pt-24 pb-16">
-                <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
-                        {[...Array(8)].map((_, i) => (
-                            <div key={i} className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-sm border border-gray-100 p-4">
-                                <Skeleton className="w-full aspect-[4/3] mb-4" />
-                                <div className="space-y-4">
-                                    <div className="flex justify-between items-start">
-                                        <Skeleton className="h-6 w-2/3" />
-                                        <Skeleton className="h-6 w-10" />
+            <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-16 w-full animate-pulse">
+                <div className="h-10 bg-slate-200 w-1/4 mb-10 rounded-lg" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {[...Array(8)].map((_, i) => (
+                        <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 p-4">
+                            <Skeleton className="w-full aspect-[4/3] mb-4" />
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-start">
+                                    <Skeleton className="h-6 w-2/3" />
+                                    <Skeleton className="h-6 w-12" />
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="space-y-1">
+                                        <Skeleton className="h-3 w-16" />
+                                        <Skeleton className="h-4 w-24" />
                                     </div>
-                                    <div className="flex justify-between pt-2 border-b border-gray-50 pb-3">
-                                        <div className="space-y-1 w-1/3">
-                                            <Skeleton className="h-3 w-1/2" />
-                                            <Skeleton className="h-4 w-full" />
-                                        </div>
-                                        <div className="space-y-1 w-1/3 text-right">
-                                            <Skeleton className="h-3 w-1/2 block ml-auto" />
-                                            <Skeleton className="h-4 w-full" />
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-between items-center pt-2">
-                                        <div className="space-y-1">
-                                            <Skeleton className="h-7 w-20" />
-                                            <Skeleton className="h-3 w-12" />
-                                        </div>
-                                        <Skeleton className="h-10 w-24 rounded-xl" />
+                                    <div className="space-y-1 text-right">
+                                        <Skeleton className="h-3 w-12 ml-auto" />
+                                        <Skeleton className="h-4 w-20" />
                                     </div>
                                 </div>
+                                <div className="flex justify-between items-center pt-3 border-t border-slate-50">
+                                    <Skeleton className="h-7 w-20" />
+                                    <Skeleton className="h-10 w-32 rounded-lg" />
+                                </div>
                             </div>
-                        ))}
-                    </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         );
     }
 
-
-    if (wishlistItems.length === 0) {
+    if (validWishlistItems.length === 0) {
         return (
-            <div className="min-h-screen bg-white flex items-center justify-center p-4">
-                <div className="text-center max-w-lg w-full">
-                    {/* Professional SVG Illustration */}
-                    <div className="mb-12">
-                        <svg
-                            className="w-80 h-80 mx-auto"
-                            viewBox="0 0 240 240"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            {/* Background Circle */}
-                            <circle cx="120" cy="120" r="100" fill="#FFF7ED" />
-
-                            {/* Clipboard/List Icon */}
-                            <rect x="70" y="60" width="100" height="120" rx="8" fill="white" stroke="#F7DB91" strokeWidth="3" />
-
-                            {/* Clipboard Top */}
-                            <rect x="95" y="50" width="50" height="20" rx="4" fill="#FF5FCF" />
-                            <rect x="100" y="55" width="40" height="10" rx="2" fill="white" />
-
-                            {/* List Items - Checkboxes with lines */}
-                            <rect x="85" y="85" width="12" height="12" rx="2" stroke="#F7DB91" strokeWidth="2" fill="white" />
-                            <line x1="105" y1="91" x2="145" y2="91" stroke="#F7DB91" strokeWidth="2.5" strokeLinecap="round" />
-
-                            <rect x="85" y="110" width="12" height="12" rx="2" stroke="#F7DB91" strokeWidth="2" fill="white" />
-                            <line x1="105" y1="116" x2="145" y2="116" stroke="#F7DB91" strokeWidth="2.5" strokeLinecap="round" />
-
-                            <rect x="85" y="135" width="12" height="12" rx="2" stroke="#F7DB91" strokeWidth="2" fill="white" />
-                            <line x1="105" y1="141" x2="145" y2="141" stroke="#F7DB91" strokeWidth="2.5" strokeLinecap="round" />
-
-                            {/* Dashed lines indicating empty */}
-                            <line x1="105" y1="160" x2="145" y2="160" stroke="#F7DB91" strokeWidth="2" strokeDasharray="4,4" opacity="0.4">
-                                <animate attributeName="stroke-dashoffset" from="0" to="8" dur="1.5s" repeatCount="indefinite" />
-                            </line>
-
-                            {/* Bookmark ribbon */}
-                            <path d="M155 60 L155 100 L145 90 L135 100 L135 60 Z" fill="#FF5FCF" opacity="0.8" />
-
-                            {/* Floating Stars/Sparkles */}
-                            <circle cx="50" cy="80" r="4" fill="#F7DB91" opacity="0.5">
-                                <animate attributeName="cy" values="80;70;80" dur="3s" repeatCount="indefinite" />
-                            </circle>
-                            <circle cx="190" cy="100" r="5" fill="#F7DB91" opacity="0.4">
-                                <animate attributeName="cy" values="100;90;100" dur="2.5s" repeatCount="indefinite" />
-                            </circle>
-                            <circle cx="60" cy="150" r="6" fill="#F7DB91" opacity="0.4">
-                                <animate attributeName="cy" values="150;140;150" dur="3.5s" repeatCount="indefinite" />
-                            </circle>
-
-                            {/* Small plus icons */}
-                            <g opacity="0.5">
-                                <line x1="180" y1="140" x2="180" y2="150" stroke="#FF5FCF" strokeWidth="2" strokeLinecap="round">
-                                    <animate attributeName="opacity" values="0.3;0.7;0.3" dur="2s" repeatCount="indefinite" />
-                                </line>
-                                <line x1="175" y1="145" x2="185" y2="145" stroke="#FF5FCF" strokeWidth="2" strokeLinecap="round">
-                                    <animate attributeName="opacity" values="0.3;0.7;0.3" dur="2s" repeatCount="indefinite" />
-                                </line>
-                            </g>
-                        </svg>
-                    </div>
-
-                    {/* Professional Text Content */}
-                    <div className="space-y-4 mb-10">
-                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
-                            Your Wishlist is Empty
-                        </h1>
-                        <p className="text-lg text-gray-600 leading-relaxed max-w-md mx-auto">
-                            Save your favorite items and never lose track of what you love
-                        </p>
-                    </div>
-
-                    {/* CTA Button */}
-                    <button
-                        onClick={() => navigate('/')}
-                        className="inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-primary to-primary/90 text-white font-semibold text-lg rounded-xl hover:from-primary/90 hover:to-primary/80 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
-                    >
-                        <BsFillBagHeartFill className="w-5 h-5" />
-                        Explore Products
-                    </button>
+            <div className="flex-1 flex flex-col items-center justify-center py-20 px-6 text-center">
+                <div className="w-24 h-24 bg-rose-50/60 border border-rose-100 rounded-3xl flex items-center justify-center mb-8 shadow-sm">
+                    <BsFillBagHeartFill className="text-rose-500 text-4xl animate-pulse" />
                 </div>
+                <h2 className="text-3xl font-bold text-slate-800 mb-3 tracking-tight uppercase">Your Wishlist is Empty</h2>
+                <p className="text-slate-500 font-medium mb-10 max-w-md mx-auto leading-relaxed text-sm">
+                    Add items you like to your wishlist so you can find them easily later and keep track of special deals.
+                </p>
+                <button
+                    onClick={() => navigate('/')}
+                    className="px-10 py-4 bg-[#45C3D3] hover:bg-teal-500 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md shadow-teal-500/10 hover:shadow-lg active:scale-95"
+                >
+                    Browse Collections
+                </button>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-primary/5 via-white to-secondary/10 flex flex-col">
-            {/* Header - Balanced & Elegant */}
-            <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-40">
-                <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <button
-                                onClick={() => navigate(-1)}
-                                className="p-2.5 hover:bg-rose-50 rounded-full transition-all group border border-gray-100"
-                            >
-                                <FaArrowLeft className="w-4 h-4 text-gray-600 group-hover:text-rose-600" />
-                            </button>
-                            <div>
-                                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
-                                    My <span className="text-rose-500">Wishlist</span>
-                                </h1>
-                                <p className="text-xs sm:text-sm text-gray-500 font-medium">
-                                    {validWishlistItems.length} {validWishlistItems.length === 1 ? 'item' : 'items'} saved
-                                </p>
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={() => navigate('/Cart')}
-                            className="flex items-center gap-2 px-4 py-2 bg-rose-50 text-rose-600 rounded-full font-bold text-sm hover:bg-rose-100 transition-all border border-rose-100"
-                        >
-                            <FaShoppingCart className="w-4 h-4" />
-                            <span>Cart</span>
-                        </button>
-                    </div>
+        <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-8 lg:py-16 w-full">
+            {/* --- HEADER --- */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10 border-b border-slate-200/80 pb-6">
+                <div>
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-800 tracking-tight uppercase">
+                        My <span className="text-rose-500 font-medium">Wishlist</span>
+                    </h1>
+                    <p className="text-sm text-slate-400 font-medium mt-1">
+                        You have {validWishlistItems.length} {validWishlistItems.length === 1 ? 'item' : 'items'} saved in your collection
+                    </p>
                 </div>
+                <button
+                    onClick={() => navigate('/Cart')}
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-[#45C3D3] hover:bg-teal-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-md shadow-teal-500/10 hover:shadow-lg active:scale-95"
+                >
+                    <FaShoppingCart className="text-sm" />
+                    <span>View Cart</span>
+                </button>
             </div>
 
             {error && (
-                <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-4 pb-32 flex-1">
-
-                    <div className="bg-primary/5 border-2 border-primary/20 text-primary px-3 sm:px-4 py-2 sm:py-3 rounded-xl flex items-center gap-2 sm:gap-3">
-                        <FaTimes className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                        <p className="font-medium text-sm sm:text-base">{error}</p>
-                    </div>
+                <div className="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl flex items-center gap-3 mb-6">
+                    <FaTimes className="w-4 h-4 flex-shrink-0" />
+                    <p className="font-semibold text-xs uppercase tracking-wider">{error}</p>
                 </div>
             )}
 
-            {/* Wishlist Grid */}
-            <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-6 lg:py-8 pb-40 sm:pb-32 md:pb-28 flex-1">
-                <div className="w-full max-w-8xl mx-auto">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
-                        {validWishlistItems.map((item) => (
-                            <div
-                                key={item.productId._id}
-                                className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all border-2 border-gray-100 group relative"
+            {/* --- GRID --- */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+                {validWishlistItems.map((item) => {
+                    const isInCart = cartItems.some(cartItem =>
+                        (cartItem.productId?._id || cartItem.productId) === item.productId._id
+                    );
+                    const isOutOfStock = (item.productId.stock || 0) <= 0;
+                    const isAdding = addingToCart === item.productId._id;
+
+                    return (
+                        <div
+                            key={item.productId._id}
+                            className="group relative bg-white rounded-2xl overflow-hidden border border-slate-100 hover:border-slate-200/80 shadow-[0_2px_8px_rgba(15,23,42,0.03)] hover:shadow-[0_16px_36px_rgba(15,23,42,0.08)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full"
+                        >
+                            {/* Image Container with premium gradient background */}
+                            <div 
+                                onClick={() => navigate(`/product/${item.productId._id}`)}
+                                className="relative aspect-square w-full overflow-hidden bg-gradient-to-b from-slate-50/60 to-slate-100/30 flex items-center justify-center p-6 cursor-pointer"
                             >
-                                {/* Product Image */}
-                                <div
-                                    onClick={() => navigate(`/product/${item.productId._id}`)}
-                                    className="relative w-full aspect-[4/3] overflow-hidden cursor-pointer bg-gradient-to-br from-gray-50 to-gray-100"
+                                <img
+                                    src={item.productId.images?.[0] || placeholderImg}
+                                    alt={item.productId.name}
+                                    className="w-4/5 h-4/5 object-contain transition-transform duration-500 group-hover:scale-105"
+                                    onError={(e) => {
+                                        e.target.src = placeholderImg;
+                                        e.target.onerror = null;
+                                    }}
+                                />
+
+                                {/* Remove Button - Delicate Floating Circle */}
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        removeFromWishlist(item.productId._id);
+                                    }}
+                                    disabled={removingItem === item.productId._id}
+                                    className="absolute top-3.5 right-3.5 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center border border-slate-100 text-slate-400 hover:text-rose-600 hover:bg-white shadow-sm hover:scale-105 active:scale-95 transition-all z-10 disabled:opacity-50"
                                 >
-                                    <img
-                                        src={item.productId.images?.[0] || placeholderImg}
-                                        alt={item.productId.name}
-                                        loading="lazy"
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                                        onError={(e) => {
-                                            e.target.src = placeholderImg;
-                                            e.target.onerror = null;
-                                        }}
-                                    />
+                                    {removingItem === item.productId._id ? (
+                                        <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-current"></div>
+                                    ) : (
+                                        <FaTrash className="w-3.5 h-3.5 text-rose-500" />
+                                    )}
+                                </button>
 
-                                    {/* Gradient Overlay on Hover */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
-                                    {/* Remove Button - Top Right */}
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            removeFromWishlist(item.productId._id);
-                                        }}
-                                        disabled={removingItem === item.productId._id}
-                                        className="absolute top-2 sm:top-3 right-2 sm:right-3 w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-50 transition-all group/btn disabled:opacity-50"
-                                    >
-                                        {removingItem === item.productId._id ? (
-                                            <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-primary"></div>
-                                        ) : (
-                                            <BsFillBagHeartFill className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 group-hover/btn:scale-110 transition-transform" />
-                                        )}
-                                    </button>
-
-                                    {/* Stock Badge */}
-                                    {(item.productId.stock || 0) <= 0 && (
-                                        <div className="absolute top-2 sm:top-3 left-2 sm:left-3 px-2 sm:px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
+                                {/* Out of Stock sophisticated overlay */}
+                                {isOutOfStock && (
+                                    <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center z-10">
+                                        <span className="bg-white/95 text-slate-900 font-bold text-[10px] tracking-widest uppercase px-4 py-2 rounded-full shadow-md border border-slate-100">
                                             Out of Stock
-                                        </div>
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Details section */}
+                            <div className="p-5 flex-1 flex flex-col justify-between">
+                                <div className="flex flex-col gap-1 mb-2.5">
+                                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                                        {item.productId.category?.main || (typeof item.productId.category === 'string' ? item.productId.category : 'General')}
+                                    </span>
+                                    <h3 
+                                        onClick={() => navigate(`/product/${item.productId._id}`)}
+                                        className="text-sm font-semibold text-slate-800 leading-snug line-clamp-2 min-h-[2.5rem] tracking-tight group-hover:text-slate-950 transition-colors cursor-pointer capitalize"
+                                    >
+                                        {item.productId.name.toLowerCase()}
+                                    </h3>
+                                </div>
+
+                                {/* Ratings and stock status */}
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-1 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100">
+                                        <FaStar className="w-2.5 h-2.5 text-amber-500" />
+                                        <span className="text-xs font-bold text-slate-600">4.2</span>
+                                    </div>
+                                    <span className="text-[10px] font-bold text-[#45C3D3] uppercase tracking-wider">
+                                        {item.productId.brand || 'Official'}
+                                    </span>
+                                </div>
+
+                                {/* Pricing and Cart block */}
+                                <div className="flex items-center justify-between pt-3.5 border-t border-slate-50 mt-auto">
+                                    <div className="flex flex-col">
+                                        {(item.productId.pricing?.mrp || item.productId.originalPrice) && (
+                                            <span className="text-[11px] text-slate-400 font-medium line-through">
+                                                ₹{(item.productId.pricing?.mrp || item.productId.originalPrice || 0).toFixed(0)}
+                                            </span>
+                                        )}
+                                        <span className="text-lg font-bold text-slate-900 tracking-tight font-outfit">
+                                            ₹{(item.productId.pricing?.selling_price || item.productId.price || 0).toFixed(0)}
+                                        </span>
+                                    </div>
+
+                                    {isInCart ? (
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate('/cart');
+                                            }}
+                                            className="h-9 px-4 flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl font-semibold text-xs hover:bg-emerald-100/70 hover:border-emerald-300 transition-all shadow-sm"
+                                        >
+                                            <FaCheckCircle className="w-3.5 h-3.5" />
+                                            Cart
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={() => addToCart(item.productId)}
+                                            disabled={isAdding || isOutOfStock}
+                                            className={`h-9 px-4 flex items-center gap-1.5 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95 ${
+                                                isOutOfStock
+                                                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-100 shadow-none'
+                                                    : 'bg-[#45C3D3] hover:bg-teal-500 shadow-teal-500/10 hover:shadow-lg'
+                                            }`}
+                                        >
+                                            {isAdding ? (
+                                                <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-white"></div>
+                                            ) : (
+                                                <>
+                                                    <FaShoppingCart className="w-3 h-3" />
+                                                    <span>Add</span>
+                                                </>
+                                            )}
+                                        </button>
                                     )}
                                 </div>
-
-                                {/* Product Info */}
-                                <div className="p-4 space-y-4">
-                                    <div className="flex justify-between items-start gap-2">
-                                        <h3
-                                            onClick={() => navigate(`/product/${item.productId._id}`)}
-                                            className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors cursor-pointer line-clamp-1"
-                                        >
-                                            {item.productId.name}
-                                        </h3>
-                                        <div className="flex items-center gap-1 bg-secondary/10 px-2 py-1 rounded-md flex-shrink-0">
-                                            <FaStar className="w-3 h-3 text-secondary" />
-                                            <span className="text-sm font-bold text-gray-700">4.2</span>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex justify-between items-end border-b border-gray-100 pb-3">
-                                        <div className="space-y-0.5 min-w-0">
-                                            <p className="text-xs text-gray-400 font-medium">Category</p>
-                                            <p className="text-sm font-extrabold text-gray-800 truncate">
-                                                {item.productId.category?.main || (typeof item.productId.category === 'string' ? item.productId.category : 'Crackers')}
-                                            </p>
-                                        </div>
-                                        <div className="space-y-0.5 text-right flex-shrink-0">
-                                            <p className="text-xs text-gray-400 font-medium">Brand</p>
-                                            <p className="text-sm font-extrabold text-primary">
-                                                {item.productId.brand || 'Standard'}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center justify-between pt-2">
-                                        <div className="flex flex-col">
-                                            <span className="text-2xl font-black text-gray-900 leading-none">
-                                                ₹{(item.productId.pricing?.selling_price || item.productId.price || 0).toFixed(2)}
-                                            </span>
-                                            {(item.productId.pricing?.mrp || item.productId.originalPrice) && (
-                                                <span className="text-sm text-gray-400 line-through mt-1">
-                                                    ₹{(item.productId.pricing?.mrp || item.productId.originalPrice).toFixed(2)}
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        {(() => {
-                                            const isInCart = cartItems.some(cartItem =>
-                                                (cartItem.productId?._id || cartItem.productId) === item.productId._id
-                                            );
-                                            const isOutOfStock = (item.productId.stock || 0) <= 0;
-                                            const isAdding = addingToCart === item.productId._id;
-
-                                            return (
-                                                <button
-                                                    onClick={() => addToCart(item.productId)}
-                                                    disabled={isAdding || isOutOfStock}
-                                                    className={`px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-md hover:shadow-lg transform active:scale-95 ${isAdding || isOutOfStock
-                                                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                                        : 'text-white'
-                                                        }`}
-                                                    style={{
-                                                        background: !(isAdding || isOutOfStock) ? 'linear-gradient(to right, #E91E63, #d81b60)' : undefined
-                                                    }}
-                                                >
-                                                    {isAdding ? (
-                                                        <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                                                    ) : isInCart ? (
-                                                        <>
-                                                            <FaCheckCircle className="flex-shrink-0" />
-                                                            <span className="whitespace-nowrap">View Cart</span>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <FaShoppingCart className="flex-shrink-0" />
-                                                            <span className="whitespace-nowrap">Add to Cart</span>
-                                                        </>
-                                                    )}
-                                                </button>
-                                            );
-                                        })()}
-                                    </div>
-                                </div>
                             </div>
-                        ))}
-                    </div>
-                </div>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

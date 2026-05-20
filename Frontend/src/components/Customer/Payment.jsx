@@ -331,7 +331,7 @@ const Payment = () => {
                 key: data.razorpayKey,
                 amount: data.paymentOrder.amount,
                 currency: data.paymentOrder.currency,
-                name: 'AJIZZ FASHIONS',
+                name: 'Anti Turnish Jewellery',
                 description: `Order Payment Session - ${Date.now()}`,
                 image: '', // logo removed to fix CORS/loopback errors
                 order_id: data.paymentOrder.id,
@@ -341,7 +341,7 @@ const Payment = () => {
                     contact: selectedAddress?.phone || userData.phone || ""
                 },
                 theme: {
-                    color: "#E91E63", // Highlight color
+                    color: "#81C784", // Highlight color
                 },
                 handler: async function (response) {
                     try {

@@ -28,6 +28,22 @@ const reviewSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+
+    title: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    tags: {
+      type: [String],
+      default: [],
+    },
+
+    helpfulVotes: {
+      up: { type: Number, default: 0 },
+      down: { type: Number, default: 0 }
+    },
   },
   { timestamps: true }
 );

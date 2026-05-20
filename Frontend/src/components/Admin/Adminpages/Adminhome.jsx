@@ -10,6 +10,7 @@ import AdminSettings from '../components/AdminSettings';
 import AdminRefundsManagement from '../components/AdminRefundsManagement';
 import AdminSupportTickets from '../components/AdminSupportTickets';
 import ProductUploadModal from '../components/ProductUploadModal';
+import AdminTopSellingProducts from '../components/AdminTopSellingProducts';
 
 const Adminhome = () => {
     const [activePage, setActivePage] = useState('Dashboard');
@@ -46,6 +47,8 @@ const Adminhome = () => {
                 return <AdminSupportTickets refreshId={refreshId} />;
             case 'Hero Section':
                 return <AdminHeroManagement refreshId={refreshId} />;
+            case 'Top Selling Products':
+                return <AdminTopSellingProducts refreshId={refreshId} />;
             case 'Finance':
                 return <AdminFinance refreshId={refreshId} />;
             case 'Settings':
@@ -60,14 +63,14 @@ const Adminhome = () => {
             {/* Mobile Header */}
             <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-slate-900 border-b border-slate-800 z-40 px-6 flex items-center justify-between shadow-sm">
                 <div className="flex items-center gap-3">
-                    <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 text-white hover:bg-slate-800 rounded-lg">
+                    <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 text-white hover:bg-slate-800 rounded-none">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
                     </button>
-                    <span className="font-black tracking-tight text-lg">
-                        <span className="text-[#E91E63]">AJIZZ</span> <span className="text-white">FASHIONS</span>
+                    <span className="font-bold tracking-tight text-lg">
+                        <span className="text-[#81C784]">Hey Azhagi</span> <span className="text-white">Admin</span>
                     </span>
                 </div>
-                <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 font-bold text-xs">
+                <div className="w-8 h-8 bg-slate-800 border border-slate-700 text-slate-350 font-bold text-xs flex items-center justify-center rounded-none">
                     A
                 </div>
             </div>

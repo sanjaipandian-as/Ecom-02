@@ -341,75 +341,103 @@ const SearchResults = () => {
                                 {searchResults.map((product) => {
                                     const isInCart = cartItems.some(item => (item.productId?._id || item.productId) === product._id);
                                     const cartItem = cartItems.find(item => (item.productId?._id || item.productId) === product._id);
+                                    const discount = product.pricing?.mrp && product.pricing?.selling_price 
+                                        ? Math.round(((product.pricing.mrp - product.pricing.selling_price) / product.pricing.mrp) * 100)
+                                        : 0;
 
                                     return (
-
                                         <div
                                             key={product._id}
                                             onClick={() => navigate(`/product/${product._id}`)}
-                                            className="group relative bg-white rounded-[2.5rem] overflow-hidden border border-gray-50 shadow-sm hover:shadow-2xl hover:shadow-pink-100/50 transition-all duration-500 cursor-pointer"
+                                            className="group relative bg-white rounded-2xl overflow-hidden border border-slate-100 hover:border-slate-200/80 shadow-[0_2px_8px_rgba(15,23,42,0.03)] hover:shadow-[0_16px_36px_rgba(15,23,42,0.08)] hover:-translate-y-1.5 transition-all duration-300 cursor-pointer flex flex-col h-full"
                                         >
-                                            <div className="relative aspect-[4/5] overflow-hidden bg-gray-50/30 flex items-center justify-center p-8 transition-all duration-500 group-hover:p-4">
+                                            {/* Image Container with premium gradient background */}
+                                            <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-b from-slate-50/60 to-slate-100/30 flex items-center justify-center p-6">
                                                 <img
                                                     src={product.images?.[0] || placeholderImg}
                                                     alt={product.name}
-                                                    className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
+                                                    className="w-4/5 h-4/5 object-contain transition-transform duration-500 group-hover:scale-105"
                                                     onError={(e) => {
                                                         e.target.src = placeholderImg;
                                                         e.target.onerror = null;
                                                     }}
                                                 />
 
+                                                {/* Discount Tag */}
+                                                {discount > 0 && product.stock > 0 && (
+                                                    <span className="absolute top-3.5 left-3.5 bg-rose-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm z-10">
+                                                        -{discount}% OFF
+                                                    </span>
+                                                )}
+
+                                                {/* Wishlist Button - Sleek Glassmorphism */}
                                                 <button
                                                     onClick={(e) => toggleWishlist(e, product._id)}
                                                     disabled={togglingWishlist === product._id}
-                                                    className={`absolute top-4 right-4 p-3 rounded-2xl shadow-xl transition-all duration-300 ${wishlistItems.includes(product._id)
-                                                        ? 'bg-[#E91E63] text-white shadow-pink-500/30'
-                                                        : 'bg-white text-gray-400 hover:text-[#E91E63] hover:bg-white'
-                                                        }`}
+                                                    className={`absolute top-3.5 right-3.5 w-9 h-9 rounded-full flex items-center justify-center shadow-sm border transition-all duration-300 hover:scale-105 active:scale-95 z-10 ${
+                                                        wishlistItems.includes(product._id)
+                                                            ? 'bg-rose-50 border-rose-100 text-rose-500 hover:bg-rose-100/80'
+                                                            : 'bg-white/90 backdrop-blur-sm border-slate-100 text-slate-400 hover:text-rose-500 hover:bg-white'
+                                                    }`}
                                                 >
                                                     {togglingWishlist === product._id ? (
-                                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
+                                                        <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-current"></div>
                                                     ) : (
-                                                        wishlistItems.includes(product._id) ? <FaHeart className="w-4 h-4" /> : <FaRegHeart className="w-4 h-4" />
+                                                        wishlistItems.includes(product._id) ? <FaHeart className="w-3.5 h-3.5" /> : <FaRegHeart className="w-3.5 h-3.5" />
                                                     )}
                                                 </button>
 
+                                                {/* Out of Stock sophisticated overlay */}
                                                 {product.stock <= 0 && (
-                                                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-sm">
-                                                        <span className="text-white font-black text-lg tracking-widest uppercase border-2 border-white px-4 py-2">Out of Stock</span>
+                                                    <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center transition-all duration-300 z-10">
+                                                        <span className="bg-white/95 text-slate-900 font-bold text-[10px] tracking-widest uppercase px-4 py-2 rounded-full shadow-md border border-slate-100">
+                                                            Out of Stock
+                                                        </span>
                                                     </div>
                                                 )}
 
-                                                {/* Static Quick View */}
-                                                <div className="absolute bottom-4 left-4 right-4">
-                                                    <div className="w-full py-3 bg-[#E91E63] text-white rounded-xl text-[10px] font-black text-center shadow-lg shadow-pink-500/30 tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-pink-600 transition-colors">
-                                                        <FaEye className="w-3 h-3" />
-                                                        QUICK VIEW
+                                                {/* Premium hover-triggered Quick View */}
+                                                {product.stock > 0 && (
+                                                    <div className="absolute bottom-3 left-3 right-3 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-10">
+                                                        <div className="w-full py-2.5 bg-[#81C784] hover:bg-[#72b775] text-white rounded-xl text-[11px] font-bold text-center shadow-md tracking-wider uppercase flex items-center justify-center gap-2 transition-colors">
+                                                            <FaEye className="w-3.5 h-3.5" />
+                                                            Quick View
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                )}
                                             </div>
 
-                                            <div className="p-6">
-                                                <div className="flex flex-col gap-1 mb-3">
-                                                    <span className="text-[10px] font-black text-[#E91E63] uppercase tracking-widest">{product.category?.main || product.category || 'General'}</span>
-                                                    <h3 className="text-base font-black text-gray-900 leading-tight line-clamp-2 min-h-[2.5rem]">{product.name}</h3>
+                                            {/* Details section */}
+                                            <div className="p-5 flex-1 flex flex-col justify-between">
+                                                <div className="flex flex-col gap-1 mb-2.5">
+                                                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                                                        {product.category?.main || product.category || 'General'}
+                                                    </span>
+                                                    <h3 className="text-sm font-semibold text-slate-800 leading-snug line-clamp-2 min-h-[2.5rem] tracking-tight group-hover:text-slate-950 transition-colors">
+                                                        {product.name}
+                                                    </h3>
                                                 </div>
 
-                                                <div className="flex items-center justify-between mb-6">
-                                                    <div className="flex items-center gap-1 bg-gray-100/50 px-2 py-1 rounded-lg">
-                                                        <FaStar className="w-3 h-3 text-yellow-400" />
-                                                        <span className="text-xs font-bold text-gray-700">4.2</span>
+                                                {/* Ratings and stock status */}
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <div className="flex items-center gap-1 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100">
+                                                        <FaStar className="w-2.5 h-2.5 text-amber-500" />
+                                                        <span className="text-xs font-bold text-slate-600">4.2</span>
                                                     </div>
-                                                    <span className={`text-[10px] font-black uppercase tracking-wider ${product.stock > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                                                    <span className={`text-[10px] font-bold uppercase tracking-wider ${
+                                                        product.stock > 0 ? 'text-emerald-600' : 'text-slate-400'
+                                                    }`}>
                                                         {product.stock > 0 ? 'In Stock' : 'Sold Out'}
                                                     </span>
                                                 </div>
 
-                                                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                                                {/* Pricing and Cart block */}
+                                                <div className="flex items-center justify-between pt-3.5 border-t border-slate-50 mt-auto">
                                                     <div className="flex flex-col">
-                                                        <span className="text-xs text-gray-400 font-bold line-through">₹{(product.pricing?.mrp || product.price * 1.2 || 0).toFixed(0)}</span>
-                                                        <span className="text-xl font-black text-gray-900">
+                                                        <span className="text-[11px] text-slate-400 font-medium line-through">
+                                                            ₹{(product.pricing?.mrp || product.price * 1.2 || 0).toFixed(0)}
+                                                        </span>
+                                                        <span className="text-lg font-bold text-slate-900 tracking-tight font-outfit">
                                                             ₹{(product.pricing?.selling_price || product.price || 0).toFixed(0)}
                                                         </span>
                                                     </div>
@@ -420,24 +448,25 @@ const SearchResults = () => {
                                                                 e.stopPropagation();
                                                                 navigate('/cart');
                                                             }}
-                                                            className="h-10 px-4 flex items-center gap-2 bg-white border-2 border-[#E91E63] text-[#E91E63] rounded-xl font-bold text-xs hover:bg-[#E91E63] hover:text-white transition-all shadow-lg shadow-pink-500/10"
+                                                            className="h-9 px-4 flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl font-semibold text-xs hover:bg-emerald-100/70 hover:border-emerald-300 transition-all shadow-sm"
                                                         >
-                                                            <FaCheckCircle />
-                                                            CART
+                                                            <FaCheckCircle className="w-3.5 h-3.5" />
+                                                            Cart
                                                         </button>
                                                     ) : (
                                                         <button
                                                             onClick={(e) => addToCart(e, product)}
                                                             disabled={addingToCart === product._id || product.stock <= 0}
-                                                            className={`h-10 w-10 flex items-center justify-center rounded-xl transition-all shadow-lg ${product.stock <= 0
-                                                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                                                : 'bg-[#E91E63] text-white shadow-pink-500/30 hover:scale-105 active:scale-95'
-                                                                }`}
+                                                            className={`h-9 w-9 flex items-center justify-center rounded-xl transition-all ${
+                                                                product.stock <= 0
+                                                                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-100'
+                                                                    : 'bg-[#81C784] hover:bg-[#72b775] text-white shadow-sm hover:shadow active:scale-95'
+                                                            }`}
                                                         >
                                                             {addingToCart === product._id ? (
-                                                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                                                <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-white"></div>
                                                             ) : (
-                                                                <FaShoppingCart className="w-4 h-4" />
+                                                                <FaShoppingCart className="w-3.5 h-3.5" />
                                                             )}
                                                         </button>
                                                     )}

@@ -22,6 +22,29 @@ const Searchbar = () => {
     const debounceTimer = useRef(null);
     const notificationRef = useRef(null);
 
+    const [isScrolled, setIsScrolled] = useState(false);
+    const isHomePage = location.pathname === '/';
+
+    useEffect(() => {
+        if (!isHomePage) {
+            setIsScrolled(true);
+            return;
+        }
+
+        const handleScroll = () => {
+            if (window.scrollY > 50) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        handleScroll();
+
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [isHomePage]);
+
     const [notifications, setNotifications] = useState([]);
     const [showNotifications, setShowNotifications] = useState(false);
     const [loadingNotifications, setLoadingNotifications] = useState(false);
@@ -83,7 +106,7 @@ const Searchbar = () => {
             '/Affiliate': 'Affiliate Program',
             '/BrandRegistry': 'Brand Registry',
             '/advertise': 'Advertise Your Products',
-            '/sell': 'Sell on AJIZZ FASHIONS',
+            '/sell': 'Sell on Anti Turnish Jewellery',
 
 
             '/careers': 'Careers',
@@ -116,7 +139,7 @@ const Searchbar = () => {
             return settingsTitles[settingsPage] || 'Settings';
         }
 
-        return routeTitles[path] || 'AJIZZ FASHIONS';
+        return routeTitles[path] || 'Anti Turnish Jewellery';
     };
 
     useEffect(() => {
@@ -238,7 +261,7 @@ const Searchbar = () => {
             '/Affiliate': 'Affiliate Program',
             '/BrandRegistry': 'Brand Registry',
             '/advertise': 'Advertise Your Products',
-            '/sell': 'Sell on AJIZZ FASHIONS',
+            '/sell': 'Sell on Anti Turnish Jewellery',
 
             // Footer Links
             '/careers': 'Careers',
@@ -249,7 +272,7 @@ const Searchbar = () => {
             '/legal': 'Legal Information',
         };
 
-        let pageTitle = 'AJIZZ FASHIONS';
+        let pageTitle = 'Anti Turnish Jewellery';
 
         // Check for exact route match first
         if (routeTitles[path]) {
@@ -285,7 +308,7 @@ const Searchbar = () => {
             pageTitle = settingsTitles[settingsPage] || 'Settings';
         }
 
-        document.title = `${pageTitle} - AJIZZ FASHIONS`;
+        document.title = `${pageTitle} - Anti Turnish Jewellery`;
     }, [location.pathname]);
 
     // Close suggestions when clicking outside
@@ -460,543 +483,412 @@ const Searchbar = () => {
         navigate('/');
     };
 
-
-
     return (
         <div
-            className="sticky top-0 z-50 border-b border-gray-100 shadow-sm transition-all duration-300"
-            style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
+            className={`z-50 transition-all duration-300 ${isHomePage
+                    ? "fixed top-0 left-0 right-0 text-gray-800 border-b border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.03)] py-3"
+                    : "sticky top-0 border-b border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.03)] text-gray-800 py-3"
+                }`}
+            style={{ backgroundColor: 'rgba(255, 255, 255, 0.35)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
         >
+            <div className="px-6 md:px-12 w-full flex items-center justify-between relative min-h-[50px]">
+                {/* Left Links - Desktop only */}
+                <div className="hidden lg:flex gap-8 text-[15px] font-medium tracking-wide">
+                    <button
+                        onClick={() => navigate('/products')}
+                        className="transition font-semibold text-xs uppercase tracking-wider text-gray-700 hover:text-green-600"
+                    >
+                        Shop
+                    </button>
+                    <button
+                        onClick={() => navigate('/category/bestsellers')}
+                        className="transition font-semibold text-xs uppercase tracking-wider text-gray-700 hover:text-green-600"
+                    >
+                        Bestsellers
+                    </button>
+                    <button
+                        onClick={() => navigate('/Support')}
+                        className="transition font-semibold text-xs uppercase tracking-wider text-gray-700 hover:text-green-600"
+                    >
+                        Support
+                    </button>
+                    <button
+                        onClick={() => navigate('/about')}
+                        className="transition font-semibold text-xs uppercase tracking-wider text-gray-700 hover:text-green-600"
+                    >
+                        About
+                    </button>
+                </div>
 
-            <div className="px-4 md:px-6 lg:px-8 py-3.5 md:py-4">
-                <div className="flex items-center justify-between gap-3 md:gap-4 lg:gap-6">
-                    <div className="flex items-center">
-                        <button
-                            onClick={() => navigate('/')}
-                            className="cursor-pointer group"
-                        >
-                            <h1 className="text-lg md:text-xl lg:text-2xl font-bold whitespace-nowrap transition-all duration-300 group-hover:animate-sparkle" style={{ color: '#2E2E2E' }}>
-                                <span style={{ color: '#E91E63' }}>AJIZZ</span> FASHIONS
-                            </h1>
-                        </button>
+                {/* Center Logo & Brand Identity */}
+                <div
+                    className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center cursor-pointer select-none text-center"
+                    onClick={() => navigate('/')}
+                >
+                    <span
+                        className="text-2xl md:text-3xl font-light tracking-wide transition-colors duration-300 text-gray-900"
+                        style={{ fontFamily: 'Playfair Display, Georgia, serif' }}
+                    >
+                        Hey Azhagi
+                    </span>
+                    <span
+                        className="text-[8px] md:text-[9px] font-sans tracking-[0.2em] uppercase mt-0.5 transition-colors duration-300 text-gray-500"
+                    >
+                        Anti Turnish Jewellery
+                    </span>
+                </div>
+
+                {/* Right Items */}
+                <div className="flex items-center gap-2.5 md:gap-3">
+                    {/* Search Input - Desktop only */}
+                    <div className="hidden lg:flex items-center relative z-20" ref={searchRef}>
+                        <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-[14px] h-[14px]" />
+                        <input
+                            type="text"
+                            placeholder="Search jewellery..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            onFocus={() => setShowSuggestions(searchQuery.trim().length > 1)}
+                            className="pl-10 pr-4 py-2 w-52 md:w-60 rounded-full text-xs font-semibold focus:outline-none transition-all shadow-sm bg-gray-100 text-gray-800 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-[#81C784] border border-gray-200"
+                        />
+
+                        {/* Suggestions box */}
+                        {showSuggestions && (
+                            <div
+                                className="absolute top-full left-0 right-0 mt-2 border border-gray-200 rounded-xl shadow-xl z-50 max-h-96 overflow-y-auto"
+                                style={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
+                            >
+                                {loadingSuggestions ? (
+                                    <div className="p-4 text-center text-gray-500">
+                                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 mx-auto" style={{ borderBottomColor: '#81C784' }}></div>
+                                    </div>
+                                ) : suggestions.length > 0 ? (
+                                    <div className="py-2">
+                                        {suggestions.map((suggestion, index) => (
+                                            <button
+                                                key={suggestion._id}
+                                                onClick={() => handleSearch(suggestion.name)}
+                                                className={`w-full px-4 py-2 text-left transition-colors flex items-center gap-3 text-xs`}
+                                                style={{ backgroundColor: index === selectedSuggestionIndex ? 'rgba(200, 230, 201, 0.2)' : 'transparent' }}
+                                                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(200, 230, 201, 0.2)'; }}
+                                                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = index === selectedSuggestionIndex ? 'rgba(200, 230, 201, 0.2)' : 'transparent'; }}
+                                            >
+                                                <FaSearch className="w-3 h-3 text-[#81C784]" />
+                                                <span className="text-gray-800">{suggestion.name}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                ) : searchQuery.trim().length > 1 ? (
+                                    <div className="p-4 text-center text-xs text-gray-500">
+                                        No suggestions found
+                                    </div>
+                                ) : null}
+                            </div>
+                        )}
                     </div>
 
-
-                    <div className="hidden md:flex flex-1 max-w-xl lg:max-w-2xl" ref={searchRef}>
-                        <div className="relative w-full">
-                            <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
-                            <input
-                                type="text"
-                                placeholder="Search skincare, makeup, brands…"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                onFocus={(e) => {
-                                    e.target.style.borderColor = '#E91E63';
-                                    searchQuery.trim().length > 1 && setShowSuggestions(true);
-                                }}
-                                onBlur={(e) => {
-                                    e.target.style.borderColor = '#E5E7EB';
-                                    setTimeout(() => {
-                                        if (!searchQuery.trim()) {
-                                            setShowSearchBar(false);
-                                        }
-                                    }, 200);
-                                }}
-                                autoFocus
-                                className="w-full pl-12 pr-12 py-3 border border-gray-200 rounded-full text-sm placeholder-gray-400 focus:outline-none focus:bg-white focus:shadow-md transition-all"
-                                style={{ backgroundColor: '#F5F5F5', color: '#2E2E2E' }}
-                                onMouseEnter={(e) => e.target.style.borderColor = '#F8BBD0'}
-                                onMouseLeave={(e) => e.target.style.borderColor = '#E5E7EB'}
-                            />
-
-
-
-                            {showSuggestions && (
-                                <div
-                                    className="absolute top-full left-0 right-0 mt-2 border border-gray-200 rounded-xl shadow-xl z-50 max-h-96 overflow-y-auto"
-                                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
-                                >
-                                    {loadingSuggestions ? (
-                                        <div className="p-4 text-center text-gray-500">
-                                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 mx-auto" style={{ borderBottomColor: '#E91E63' }}></div>
-                                        </div>
-                                    ) : suggestions.length > 0 ? (
-                                        <div className="py-2">
-                                            {suggestions.map((suggestion, index) => (
-                                                <button
-                                                    key={suggestion._id}
-                                                    onClick={() => handleSearch(suggestion.name)}
-                                                    className={`w-full px-4 py-3 text-left transition-colors flex items-center gap-3`}
-                                                    style={{ backgroundColor: index === selectedSuggestionIndex ? 'rgba(248, 187, 208, 0.2)' : 'transparent' }}
-                                                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(248, 187, 208, 0.2)'; }}
-                                                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = index === selectedSuggestionIndex ? 'rgba(248, 187, 208, 0.2)' : 'transparent'; }}
-                                                >
-                                                    <FaSearch className="w-4 h-4" style={{ color: '#E91E63' }} />
-                                                    <span className="text-charcoal">{suggestion.name}</span>
-                                                </button>
-                                            ))}
-                                        </div>
-                                    ) : searchQuery.trim().length > 1 ? (
-                                        <div className="p-4 text-center text-gray-500">
-                                            No suggestions found
-                                        </div>
-                                    ) : null}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-
-                    <div className="hidden md:flex items-center gap-3">
-
-                        <button
-                            onClick={() => navigate('/Cart')}
-                            className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 transition-all duration-300 group"
-                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#E91E63'; e.currentTarget.style.backgroundColor = 'rgba(248, 187, 208, 0.2)'; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E5E7EB'; e.currentTarget.style.backgroundColor = 'transparent'; }}
-                            title="Cart"
-                        >
-                            <FaShoppingBag className="w-4 h-4 transition-colors" style={{ color: '#2E2E2E' }} onMouseEnter={(e) => e.target.style.color = '#E91E63'} onMouseLeave={(e) => e.target.style.color = '#2E2E2E'} />
-                            <span className="text-sm font-medium transition-colors" style={{ color: '#2E2E2E' }} onMouseEnter={(e) => e.target.style.color = '#E91E63'} onMouseLeave={(e) => e.target.style.color = '#2E2E2E'}>Cart</span>
-                        </button>
-
-
+                    {/* Action Buttons */}
+                    {userRole !== 'admin' && (
                         <button
                             onClick={() => navigate('/Wishlist')}
-                            className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 transition-all duration-300 group"
-                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#E91E63'; e.currentTarget.style.backgroundColor = 'rgba(248, 187, 208, 0.2)'; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E5E7EB'; e.currentTarget.style.backgroundColor = 'transparent'; }}
+                            className="w-[38px] h-[38px] rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition shadow-sm text-gray-700 hover:text-green-600"
                             title="Wishlist"
                         >
-                            <BsFillBagHeartFill className="w-4 h-4 transition-colors" style={{ color: '#2E2E2E' }} onMouseEnter={(e) => e.target.style.color = '#E91E63'} onMouseLeave={(e) => e.target.style.color = '#2E2E2E'} />
-                            <span className="text-sm font-medium transition-colors" style={{ color: '#2E2E2E' }} onMouseEnter={(e) => e.target.style.color = '#E91E63'} onMouseLeave={(e) => e.target.style.color = '#2E2E2E'}>Wishlist</span>
+                            <BsFillBagHeartFill className="w-4 h-4" />
                         </button>
-                    </div>
+                    )}
 
+                    {userRole !== 'admin' && (
+                        <button
+                            onClick={() => navigate('/Cart')}
+                            className="w-[38px] h-[38px] rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition shadow-sm text-gray-700 hover:text-green-600"
+                            title="Cart"
+                        >
+                            <FaShoppingBag className="w-4 h-4" />
+                        </button>
+                    )}
 
-                    <div className="flex items-center gap-3">
+                    {/* Notifications system */}
+                    <div className="relative" ref={notificationRef}>
+                        <button
+                            onClick={() => setShowNotifications(!showNotifications)}
+                            className="w-[38px] h-[38px] rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition shadow-sm text-gray-700 hover:text-green-600 relative"
+                            title="Notifications"
+                        >
+                            <FaBell className="w-4 h-4" />
+                            {unreadCount > 0 && (
+                                <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 text-white text-[9px] font-bold rounded-full flex items-center justify-center border border-white bg-amber-500 animate-pulse">
+                                    {unreadCount > 9 ? '9+' : unreadCount}
+                                </span>
+                            )}
+                        </button>
 
-                        <div className="relative" ref={notificationRef}>
-                            <button
-                                onClick={() => setShowNotifications(!showNotifications)}
-                                className="relative p-2 hover:bg-secondary/30 rounded-full transition-all cursor-pointer group"
-                                title="Notifications"
-                            >
-                                <FaBell className="w-5 h-5 transition-colors" style={{ color: '#2E2E2E' }} onMouseEnter={(e) => e.target.style.color = '#E91E63'} onMouseLeave={(e) => e.target.style.color = '#2E2E2E'} />
-                                {unreadCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1.5 text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-white" style={{ backgroundColor: '#C9A24D' }}>
-                                        {unreadCount > 9 ? '9+' : unreadCount}
-                                    </span>
-                                )}
-                            </button>
-
-
-                            {showNotifications && isLoggedIn && (
-                                <div className="fixed sm:absolute top-16 sm:top-full left-2 right-2 sm:left-auto sm:right-0 mt-0 sm:mt-2 w-auto sm:w-80 md:w-96 bg-white border-2 border-gray-200 rounded-xl sm:rounded-2xl shadow-2xl z-50 max-h-[calc(100vh-5rem)] sm:max-h-[500px] overflow-hidden flex flex-col">
-
-                                    <div className="p-3 sm:p-4 border-b border-gray-200 bg-primary/10 flex-shrink-0">
-                                        <div className="flex items-center justify-between mb-1 sm:mb-2">
-                                            <h3 className="text-base sm:text-lg font-bold text-gray-900">Notifications</h3>
-                                            <div className="flex items-center gap-2">
-                                                {unreadCount > 0 && (
-                                                    <button
-                                                        onClick={markAllAsRead}
-                                                        className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors px-2 py-1 hover:bg-primary/20 rounded"
-                                                    >
-                                                        Mark all read
-                                                    </button>
-                                                )}
-
+                        {/* Notifications drawer */}
+                        {showNotifications && isLoggedIn && (
+                            <div className="fixed sm:absolute top-16 sm:top-full left-2 right-2 sm:left-auto sm:right-0 mt-2 w-auto sm:w-80 md:w-96 bg-white border border-gray-200 rounded-2xl shadow-2xl z-50 max-h-[calc(100vh-5rem)] sm:max-h-[500px] overflow-hidden flex flex-col">
+                                <div className="p-3 sm:p-4 border-b border-gray-200 bg-gray-50 flex-shrink-0">
+                                    <div className="flex items-center justify-between mb-1">
+                                        <h3 className="text-sm font-bold text-gray-900">Notifications</h3>
+                                        <div className="flex items-center gap-2">
+                                            {unreadCount > 0 && (
                                                 <button
-                                                    onClick={() => setShowNotifications(false)}
-                                                    className="sm:hidden p-1 hover:bg-gray-200 rounded-full transition-colors"
+                                                    onClick={markAllAsRead}
+                                                    className="text-xs font-semibold text-[#81C784] hover:text-[#66bb6a] transition-colors px-2 py-0.5 hover:bg-green-50 rounded"
                                                 >
-                                                    <FaTimes className="w-4 h-4 text-gray-600" />
+                                                    Mark all read
                                                 </button>
-                                            </div>
+                                            )}
+                                            <button
+                                                onClick={() => setShowNotifications(false)}
+                                                className="sm:hidden p-1 hover:bg-gray-200 rounded-full transition-colors"
+                                            >
+                                                <FaTimes className="w-3 h-3 text-gray-600" />
+                                            </button>
                                         </div>
-                                        {unreadCount > 0 && (
-                                            <p className="text-xs sm:text-sm text-gray-600">
-                                                You have {unreadCount} unread {unreadCount === 1 ? 'notification' : 'notifications'}
-                                            </p>
-                                        )}
                                     </div>
+                                    {unreadCount > 0 && (
+                                        <p className="text-xs text-gray-500">
+                                            You have {unreadCount} unread notification{unreadCount === 1 ? '' : 's'}
+                                        </p>
+                                    )}
+                                </div>
 
-
-                                    <div className="overflow-y-auto flex-1 overscroll-contain">
-                                        {loadingNotifications ? (
-                                            <div className="p-6 sm:p-8 text-center">
-                                                <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-primary mx-auto"></div>
-                                            </div>
-                                        ) : notifications.length === 0 ? (
-                                            <div className="p-6 sm:p-8 text-center">
-                                                <FaBell className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-3" />
-                                                <p className="text-sm sm:text-base text-gray-600 font-medium">No notifications yet</p>
-                                                <p className="text-xs sm:text-sm text-gray-500 mt-1">We'll notify you when something arrives</p>
-                                            </div>
-                                        ) : (
-                                            <div className="divide-y divide-gray-100">
-                                                {notifications.map((notification) => (
-                                                    <div
-                                                        key={notification._id}
-                                                        onClick={() => !notification.isRead && markAsRead(notification._id)}
-                                                        className={`p-3 sm:p-4 hover:bg-primary/10 active:bg-gray-100 transition-colors cursor-pointer ${!notification.isRead ? 'bg-primary/10' : ''
-                                                            }`}
-                                                    >
-                                                        <div className="flex items-start gap-2 sm:gap-3">
-                                                            <span className="text-xl sm:text-2xl flex-shrink-0 mt-0.5">
-                                                                {getNotificationIcon(notification.type)}
-                                                            </span>
-                                                            <div className="flex-1 min-w-0">
-                                                                <div className="flex items-start justify-between gap-2 mb-1">
-                                                                    <h4 className={`text-sm sm:text-base font-semibold leading-tight ${!notification.isRead ? 'text-gray-900' : 'text-gray-700'
-                                                                        }`}>
-                                                                        {notification.title}
-                                                                    </h4>
-                                                                    {!notification.isRead && (
-                                                                        <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0 mt-1.5"></div>
-                                                                    )}
-                                                                </div>
-                                                                <p className="text-xs sm:text-sm text-gray-600 line-clamp-2 mb-1.5">
-                                                                    {notification.message}
-                                                                </p>
-                                                                <p className="text-[10px] sm:text-xs text-gray-500">
-                                                                    {getTimeAgo(notification.createdAt)}
-                                                                </p>
+                                <div className="overflow-y-auto flex-1 overscroll-contain custom-scrollbar">
+                                    {loadingNotifications ? (
+                                        <div className="p-8 text-center">
+                                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#81C784] mx-auto"></div>
+                                        </div>
+                                    ) : notifications.length === 0 ? (
+                                        <div className="p-8 text-center">
+                                            <FaBell className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                                            <p className="text-xs text-gray-500 font-medium">No notifications yet</p>
+                                        </div>
+                                    ) : (
+                                        <div className="divide-y divide-gray-100">
+                                            {notifications.map((notification) => (
+                                                <div
+                                                    key={notification._id}
+                                                    onClick={() => !notification.isRead && markAsRead(notification._id)}
+                                                    className={`p-3 sm:p-4 hover:bg-gray-50 transition-colors cursor-pointer ${!notification.isRead ? 'bg-green-50/30' : ''
+                                                        }`}
+                                                >
+                                                    <div className="flex items-start gap-2.5">
+                                                        <span className="text-lg flex-shrink-0 mt-0.5">
+                                                            {getNotificationIcon(notification.type)}
+                                                        </span>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-start justify-between gap-2 mb-0.5">
+                                                                <h4 className={`text-xs font-bold leading-tight ${!notification.isRead ? 'text-gray-900' : 'text-gray-700'
+                                                                    }`}>
+                                                                    {notification.title}
+                                                                </h4>
+                                                                {!notification.isRead && (
+                                                                    <div className="w-1.5 h-1.5 bg-[#81C784] rounded-full flex-shrink-0 mt-1"></div>
+                                                                )}
                                                             </div>
+                                                            <p className="text-[11px] text-gray-500 line-clamp-2 mb-1">
+                                                                {notification.message}
+                                                            </p>
+                                                            <p className="text-[9px] text-gray-400">
+                                                                {getTimeAgo(notification.createdAt)}
+                                                            </p>
                                                         </div>
                                                     </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-
-
-                                    {notifications.length > 0 && (
-                                        <div className="p-2 sm:p-3 border-t border-gray-200 bg-gray-50 flex-shrink-0">
-                                            <button
-                                                onClick={() => {
-                                                    setShowNotifications(false);
-                                                }}
-                                                className="w-full text-center text-xs sm:text-sm font-semibold text-primary hover:text-primary/80 py-2 hover:bg-primary/10 rounded transition-colors"
-                                            >
-                                                View all notifications
-                                            </button>
+                                                </div>
+                                            ))}
                                         </div>
                                     )}
                                 </div>
-                            )}
-                        </div>
-
-
-                        {!isLoggedIn ? (
-                            <>
-
-                                <button
-                                    onClick={() => navigate('/Login')}
-                                    className="hidden md:block px-5 py-2.5 text-sm font-medium border border-gray-200 rounded-full transition-all"
-                                    style={{ color: '#2E2E2E' }}
-                                    onMouseEnter={(e) => { e.target.style.borderColor = '#E91E63'; e.target.style.backgroundColor = 'rgba(248, 187, 208, 0.2)'; }}
-                                    onMouseLeave={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.backgroundColor = 'transparent'; }}
-                                >
-                                    Login
-                                </button>
-
-
-                                <button
-                                    onClick={() => navigate('/Register')}
-                                    className="hidden md:block px-5 py-2.5 text-sm font-medium text-white rounded-full transition-all shadow-sm"
-                                    style={{ backgroundColor: '#E91E63' }}
-                                    onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(233, 30, 99, 0.9)'}
-                                    onMouseLeave={(e) => e.target.style.backgroundColor = '#E91E63'}
-                                >
-                                    Sign Up
-                                </button>
-                            </>
-                        ) : (
-                            <>
-
-                                <button
-                                    onClick={() => navigate(userRole === 'admin' ? '/admin-Dashboard' : userRole === 'seller' ? '/seller-home' : '/Settings')}
-                                    className="hidden md:flex w-10 h-10 rounded-full items-center justify-center cursor-pointer transition-all"
-                                    style={{ backgroundColor: '#E91E63' }}
-                                    onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(233, 30, 99, 0.9)'}
-                                    onMouseLeave={(e) => e.target.style.backgroundColor = '#E91E63'}
-                                    title={userRole === 'admin' ? "Go to Admin Dashboard" : userRole === 'seller' ? "Go to Seller Dashboard" : "Go to Settings"}
-                                >
-                                    <FaCog className="w-5 h-5 text-white" />
-                                </button>
-
-
-                                <button
-                                    onClick={handleLogout}
-                                    className="hidden md:flex w-10 h-10 rounded-full border border-gray-200 items-center justify-center transition-all cursor-pointer"
-                                    onMouseEnter={(e) => { e.target.style.borderColor = '#E91E63'; e.target.style.backgroundColor = 'rgba(248, 187, 208, 0.2)'; }}
-                                    onMouseLeave={(e) => { e.target.style.borderColor = '#E5E7EB'; e.target.style.backgroundColor = 'transparent'; }}
-                                    title="Logout"
-                                >
-                                    <FaSignOutAlt className="w-5 h-5 transition-colors" style={{ color: '#2E2E2E' }} onMouseEnter={(e) => e.target.style.color = '#E91E63'} onMouseLeave={(e) => e.target.style.color = '#2E2E2E'} />
-                                </button>
-                            </>
+                            </div>
                         )}
-
-
-                        <button
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="md:hidden p-2 rounded-full transition-all"
-                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(233, 30, 99, 0.1)'; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-                        >
-                            {isMobileMenuOpen ? (
-                                <FaTimes className="w-5 h-5 text-gray-600" />
-                            ) : (
-                                <FaBars className="w-5 h-5 text-gray-600" />
-                            )}
-                        </button>
                     </div>
+
+                    {/* Auth Status & Account Toggles */}
+                    {!isLoggedIn ? (
+                        <button
+                            onClick={() => navigate('/Login')}
+                            className="w-[38px] h-[38px] rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition shadow-sm text-gray-700 hover:text-green-600"
+                            title="Login"
+                        >
+                            <FaUser className="w-4 h-4" />
+                        </button>
+                    ) : (
+                        <>
+                            <button
+                                onClick={() => navigate(userRole === 'admin' ? '/admin-Dashboard' : userRole === 'seller' ? '/seller-home' : '/Settings')}
+                                className="w-[38px] h-[38px] rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition shadow-sm text-gray-700 hover:text-green-600"
+                                title={userRole === 'admin' ? "Admin Dashboard" : userRole === 'seller' ? "Seller Dashboard" : "Settings"}
+                            >
+                                {userRole === 'admin' ? <FaCog className="w-4 h-4" /> : <FaUser className="w-4 h-4" />}
+                            </button>
+                            <button
+                                onClick={handleLogout}
+                                className="w-[38px] h-[38px] rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition shadow-sm text-gray-700 hover:text-red-500"
+                                title="Logout"
+                            >
+                                <FaSignOutAlt className="w-4 h-4" />
+                            </button>
+                        </>
+                    )}
+
+                    {/* Mobile Hamburger toggle */}
+                    <button
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="lg:hidden p-2 rounded-full transition-colors text-gray-700 hover:bg-gray-100"
+                    >
+                        {isMobileMenuOpen ? <FaTimes className="w-5 h-5" /> : <FaBars className="w-5 h-5" />}
+                    </button>
                 </div>
             </div>
 
-
-            <div className="md:hidden px-3 pb-3" ref={searchRef}>
-                <div className="relative group">
-                    <FaSearch
-                        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 transition-colors z-10"
-                        style={{ color: '#9CA3AF' }}
-                    />
+            {/* Mobile Search Bar - Visible on smaller screens */}
+            <div className="lg:hidden px-6 pb-2.5 pt-2" ref={searchRef}>
+                <div className="relative">
+                    <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-[14px] h-[14px] z-10" />
                     <input
                         type="text"
-                        placeholder="Search skincare, makeup, brands…"
+                        placeholder="Search jewellery..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        onFocus={(e) => {
-                            e.target.style.borderColor = '#E91E63';
-                            searchQuery.trim().length > 1 && setShowSuggestions(true);
-                        }}
-                        onBlur={(e) => {
-                            e.target.style.borderColor = '#E5E7EB';
-                        }}
-                        className="w-full pl-10 pr-4 py-2.5 border-2 border-gray-200 rounded-full text-sm placeholder-gray-400 focus:outline-none focus:bg-white transition-all cursor-text shadow-sm"
-                        style={{ backgroundColor: '#F9FAFB', color: '#374151' }}
+                        className={`w-full pl-10 pr-4 py-2 rounded-full text-xs font-semibold focus:outline-none transition-all shadow-sm ${isHomePage && !isScrolled
+                                ? "bg-white/95 text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-white/50"
+                                : "bg-gray-100 text-gray-800 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-[#81C784] border border-gray-200"
+                            }`}
                     />
 
-
-                    {showSuggestions && (
+                    {showSuggestions && suggestions.length > 0 && (
                         <div
-                            className="absolute top-full left-0 right-0 mt-2 border-2 border-gray-200 rounded-2xl shadow-xl z-50 max-h-64 overflow-y-auto"
+                            className="absolute top-full left-0 right-0 mt-2 border border-gray-200 rounded-xl shadow-xl z-50 max-h-60 overflow-y-auto"
                             style={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
                         >
-                            {loadingSuggestions ? (
-                                <div className="p-4 text-center text-gray-500">
-                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 mx-auto" style={{ borderBottomColor: '#E91E63' }}></div>
-                                </div>
-                            ) : suggestions.length > 0 ? (
-                                <div className="py-2">
-                                    {suggestions.map((suggestion, index) => (
-                                        <button
-                                            key={suggestion._id}
-                                            onClick={() => handleSearch(suggestion.name)}
-                                            className={`w-full px-3 py-2.5 text-left transition-colors flex items-center gap-2`}
-                                            style={{ backgroundColor: index === selectedSuggestionIndex ? 'rgba(233, 30, 99, 0.1)' : 'transparent' }}
-                                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(233, 30, 99, 0.1)'; }}
-                                            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = index === selectedSuggestionIndex ? 'rgba(233, 30, 99, 0.1)' : 'transparent'; }}
-                                        >
-                                            <FaSearch className="w-3 h-3 text-gray-400" />
-                                            <span className="text-sm" style={{ color: '#374151' }}>{suggestion.name}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            ) : searchQuery.trim().length > 1 ? (
-                                <div className="p-4 text-center text-sm text-gray-500">
-                                    No suggestions found
-                                </div>
-                            ) : null}
+                            <div className="py-1">
+                                {suggestions.map((suggestion, index) => (
+                                    <button
+                                        key={suggestion._id}
+                                        onClick={() => handleSearch(suggestion.name)}
+                                        className="w-full px-4 py-2.5 text-left transition-colors flex items-center gap-3 text-xs text-gray-800 hover:bg-green-50"
+                                    >
+                                        <FaSearch className="w-3 h-3 text-[#81C784]" />
+                                        <span>{suggestion.name}</span>
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </div>
             </div>
 
+            {/* Mobile Drawer menu */}
+            {isMobileMenuOpen && (
+                <div
+                    className="lg:hidden border-t border-gray-100 shadow-xl py-4 animate-slideDown animate-fadeIn"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
+                >
+                    <div className="px-6 space-y-2">
+                        {/* Custom shop categories */}
+                        <button
+                            onClick={() => {
+                                navigate('/products');
+                                setIsMobileMenuOpen(false);
+                            }}
+                            className="w-full px-4 py-2.5 text-xs font-bold text-gray-700 bg-gray-50 rounded-lg hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 uppercase tracking-wider text-left"
+                        >
+                            <FaShoppingBag className="w-3.5 h-3.5" />
+                            <span>Shop</span>
+                        </button>
+                        <button
+                            onClick={() => {
+                                navigate('/category/bestsellers');
+                                setIsMobileMenuOpen(false);
+                            }}
+                            className="w-full px-4 py-2.5 text-xs font-bold text-gray-700 bg-gray-50 rounded-lg hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 uppercase tracking-wider text-left"
+                        >
+                            <FaShoppingBag className="w-3.5 h-3.5" />
+                            <span>Bestsellers</span>
+                        </button>
+                        <button
+                            onClick={() => {
+                                navigate('/Support');
+                                setIsMobileMenuOpen(false);
+                            }}
+                            className="w-full px-4 py-2.5 text-xs font-bold text-gray-700 bg-gray-50 rounded-lg hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 uppercase tracking-wider text-left"
+                        >
+                            <FaUser className="w-3.5 h-3.5" />
+                            <span>Support</span>
+                        </button>
+                        <button
+                            onClick={() => {
+                                navigate('/about');
+                                setIsMobileMenuOpen(false);
+                            }}
+                            className="w-full px-4 py-2.5 text-xs font-bold text-gray-700 bg-gray-50 rounded-lg hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 uppercase tracking-wider text-left"
+                        >
+                            <FaUser className="w-3.5 h-3.5" />
+                            <span>About</span>
+                        </button>
 
-            {
-                isMobileMenuOpen && (
-                    <div
-                        className="md:hidden border-t border-gray-200 shadow-lg"
-                        style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
-                    >
+                        <div className="h-px bg-gray-100 my-4" />
+
                         {!isLoggedIn ? (
-                            <div className="px-4 py-4 space-y-3">
-
-                                <div className="space-y-2 mb-4 pb-4 border-b border-gray-200">
-
-                                    <button
-                                        onClick={() => {
-                                            navigate('/');
-                                            setIsMobileMenuOpen(false);
-                                        }}
-                                        className="w-full px-4 py-3 text-sm font-medium rounded-lg transition-all flex items-center gap-3"
-                                        style={{ color: '#374151', backgroundColor: '#F9FAFB' }}
-                                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F3F4F6'; }}
-                                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#F9FAFB'; }}
-                                    >
-                                        <FaHome className="w-4 h-4 text-gray-600" />
-                                        <span>Home</span>
-                                    </button>
-
-
-                                    <button
-                                        onClick={() => {
-                                            navigate('/Cart');
-                                            setIsMobileMenuOpen(false);
-                                        }}
-                                        className="w-full px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all flex items-center gap-3"
-                                    >
-                                        <FaShoppingBag className="w-4 h-4 text-gray-600" />
-                                        <span>Cart</span>
-                                    </button>
-
-
-                                    <button
-                                        onClick={() => {
-                                            navigate('/Wishlist');
-                                            setIsMobileMenuOpen(false);
-                                        }}
-                                        className="w-full px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all flex items-center gap-3"
-                                    >
-                                        <BsFillBagHeartFill className="w-4 h-4 text-gray-600" />
-                                        <span>Wishlist</span>
-                                    </button>
-                                </div>
-
-
+                            <div className="grid grid-cols-2 gap-3 pt-2">
                                 <button
                                     onClick={() => {
                                         navigate('/Login');
                                         setIsMobileMenuOpen(false);
                                     }}
-                                    className="w-full px-4 py-3 text-sm font-semibold border-2 rounded-lg transition-all flex items-center justify-center gap-2"
-                                    style={{ color: '#374151', backgroundColor: '#FFFFFF', borderColor: '#D1D5DB' }}
-                                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#E91E63'; e.currentTarget.style.color = '#E91E63'; e.currentTarget.style.backgroundColor = 'rgba(233, 30, 99, 0.1)'; }}
-                                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#D1D5DB'; e.currentTarget.style.color = '#374151'; e.currentTarget.style.backgroundColor = '#FFFFFF'; }}
+                                    className="px-4 py-2.5 text-xs font-bold border border-gray-300 rounded-lg text-gray-700 hover:border-green-500 hover:text-[#81C784] transition text-center uppercase tracking-wider"
                                 >
-                                    <FaUser className="w-4 h-4" />
                                     Login
                                 </button>
-
-
                                 <button
                                     onClick={() => {
                                         navigate('/Register');
                                         setIsMobileMenuOpen(false);
                                     }}
-                                    className="w-full px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all shadow-sm flex items-center justify-center gap-2"
-                                    style={{ backgroundColor: '#E91E63' }}
-                                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(233, 30, 99, 0.9)'; }}
-                                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#E91E63'; }}
+                                    className="px-4 py-2.5 text-xs font-bold text-white bg-[#81C784] rounded-lg hover:bg-[#66bb6a] transition text-center uppercase tracking-wider shadow-sm"
                                 >
-                                    <FaUser className="w-4 h-4" />
                                     Sign Up
                                 </button>
                             </div>
                         ) : (
-                            <div className="px-4 py-4">
-
-                                <div className="pb-4 mb-4 border-b border-gray-200">
-                                    <div
-                                        onClick={() => {
-                                            navigate(userRole === 'admin' ? '/admin-Dashboard' : userRole === 'seller' ? '/seller-home' : '/Settings');
-                                            setIsMobileMenuOpen(false);
-                                        }}
-                                        className="flex items-center gap-3 cursor-pointer p-2 rounded-xl transition-all hover:bg-gray-50 active:bg-gray-100 group"
-                                    >
-                                        <div className="w-12 h-12 rounded-full flex items-center justify-center transition-transform group-hover:scale-105" style={{ backgroundColor: '#E91E63' }}>
-                                            <FaUser className="w-6 h-6 text-white" />
-                                        </div>
-                                        <div className="flex-1">
-                                            <h3 className="text-sm font-bold text-gray-900 group-hover:text-[#E91E63] transition-colors">{userName}</h3>
-                                            <p className="text-xs text-gray-500 capitalize">{userRole}</p>
-                                        </div>
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-xl mb-2">
+                                    <div className="w-10 h-10 rounded-full bg-[#81C784] text-white flex items-center justify-center font-bold">
+                                        {userName.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <h4 className="text-xs font-bold text-gray-900">{userName}</h4>
+                                        <p className="text-[10px] text-gray-400 capitalize">{userRole}</p>
                                     </div>
                                 </div>
-
-
-                                <div className="space-y-2">
-
-                                    <button
-                                        onClick={() => {
-                                            navigate('/');
-                                            setIsMobileMenuOpen(false);
-                                        }}
-                                        className="w-full px-4 py-3 text-sm font-medium rounded-lg transition-all flex items-center gap-3"
-                                        style={{ color: '#374151', backgroundColor: '#F9FAFB' }}
-                                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F3F4F6'; }}
-                                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#F9FAFB'; }}
-                                    >
-                                        <FaHome className="w-4 h-4 text-gray-600" />
-                                        <span>Home</span>
-                                    </button>
-
-
-                                    <button
-                                        onClick={() => {
-                                            navigate('/Cart');
-                                            setIsMobileMenuOpen(false);
-                                        }}
-                                        className="w-full px-4 py-3 text-sm font-medium rounded-lg transition-all flex items-center gap-3"
-                                        style={{ color: '#374151', backgroundColor: '#F9FAFB' }}
-                                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F3F4F6'; }}
-                                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#F9FAFB'; }}
-                                    >
-                                        <FaShoppingBag className="w-4 h-4 text-gray-600" />
-                                        <span>Cart</span>
-                                    </button>
-
-
-                                    <button
-                                        onClick={() => {
-                                            navigate('/Wishlist');
-                                            setIsMobileMenuOpen(false);
-                                        }}
-                                        className="w-full px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all flex items-center gap-3"
-                                    >
-                                        <BsFillBagHeartFill className="w-4 h-4 text-gray-600" />
-                                        <span>Wishlist</span>
-                                    </button>
-
-
-                                    <button
-                                        onClick={() => {
-                                            navigate('/Settings');
-                                            setIsMobileMenuOpen(false);
-                                        }}
-                                        className="w-full px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all flex items-center gap-3"
-                                    >
-                                        <FaUser className="w-4 h-4 text-gray-600" />
-                                        <span>Profile Settings</span>
-                                    </button>
-
-
-                                    <button
-                                        onClick={() => {
-                                            handleLogout();
-                                            setIsMobileMenuOpen(false);
-                                        }}
-                                        className="w-full px-4 py-3 text-sm font-medium rounded-lg transition-all flex items-center gap-3"
-                                        style={{ color: '#DC2626', backgroundColor: '#FEF2F2' }}
-                                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#FEE2E2'; }}
-                                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#FEF2F2'; }}
-                                    >
-                                        <FaSignOutAlt className="w-4 h-4" />
-                                        <span>Logout</span>
-                                    </button>
-                                </div>
+                                <button
+                                    onClick={() => {
+                                        navigate('/Settings');
+                                        setIsMobileMenuOpen(false);
+                                    }}
+                                    className="w-full px-4 py-2.5 text-xs font-bold text-gray-700 bg-gray-50 rounded-lg hover:bg-green-50 transition flex items-center gap-3 text-left"
+                                >
+                                    <FaCog className="w-3.5 h-3.5" />
+                                    <span>Profile Settings</span>
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        handleLogout();
+                                        setIsMobileMenuOpen(false);
+                                    }}
+                                    className="w-full px-4 py-2.5 text-xs font-bold text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition flex items-center gap-3 text-left"
+                                >
+                                    <FaSignOutAlt className="w-3.5 h-3.5" />
+                                    <span>Logout</span>
+                                </button>
                             </div>
                         )}
                     </div>
-                )
-            }
-        </div >
+                </div>
+            )}
+        </div>
     );
 };
 

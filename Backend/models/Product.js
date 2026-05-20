@@ -137,6 +137,12 @@ const ProductSchema = new Schema(
       index: true,
     },
 
+    showInTopSelling: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+
     views: { type: Number, default: 0 },
     sold_count: { type: Number, default: 0 },
 
