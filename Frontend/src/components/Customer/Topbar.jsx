@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { FaSearch, FaBell, FaUser, FaSignOutAlt, FaInfinity, FaBars, FaTimes, FaHome, FaShoppingBag, FaCog } from 'react-icons/fa';
+import { FaSearch, FaBell, FaUser, FaSignOutAlt, FaBars, FaTimes, FaHome, FaShoppingBag, FaCog } from 'react-icons/fa';
 import { BsFillBagHeartFill } from 'react-icons/bs';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -18,7 +18,8 @@ const Searchbar = () => {
     const [showSearchBar, setShowSearchBar] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
-    const searchRef = useRef(null);
+    const desktopSearchRef = useRef(null);
+    const mobileSearchRef = useRef(null);
     const debounceTimer = useRef(null);
     const notificationRef = useRef(null);
 
@@ -49,6 +50,20 @@ const Searchbar = () => {
     const [showNotifications, setShowNotifications] = useState(false);
     const [loadingNotifications, setLoadingNotifications] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
+
+    const navItems = [
+        { label: 'Shop', path: '/products', icon: FaShoppingBag },
+        { label: 'Bestsellers', path: '/category/bestsellers', icon: FaShoppingBag },
+        { label: 'Support', path: '/Support', icon: FaUser },
+        { label: 'About', path: '/about', icon: FaHome }
+    ];
+
+    const isNavItemActive = (path) => {
+        if (path === '/products') {
+            return location.pathname === '/products' || location.pathname.startsWith('/product/') || location.pathname.startsWith('/search');
+        }
+        return location.pathname === path;
+    };
 
 
     const getPageTitle = () => {
@@ -314,14 +329,26 @@ const Searchbar = () => {
     // Close suggestions when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (searchRef.current && !searchRef.current.contains(event.target)) {
+            const clickedDesktopSearch = desktopSearchRef.current?.contains(event.target);
+            const clickedMobileSearch = mobileSearchRef.current?.contains(event.target);
+
+            if (!clickedDesktopSearch && !clickedMobileSearch) {
                 setShowSuggestions(false);
+                setSelectedSuggestionIndex(-1);
             }
         };
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+        setShowSearchBar(false);
+        setShowSuggestions(false);
+        setShowNotifications(false);
+        setSelectedSuggestionIndex(-1);
+    }, [location.pathname]);
 
     // Close notifications when clicking outside
     useEffect(() => {
@@ -483,74 +510,61 @@ const Searchbar = () => {
         navigate('/');
     };
 
+    const handleNavigation = (path) => {
+        navigate(path);
+        setIsMobileMenuOpen(false);
+        setShowSearchBar(false);
+        setShowSuggestions(false);
+        setShowNotifications(false);
+    };
+
     return (
         <div
             className={`z-50 transition-all duration-300 ${isHomePage
-                    ? "fixed top-0 left-0 right-0 text-gray-800 border-b border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.03)] py-3"
-                    : "sticky top-0 border-b border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.03)] text-gray-800 py-3"
+                    ? "fixed top-0 left-0 right-0 text-gray-800 border-b border-white/30 shadow-[0_18px_48px_rgba(15,23,42,0.08)] py-3"
+                    : "sticky top-0 border-b border-white/30 shadow-[0_18px_48px_rgba(15,23,42,0.08)] text-gray-800 py-3"
                 }`}
-            style={{ backgroundColor: 'rgba(255, 255, 255, 0.35)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
+            style={{
+                background: 'linear-gradient(90deg, rgba(244,248,244,0.88) 0%, rgba(255,255,255,0.84) 52%, rgba(255,245,244,0.84) 100%)',
+                backdropFilter: 'blur(22px)',
+                WebkitBackdropFilter: 'blur(22px)'
+            }}
         >
-            <div className="px-6 md:px-12 w-full flex items-center justify-between relative min-h-[50px]">
-                {/* Left Links - Desktop only */}
-                <div className="hidden lg:flex gap-8 text-[15px] font-medium tracking-wide">
+            <div className="px-4 sm:px-6 md:px-8 xl:px-10 w-full flex items-center justify-between gap-3 min-h-[64px]">
+                <div className="flex items-center gap-3 lg:gap-5 flex-1 min-w-0">
                     <button
-                        onClick={() => navigate('/products')}
-                        className="transition font-semibold text-xs uppercase tracking-wider text-gray-700 hover:text-green-600"
+                        onClick={() => handleNavigation('/')}
+                        className="flex items-center gap-3 rounded-2xl py-1.5 pr-2 shrink-0 min-w-0"
+                        title="Go to home"
                     >
-                        Shop
+                        <img
+                            src="/Logo.png"
+                            alt="Hey Azhagi logo"
+                            className="w-11 h-11 rounded-[1.35rem] object-cover shadow-[0_10px_25px_rgba(129,199,132,0.35)] ring-1 ring-white/70 shrink-0"
+                        />
+                        <span className="flex flex-col items-start text-left min-w-0">
+                            <span
+                                className="text-[1.65rem] font-semibold tracking-[-0.03em] text-slate-800 leading-none truncate max-w-[10.5rem] sm:max-w-none"
+                                style={{ fontFamily: 'Playfair Display, Georgia, serif' }}
+                            >
+                                Hey Azhagi
+                            </span>
+                            <span className="hidden sm:block text-[9px] font-bold tracking-[0.32em] uppercase text-slate-400 mt-1">
+                                Anti Turnish Jewellery
+                            </span>
+                        </span>
                     </button>
-                    <button
-                        onClick={() => navigate('/category/bestsellers')}
-                        className="transition font-semibold text-xs uppercase tracking-wider text-gray-700 hover:text-green-600"
-                    >
-                        Bestsellers
-                    </button>
-                    <button
-                        onClick={() => navigate('/Support')}
-                        className="transition font-semibold text-xs uppercase tracking-wider text-gray-700 hover:text-green-600"
-                    >
-                        Support
-                    </button>
-                    <button
-                        onClick={() => navigate('/about')}
-                        className="transition font-semibold text-xs uppercase tracking-wider text-gray-700 hover:text-green-600"
-                    >
-                        About
-                    </button>
-                </div>
 
-                {/* Center Logo & Brand Identity */}
-                <div
-                    className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center cursor-pointer select-none text-center"
-                    onClick={() => navigate('/')}
-                >
-                    <span
-                        className="text-2xl md:text-3xl font-light tracking-wide transition-colors duration-300 text-gray-900"
-                        style={{ fontFamily: 'Playfair Display, Georgia, serif' }}
-                    >
-                        Hey Azhagi
-                    </span>
-                    <span
-                        className="text-[8px] md:text-[9px] font-sans tracking-[0.2em] uppercase mt-0.5 transition-colors duration-300 text-gray-500"
-                    >
-                        Anti Turnish Jewellery
-                    </span>
-                </div>
-
-                {/* Right Items */}
-                <div className="flex items-center gap-2.5 md:gap-3">
-                    {/* Search Input - Desktop only */}
-                    <div className="hidden lg:flex items-center relative z-20" ref={searchRef}>
-                        <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-[14px] h-[14px]" />
+                    <div className="hidden lg:flex items-center relative z-20 flex-1 max-w-[36rem]" ref={desktopSearchRef}>
+                        <FaSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 w-[15px] h-[15px]" />
                         <input
                             type="text"
-                            placeholder="Search jewellery..."
+                            placeholder="Search collections, rings, earrings..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={handleKeyDown}
                             onFocus={() => setShowSuggestions(searchQuery.trim().length > 1)}
-                            className="pl-10 pr-4 py-2 w-52 md:w-60 rounded-full text-xs font-semibold focus:outline-none transition-all shadow-sm bg-gray-100 text-gray-800 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-[#81C784] border border-gray-200"
+                            className="w-full pl-12 pr-5 py-3 rounded-full text-sm font-semibold focus:outline-none transition-all shadow-[inset_0_1px_1px_rgba(255,255,255,0.7),0_8px_20px_rgba(148,163,184,0.12)] bg-white/90 text-slate-700 placeholder:text-slate-400 border border-white/70 focus:bg-white focus:border-[#81C784]/50 focus:ring-4 focus:ring-[#81C784]/10"
                         />
 
                         {/* Suggestions box */}
@@ -588,11 +602,50 @@ const Searchbar = () => {
                         )}
                     </div>
 
-                    {/* Action Buttons */}
+                    <div className="hidden lg:flex items-center gap-2 text-[15px] font-medium tracking-wide shrink-0">
+                        {navItems.map((item) => (
+                            <button
+                                key={item.label}
+                                onClick={() => handleNavigation(item.path)}
+                                className={`px-3.5 py-2 rounded-full transition-all duration-200 font-bold text-[11px] uppercase tracking-[0.26em] ${isNavItemActive(item.path)
+                                        ? 'bg-slate-900 text-white shadow-lg shadow-slate-300/40'
+                                        : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
+                                    }`}
+                            >
+                                {item.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 shrink-0 rounded-full bg-white/45 border border-white/60 px-2 py-1.5 shadow-[0_10px_30px_rgba(148,163,184,0.15)]">
+                    <button
+                        onClick={() => {
+                            setShowSearchBar((prev) => !prev);
+                            setIsMobileMenuOpen(false);
+                        }}
+                        className="lg:hidden w-9 h-9 rounded-full border border-slate-200/80 bg-white/90 hover:bg-white flex items-center justify-center transition shadow-sm text-slate-600 hover:text-[#4FAE57]"
+                        title="Search"
+                    >
+                        <FaSearch className="w-3.5 h-3.5" />
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            setIsMobileMenuOpen(!isMobileMenuOpen);
+                            setShowSearchBar(false);
+                            setShowNotifications(false);
+                        }}
+                        className="lg:hidden w-9 h-9 rounded-full border border-slate-200/80 bg-white/90 hover:bg-white flex items-center justify-center transition shadow-sm text-slate-600 hover:text-[#4FAE57]"
+                        aria-label="Toggle navigation menu"
+                    >
+                        {isMobileMenuOpen ? <FaTimes className="w-3.5 h-3.5" /> : <FaBars className="w-3.5 h-3.5" />}
+                    </button>
+
                     {userRole !== 'admin' && (
                         <button
                             onClick={() => navigate('/Wishlist')}
-                            className="w-[38px] h-[38px] rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition shadow-sm text-gray-700 hover:text-green-600"
+                            className="hidden lg:flex w-10 h-10 rounded-full border border-slate-200/80 bg-white/90 hover:bg-white items-center justify-center transition-all duration-200 shadow-sm text-slate-600 hover:text-[#4FAE57] hover:-translate-y-0.5"
                             title="Wishlist"
                         >
                             <BsFillBagHeartFill className="w-4 h-4" />
@@ -602,7 +655,7 @@ const Searchbar = () => {
                     {userRole !== 'admin' && (
                         <button
                             onClick={() => navigate('/Cart')}
-                            className="w-[38px] h-[38px] rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition shadow-sm text-gray-700 hover:text-green-600"
+                            className="hidden lg:flex w-10 h-10 rounded-full border border-slate-200/80 bg-white/90 hover:bg-white items-center justify-center transition-all duration-200 shadow-sm text-slate-600 hover:text-[#4FAE57] hover:-translate-y-0.5"
                             title="Cart"
                         >
                             <FaShoppingBag className="w-4 h-4" />
@@ -610,10 +663,10 @@ const Searchbar = () => {
                     )}
 
                     {/* Notifications system */}
-                    <div className="relative" ref={notificationRef}>
+                    <div className="hidden lg:block relative" ref={notificationRef}>
                         <button
                             onClick={() => setShowNotifications(!showNotifications)}
-                            className="w-[38px] h-[38px] rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition shadow-sm text-gray-700 hover:text-green-600 relative"
+                            className="w-10 h-10 rounded-full border border-slate-200/80 bg-white/90 hover:bg-white flex items-center justify-center transition-all duration-200 shadow-sm text-slate-600 hover:text-[#4FAE57] hover:-translate-y-0.5 relative"
                             title="Notifications"
                         >
                             <FaBell className="w-4 h-4" />
@@ -708,7 +761,7 @@ const Searchbar = () => {
                     {!isLoggedIn ? (
                         <button
                             onClick={() => navigate('/Login')}
-                            className="w-[38px] h-[38px] rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition shadow-sm text-gray-700 hover:text-green-600"
+                            className="hidden lg:flex w-10 h-10 rounded-full border border-slate-200/80 bg-white/90 hover:bg-white items-center justify-center transition-all duration-200 shadow-sm text-slate-600 hover:text-[#4FAE57] hover:-translate-y-0.5"
                             title="Login"
                         >
                             <FaUser className="w-4 h-4" />
@@ -717,14 +770,14 @@ const Searchbar = () => {
                         <>
                             <button
                                 onClick={() => navigate(userRole === 'admin' ? '/admin-Dashboard' : userRole === 'seller' ? '/seller-home' : '/Settings')}
-                                className="w-[38px] h-[38px] rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition shadow-sm text-gray-700 hover:text-green-600"
+                                className="hidden lg:flex w-10 h-10 rounded-full border border-slate-200/80 bg-white/90 hover:bg-white items-center justify-center transition-all duration-200 shadow-sm text-slate-600 hover:text-[#4FAE57] hover:-translate-y-0.5"
                                 title={userRole === 'admin' ? "Admin Dashboard" : userRole === 'seller' ? "Seller Dashboard" : "Settings"}
                             >
                                 {userRole === 'admin' ? <FaCog className="w-4 h-4" /> : <FaUser className="w-4 h-4" />}
                             </button>
                             <button
                                 onClick={handleLogout}
-                                className="w-[38px] h-[38px] rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition shadow-sm text-gray-700 hover:text-red-500"
+                                className="hidden lg:flex w-10 h-10 rounded-full border border-slate-200/80 bg-white/90 hover:bg-white items-center justify-center transition-all duration-200 shadow-sm text-slate-600 hover:text-rose-500 hover:-translate-y-0.5"
                                 title="Logout"
                             >
                                 <FaSignOutAlt className="w-4 h-4" />
@@ -732,18 +785,12 @@ const Searchbar = () => {
                         </>
                     )}
 
-                    {/* Mobile Hamburger toggle */}
-                    <button
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="lg:hidden p-2 rounded-full transition-colors text-gray-700 hover:bg-gray-100"
-                    >
-                        {isMobileMenuOpen ? <FaTimes className="w-5 h-5" /> : <FaBars className="w-5 h-5" />}
-                    </button>
                 </div>
             </div>
 
             {/* Mobile Search Bar - Visible on smaller screens */}
-            <div className="lg:hidden px-6 pb-2.5 pt-2" ref={searchRef}>
+            {(showSearchBar || searchQuery.trim()) && (
+                <div className="lg:hidden px-4 sm:px-6 pb-2.5 pt-2" ref={mobileSearchRef}>
                 <div className="relative">
                     <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-[14px] h-[14px] z-10" />
                     <input
@@ -752,7 +799,8 @@ const Searchbar = () => {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        className={`w-full pl-10 pr-4 py-2 rounded-full text-xs font-semibold focus:outline-none transition-all shadow-sm ${isHomePage && !isScrolled
+                        onFocus={() => setShowSuggestions(searchQuery.trim().length > 1)}
+                        className={`w-full pl-10 pr-4 py-2.5 rounded-2xl text-xs font-semibold focus:outline-none transition-all shadow-sm ${isHomePage && !isScrolled
                                 ? "bg-white/95 text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-white/50"
                                 : "bg-gray-100 text-gray-800 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-[#81C784] border border-gray-200"
                             }`}
@@ -778,7 +826,8 @@ const Searchbar = () => {
                         </div>
                     )}
                 </div>
-            </div>
+                </div>
+            )}
 
             {/* Mobile Drawer menu */}
             {isMobileMenuOpen && (
@@ -786,48 +835,95 @@ const Searchbar = () => {
                     className="lg:hidden border-t border-gray-100 shadow-xl py-4 animate-slideDown animate-fadeIn"
                     style={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
                 >
-                    <div className="px-6 space-y-2">
-                        {/* Custom shop categories */}
-                        <button
-                            onClick={() => {
-                                navigate('/products');
-                                setIsMobileMenuOpen(false);
-                            }}
-                            className="w-full px-4 py-2.5 text-xs font-bold text-gray-700 bg-gray-50 rounded-lg hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 uppercase tracking-wider text-left"
-                        >
-                            <FaShoppingBag className="w-3.5 h-3.5" />
-                            <span>Shop</span>
-                        </button>
-                        <button
-                            onClick={() => {
-                                navigate('/category/bestsellers');
-                                setIsMobileMenuOpen(false);
-                            }}
-                            className="w-full px-4 py-2.5 text-xs font-bold text-gray-700 bg-gray-50 rounded-lg hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 uppercase tracking-wider text-left"
-                        >
-                            <FaShoppingBag className="w-3.5 h-3.5" />
-                            <span>Bestsellers</span>
-                        </button>
-                        <button
-                            onClick={() => {
-                                navigate('/Support');
-                                setIsMobileMenuOpen(false);
-                            }}
-                            className="w-full px-4 py-2.5 text-xs font-bold text-gray-700 bg-gray-50 rounded-lg hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 uppercase tracking-wider text-left"
-                        >
-                            <FaUser className="w-3.5 h-3.5" />
-                            <span>Support</span>
-                        </button>
-                        <button
-                            onClick={() => {
-                                navigate('/about');
-                                setIsMobileMenuOpen(false);
-                            }}
-                            className="w-full px-4 py-2.5 text-xs font-bold text-gray-700 bg-gray-50 rounded-lg hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 uppercase tracking-wider text-left"
-                        >
-                            <FaUser className="w-3.5 h-3.5" />
-                            <span>About</span>
-                        </button>
+                    <div className="px-4 sm:px-6 space-y-4">
+                        <div className="grid grid-cols-2 gap-3">
+                            <button
+                                onClick={() => handleNavigation('/')}
+                                className="px-4 py-3 text-xs font-bold text-gray-700 bg-gray-50 rounded-2xl hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 text-left"
+                            >
+                                <FaHome className="w-3.5 h-3.5" />
+                                <span>Home</span>
+                            </button>
+                            {userRole !== 'admin' && (
+                                <button
+                                    onClick={() => handleNavigation('/Cart')}
+                                    className="px-4 py-3 text-xs font-bold text-gray-700 bg-gray-50 rounded-2xl hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 text-left"
+                                >
+                                    <FaShoppingBag className="w-3.5 h-3.5" />
+                                    <span>Cart</span>
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="space-y-2">
+                            {navItems.map((item) => {
+                                const Icon = item.icon;
+
+                                return (
+                                    <button
+                                        key={item.label}
+                                        onClick={() => handleNavigation(item.path)}
+                                        className="w-full px-4 py-3 text-xs font-bold text-gray-700 bg-gray-50 rounded-2xl hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 uppercase tracking-[0.2em] text-left"
+                                    >
+                                        <Icon className="w-3.5 h-3.5" />
+                                        <span>{item.label}</span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                            {userRole !== 'admin' && (
+                                <>
+                                    <button
+                                        onClick={() => handleNavigation('/Wishlist')}
+                                        className="px-4 py-3 text-xs font-bold text-gray-700 bg-gray-50 rounded-2xl hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 text-left"
+                                    >
+                                        <BsFillBagHeartFill className="w-3.5 h-3.5" />
+                                        <span>Wishlist</span>
+                                    </button>
+                                    <button
+                                        onClick={() => handleNavigation('/Cart')}
+                                        className="px-4 py-3 text-xs font-bold text-gray-700 bg-gray-50 rounded-2xl hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 text-left"
+                                    >
+                                        <FaShoppingBag className="w-3.5 h-3.5" />
+                                        <span>Cart</span>
+                                    </button>
+                                </>
+                            )}
+                            {isLoggedIn ? (
+                                <button
+                                    onClick={() => handleNavigation(userRole === 'admin' ? '/admin-Dashboard' : userRole === 'seller' ? '/seller-home' : '/Settings')}
+                                    className="px-4 py-3 text-xs font-bold text-gray-700 bg-gray-50 rounded-2xl hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 text-left"
+                                >
+                                    {userRole === 'admin' ? <FaCog className="w-3.5 h-3.5" /> : <FaUser className="w-3.5 h-3.5" />}
+                                    <span>{userRole === 'admin' ? 'Dashboard' : userRole === 'seller' ? 'Seller Panel' : 'Account'}</span>
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={() => handleNavigation('/Login')}
+                                    className="px-4 py-3 text-xs font-bold text-gray-700 bg-gray-50 rounded-2xl hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 text-left"
+                                >
+                                    <FaUser className="w-3.5 h-3.5" />
+                                    <span>Login</span>
+                                </button>
+                            )}
+                            <button
+                                onClick={() => {
+                                    setShowNotifications((prev) => !prev);
+                                    setIsMobileMenuOpen(false);
+                                }}
+                                className="px-4 py-3 text-xs font-bold text-gray-700 bg-gray-50 rounded-2xl hover:bg-green-50 hover:text-green-600 transition flex items-center gap-3 text-left relative"
+                            >
+                                <FaBell className="w-3.5 h-3.5" />
+                                <span>Notifications</span>
+                                {unreadCount > 0 && (
+                                    <span className="ml-auto min-w-[18px] h-[18px] px-1 text-white text-[9px] font-bold rounded-full flex items-center justify-center bg-amber-500">
+                                        {unreadCount > 9 ? '9+' : unreadCount}
+                                    </span>
+                                )}
+                            </button>
+                        </div>
 
                         <div className="h-px bg-gray-100 my-4" />
 
@@ -835,8 +931,7 @@ const Searchbar = () => {
                             <div className="grid grid-cols-2 gap-3 pt-2">
                                 <button
                                     onClick={() => {
-                                        navigate('/Login');
-                                        setIsMobileMenuOpen(false);
+                                        handleNavigation('/Login');
                                     }}
                                     className="px-4 py-2.5 text-xs font-bold border border-gray-300 rounded-lg text-gray-700 hover:border-green-500 hover:text-[#81C784] transition text-center uppercase tracking-wider"
                                 >
@@ -844,8 +939,7 @@ const Searchbar = () => {
                                 </button>
                                 <button
                                     onClick={() => {
-                                        navigate('/Register');
-                                        setIsMobileMenuOpen(false);
+                                        handleNavigation('/Register');
                                     }}
                                     className="px-4 py-2.5 text-xs font-bold text-white bg-[#81C784] rounded-lg hover:bg-[#66bb6a] transition text-center uppercase tracking-wider shadow-sm"
                                 >
@@ -865,8 +959,7 @@ const Searchbar = () => {
                                 </div>
                                 <button
                                     onClick={() => {
-                                        navigate('/Settings');
-                                        setIsMobileMenuOpen(false);
+                                        handleNavigation('/Settings');
                                     }}
                                     className="w-full px-4 py-2.5 text-xs font-bold text-gray-700 bg-gray-50 rounded-lg hover:bg-green-50 transition flex items-center gap-3 text-left"
                                 >

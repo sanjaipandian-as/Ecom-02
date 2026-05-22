@@ -4,6 +4,7 @@ import AppSkeleton from './components/Common/AppSkeleton';
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 const Homepage = lazy(() => import('./pages/Homepage'));
+const ProductsPage = lazy(() => import('./pages/ProductsPage'));
 import './App.css'
 import Login from './components/Customer/Login'
 import Register from './components/Customer/Register'
@@ -51,6 +52,7 @@ function App() {
         <Routes>
 
           <Route path="/" element={<Homepage />} />
+          <Route path="/products" element={<ProductsPage />} />
           <Route path="/product/:id" element={<Productview />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/category/:categorySlug" element={<CategoriesSpecificpage />} />

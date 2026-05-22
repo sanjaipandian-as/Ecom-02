@@ -207,6 +207,17 @@ const CategoriesSpecificpage = () => {
     const fetchProducts = async () => {
         setLoading(true);
         try {
+            if (categorySlug === 'bestsellers') {
+                const response = await API.get('/products/customer/homepage-sections');
+                const bestSellerProducts = response.data.topSellingProducts || [];
+
+                setProducts(bestSellerProducts);
+                setTotalProducts(bestSellerProducts.length);
+                setTotalPages(1);
+                setCategoryName('Bestsellers');
+                return;
+            }
+
             const params = {
                 page: currentPage,
                 limit: 50, // Show 50 products per page for better performance
@@ -269,11 +280,14 @@ const CategoriesSpecificpage = () => {
             console.error('Error fetching products:', error);
             setProducts([]);
             setTotalProducts(0);
+            setTotalPages(1);
             // Format category name from slug as fallback
-            const formattedName = categorySlug
-                .split('-')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
+            const formattedName = categorySlug === 'bestsellers'
+                ? 'Bestsellers'
+                : categorySlug
+                    .split('-')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
             setCategoryName(formattedName);
         } finally {
             setLoading(false);
