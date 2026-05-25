@@ -11,7 +11,7 @@ import {
 } from 'react-icons/fa';
 import { BsFillBagHeartFill } from 'react-icons/bs';
 
-const Sidebar = ({ showFilters = false, onFiltersChange, categories = [], maxPrice = 50000 }) => {
+const Sidebar = ({ showFilters = false, onFiltersChange, categories = [], maxPrice = 10000000 }) => {
     const navigate = useNavigate();
 
     // Filter states

@@ -125,30 +125,30 @@ const Categories = () => {
     const totalSlides = Math.ceil(categories.length / visibleCards) || 1
 
     return (
-        <section className="w-full pt-6 pb-12 md:pt-8 md:pb-16 overflow-hidden" style={{ background: '#FFFDFD' }}>
+        <section className="w-full pt-6 pb-12 md:pt-8 md:pb-16 overflow-hidden bg-cream-soft">
             <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-5 md:mb-6 px-2 gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 px-2 gap-4">
                     <div className="flex flex-col items-start text-left">
-                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-semibold mb-3 tracking-normal" style={{ color: '#2E2E2E' }}>
-                            Curated <span style={{ color: '#81C784' }}>Collections</span>
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 tracking-tight text-emerald-deep">
+                            Curated <span className="text-gold-lustrous font-normal italic font-serif">Collections</span>
                         </h2>
-                        <p className="text-gray-500 font-sans text-[15px] md:text-base max-w-xl leading-relaxed">
+                        <p className="text-slate-600 font-sans text-sm md:text-base max-w-xl leading-relaxed">
                             Discover our handpicked selection of premium, anti-tarnish jewelry designed to bring timeless elegance and confidence to your everyday look.
                         </p>
                     </div>
 
                     {/* Right side design to fill empty space */}
-                    <div className="hidden md:flex items-center gap-6 pb-1 animate-fade-in-up">
+                    <div className="hidden md:flex items-center gap-6 pb-1">
                         <div className="flex flex-col text-right">
-                            <span className="text-[13px] font-bold tracking-widest uppercase text-[#2E2E2E]">Premium Quality</span>
-                            <span className="text-[11px] text-gray-400 font-medium">Anti-Tarnish & Hypoallergenic</span>
+                            <span className="text-[12px] font-bold tracking-[0.2em] uppercase text-emerald-deep">Premium Quality</span>
+                            <span className="text-[10px] text-slate-400 font-medium uppercase tracking-[0.1em] mt-0.5">Anti-Tarnish & Hypoallergenic</span>
                         </div>
-                        <div className="h-10 w-px bg-gray-200"></div>
+                        <div className="h-10 w-px bg-gold-champagne/20"></div>
                         <button 
                             onClick={() => navigate('/products')}
-                            className="group flex items-center gap-2 bg-white border-2 border-[#81C784] text-[#81C784] px-6 py-2.5 rounded-full text-sm font-bold hover:bg-[#81C784] hover:text-white transition-all shadow-sm"
+                            className="group flex items-center gap-2.5 bg-white border border-gold-lustrous text-gold-lustrous hover:bg-gold-lustrous hover:text-white transition-all duration-350 shadow-xs px-5 py-2.5 text-xs font-bold uppercase tracking-widest cursor-pointer rounded-xs"
                         >
-                            Explore All <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            Explore All <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                         </button>
                     </div>
                 </div>
@@ -158,7 +158,7 @@ const Categories = () => {
                     {!loading && categories.length > visibleCards && (
                         <button
                             onClick={() => scroll('left')}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/50 backdrop-blur-md rounded-full flex items-center justify-center text-gray-800 shadow-md hover:bg-white transition-all duration-300 opacity-0 group-hover/nav:opacity-100 hidden md:flex"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/80 backdrop-blur-md border border-gold-champagne/25 rounded-full flex items-center justify-center text-emerald-deep shadow-sm hover:bg-gold-lustrous hover:text-white hover:border-gold-lustrous transition-all duration-350 opacity-0 group-hover/nav:opacity-100 hidden md:flex cursor-pointer"
                             aria-label="Previous categories"
                         >
                             <ChevronLeft className="w-5 h-5" />
@@ -169,7 +169,7 @@ const Categories = () => {
                     {!loading && categories.length > visibleCards && (
                         <button
                             onClick={() => scroll('right')}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/50 backdrop-blur-md rounded-full flex items-center justify-center text-gray-800 shadow-md hover:bg-white transition-all duration-300 opacity-0 group-hover/nav:opacity-100 hidden md:flex"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/80 backdrop-blur-md border border-gold-champagne/25 rounded-full flex items-center justify-center text-emerald-deep shadow-sm hover:bg-gold-lustrous hover:text-white hover:border-gold-lustrous transition-all duration-350 opacity-0 group-hover/nav:opacity-100 hidden md:flex cursor-pointer"
                             aria-label="Next categories"
                         >
                             <ChevronRight className="w-5 h-5" />
@@ -207,12 +207,12 @@ const Categories = () => {
                                 <div
                                     key={cat._id}
                                     onClick={() => handleCategoryClick(cat.name)}
-                                    className="flex-shrink-0 relative transition-transform duration-300 overflow-hidden cursor-pointer group snap-start border border-gray-100 hover:shadow-2xl"
+                                    className="flex-shrink-0 relative transition-all duration-500 overflow-hidden cursor-pointer group snap-start border border-gold-champagne/15 hover:shadow-xl hover:border-gold-lustrous/40"
                                     style={{
                                         minWidth: `${cardWidth}px`,
                                         width: `${cardWidth}px`,
                                         height: '420px',
-                                        borderRadius: '6px'
+                                        borderRadius: '4px'
                                     }}
                                 >
                                     {/* Full Height Background Image */}
@@ -230,19 +230,19 @@ const Categories = () => {
                                     )}
 
                                     {/* Gradient Overlay */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent opacity-90 transition-opacity duration-300 group-hover:opacity-100"></div>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-emerald-deep/95 via-black/10 to-transparent opacity-85 transition-opacity duration-500 group-hover:opacity-95"></div>
 
                                     {/* Text and Button Overlay */}
-                                    <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center z-10 transform transition-transform duration-300 group-hover:-translate-y-2">
-                                        <span className="text-white text-[14px] font-sans font-medium tracking-wide">Explore</span>
+                                    <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center z-10 transform transition-all duration-500 group-hover:-translate-y-4">
+                                        <span className="text-gold-champagne text-xs font-bold uppercase tracking-[0.25em] mb-1">Explore</span>
                                         <span 
-                                            className="text-white text-[28px] italic mb-4 tracking-tight drop-shadow-md" 
+                                            className="text-white text-3xl font-bold mb-4 tracking-wide drop-shadow-lg" 
                                             style={{ fontFamily: 'Playfair Display, Georgia, serif' }}
                                         >
                                             {cat.name}
                                         </span>
-                                        <button className="bg-[#faf3ce] text-[#1a382e] px-5 py-1.5 rounded-full text-[11px] font-bold flex items-center gap-1.5 hover:bg-white transition-colors uppercase tracking-widest shadow-md">
-                                            Shop <ArrowRight className="w-3 h-3 stroke-[1px]" />
+                                        <button className="bg-cream-base text-emerald-deep px-5 py-2 text-[10px] font-bold flex items-center gap-1.5 hover:bg-gold-lustrous hover:text-white transition-all duration-350 uppercase tracking-widest shadow-md rounded-xs">
+                                            Shop Collection <ArrowRight className="w-3.5 h-3.5" />
                                         </button>
                                     </div>
                                 </div>
@@ -251,9 +251,9 @@ const Categories = () => {
                     </div>
                 </div>
 
-                <div className="md:hidden flex justify-center items-center gap-2 mt-6 text-sm font-medium" style={{ color: '#81C784' }}>
+                <div className="md:hidden flex justify-center items-center gap-2 mt-6 text-sm font-medium" style={{ color: '#b4925a' }}>
                     <ChevronLeft className="w-4 h-4 animate-pulse" />
-                    <span className="uppercase tracking-widest text-[10px]">Swipe to discover more</span>
+                    <span className="uppercase tracking-[0.2em] text-[9px] font-bold">Swipe to discover more</span>
                     <ChevronRight className="w-4 h-4 animate-pulse" />
                 </div>
             </div>

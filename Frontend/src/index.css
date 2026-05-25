@@ -11,17 +11,35 @@
   /* Precision UI - Inter */
   --font-inter: 'Inter', sans-serif;
 
-  /* Primary - Titan Blue for professional CTAs */
-  --color-primary: #81C784;
-  --color-primary-foreground: #ffffff;
+  /* Premium Luxury Brand Colors */
+  --color-emerald-deep: #0b1410;
+  --color-emerald-dark: #12221b;
+  --color-emerald-light: #2b4c3c;
+  
+  --color-gold-champagne: #c5a880;
+  --color-gold-lustrous: #b4925a;
+  --color-gold-deep: #8c734b;
+  --color-gold-light: #f5eedc;
 
-  /* Secondary - Onyx Slate for professional depth */
-  --color-secondary: #0F172A;
+  --color-cream-base: #faf9f6;
+  --color-cream-soft: #fcfbf7;
+  --color-cream-dark: #f4f1ea;
+
+  --color-luxury-charcoal: #1c1c1c;
+  --color-luxury-crimson: #540c1b;
+  --color-luxury-crimson-dark: #3a0812;
+
+  /* Legacy primary/secondary mappings for compatibility */
+  --color-primary: #b4925a;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #0b1410;
   --color-secondary-foreground: #ffffff;
 }
 
 body {
   font-family: 'Inter', sans-serif;
+  background-color: #faf9f6;
+  color: #1c1c1c;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -32,10 +50,11 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  letter-spacing: -0.02em;
+  font-family: 'Playfair Display', Georgia, serif;
+  letter-spacing: -0.01em;
 }
 
+/* Hide scrollbars globally but keep functionality */
 ::-webkit-scrollbar {
   width: 0px;
   height: 0px;
@@ -45,98 +64,10 @@ h6 {
   scrollbar-width: none;
 }
 
-/* Micro-animations */
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: scaleX(0.8);
-  }
-
-  to {
-    opacity: 1;
-    transform: scaleX(1);
-  }
-}
-
-@keyframes sparkle {
-
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-}
-
-.animate-slideUp {
-  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-out forwards;
-}
-
-.animate-slideDown {
-  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transform-origin: left center;
-}
-
-.animate-sparkle {
-  animation: sparkle 0.3s ease;
-}
-
-@keyframes slideLeft {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-.animate-slideLeft {
-  animation: slideLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Custom Utilities */
-.font-hero {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-}
-
-.font-body {
-  font-family: 'Inter', sans-serif;
-}
-
-/* Custom Scrollbar for Independent Scrolling Areas */
+/* Custom Scrollbar for independent scroll areas */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -144,15 +75,115 @@ h6 {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
-  border-radius: 3px;
+  background: #c5a880/40;
+  border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #cbd5e1;
+  background: #b4925a/70;
 }
 
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #e2e8f0 transparent;
+  scrollbar-color: rgba(197, 168, 128, 0.4) transparent;
+}
+
+/* Luxury Interactive Animations */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Micro-animation utilities */
+.animate-fade-up {
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Luxury Text Gold Link Hover Effect */
+.luxury-link {
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.luxury-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: #b4925a;
+  transform-origin: bottom right;
+  transition: transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);
+}
+
+.luxury-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* Floating Glassmorphic Effect */
+.glass-header {
+  background: rgba(253, 252, 250, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(197, 168, 128, 0.15);
+}
+
+.glass-dropdown {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(197, 168, 128, 0.2);
+  box-shadow: 0 10px 30px -10px rgba(11, 20, 16, 0.12);
+}
+
+.luxury-shadow {
+  box-shadow: 0 20px 40px -15px rgba(11, 20, 16, 0.05);
 }

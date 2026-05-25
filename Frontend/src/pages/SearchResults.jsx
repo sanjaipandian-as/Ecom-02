@@ -71,10 +71,10 @@ const SearchResults = () => {
     const [filters, setFilters] = useState({
         sortBy: 'relevance',
         categories: [],
-        priceRange: [0, 50000]
+        priceRange: [0, 10000000]
     });
     const [categories, setCategories] = useState([]);
-    const [maxPrice, setMaxPrice] = useState(50000);
+    const [maxPrice, setMaxPrice] = useState(10000000);
 
     useEffect(() => {
         if (query) {
@@ -146,7 +146,7 @@ const SearchResults = () => {
 
             // Calculate max price
             const prices = products.map(p => p.pricing?.selling_price || p.price || 0);
-            const max = prices.length > 0 ? Math.max(...prices) : 50000;
+            const max = prices.length > 0 ? Math.max(...prices) : 10000000;
             setMaxPrice(max);
             setFilters(prev => ({ ...prev, priceRange: [0, max] }));
 

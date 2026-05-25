@@ -37,7 +37,7 @@ const Products = ({ filters = defaultFilters }) => {
                 const hasActiveFilters =
                     filters.category ||
                     (filters.sortBy && filters.sortBy !== 'relevance') ||
-                    (filters.priceRange && (filters.priceRange[0] > 0 || filters.priceRange[1] < 50000)) ||
+                    (filters.priceRange && (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000000)) ||
                     (filters.selectedBrands && filters.selectedBrands.length > 0) ||
                     (filters.selectedAges && filters.selectedAges.length > 0) ||
                     (filters.selectedTags && filters.selectedTags.length > 0) ||
@@ -234,27 +234,32 @@ const Products = ({ filters = defaultFilters }) => {
         const mrp = product.pricing?.mrp;
         const discount = product.pricing?.discount_percentage || 0;
 
-        // Mock colors for design
-        const colors = [
-            ['bg-[#a3c4d3]', 'bg-[#8c9ca8]', 'bg-[#708c76]'],
-            ['bg-[#cdd3a3]', 'bg-[#8c9ca8]', 'bg-[#d68a60]'],
-            ['bg-[#d3b4a3]', 'bg-[#8ca8a4]', 'bg-[#708c76]']
+        // Mock colors for finishes
+        const finishes = [
+            { name: '18K Yellow Gold', hex: '#dfb76c' },
+            { name: 'Rose Gold', hex: '#e8c3ba' },
+            { name: 'Sterling Silver', hex: '#e2e2e2' }
         ];
-        const randomColors = colors[product.name.length % 3];
 
         return (
             <div
                 onClick={() => handleProductClick(product._id)}
-                className="bg-white rounded-[16px] overflow-hidden hover:shadow-xl sm:hover:-translate-y-1 transition-all duration-300 border border-gray-100 cursor-pointer active:scale-98 animate-fadeIn flex flex-col h-full group w-full"
+                className="bg-white rounded-[16px] overflow-hidden hover:shadow-lg sm:hover:-translate-y-1 transition-all duration-350 border border-gold-champagne/15 cursor-pointer active:scale-98 animate-fade-in flex flex-col h-full group w-full"
             >
                 {/* Image & Background Section */}
-                <div className="relative w-full aspect-square sm:aspect-[4/4.5] overflow-hidden flex-shrink-0 p-4 flex flex-col" style={{ background: 'linear-gradient(to bottom, #dfdcd5, #f2efeb)' }}>
+                <div className="relative w-full aspect-square sm:aspect-[4/4.5] overflow-hidden flex-shrink-0 p-4 flex flex-col bg-cream-base border-b border-gold-champagne/10">
                     
                     {/* Top Badge */}
                     <div className="absolute top-4 left-4 z-20">
-                        <span className="px-4 py-1.5 rounded-full border border-white/80 text-white text-[11px] font-medium tracking-wide shadow-sm" style={{ backgroundColor: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(4px)' }}>
-                            {discount > 0 ? 'Promotion' : 'New'}
-                        </span>
+                        {discount > 0 ? (
+                            <span className="px-2.5 py-1 text-[9px] font-bold tracking-[0.1em] text-white bg-luxury-crimson rounded-xs shadow-xs uppercase">
+                                SALE
+                            </span>
+                        ) : (
+                            <span className="px-2.5 py-1 text-[9px] font-bold tracking-[0.1em] text-emerald-deep bg-gold-champagne/30 rounded-xs shadow-xs uppercase">
+                                NEW
+                            </span>
+                        )}
                     </div>
 
                     {/* Product Image */}
@@ -262,7 +267,7 @@ const Products = ({ filters = defaultFilters }) => {
                         <img
                             src={(product.images?.filter(img => img && img.trim() !== '')?.[0]) || placeholderImg}
                             alt={product.name}
-                            className="w-full h-full object-contain mix-blend-multiply drop-shadow-xl group-hover:scale-105 transition-transform duration-500"
+                            className="w-full h-full object-contain mix-blend-multiply drop-shadow-md group-hover:scale-105 transition-transform duration-500"
                             loading="lazy"
                             onError={(e) => {
                                 e.target.onerror = null;
@@ -273,23 +278,24 @@ const Products = ({ filters = defaultFilters }) => {
 
                     {availablePieces <= 0 && (
                         <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] z-30 flex items-center justify-center">
-                            <span className="text-gray-800 font-bold px-4 py-2 bg-white rounded-full text-[12px] sm:text-sm uppercase tracking-widest shadow-md">Out of Stock</span>
+                            <span className="text-stone-800 font-bold px-4 py-2 bg-white rounded-xs text-[11px] uppercase tracking-widest shadow-md">Out of Stock</span>
                         </div>
                     )}
                 </div>
 
                 {/* Content Section */}
-                <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between bg-white border-t border-gray-100">
+                <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between bg-white">
                     <div>
-                        {/* Color Swatches */}
-                        <div className="flex items-center gap-1.5 mb-3">
-                            {randomColors.map((color, i) => (
-                                <div key={i} className={`w-3.5 h-3.5 rounded-full ${color} border border-gray-200 shadow-sm`}></div>
+                        {/* Material Finishes */}
+                        <div className="flex items-center gap-1 mb-3">
+                            <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-gold-lustrous mr-1">Finishes:</span>
+                            {finishes.map((f, i) => (
+                                <div key={i} className="w-2.5 h-2.5 rounded-full border border-white shadow-xs" style={{ backgroundColor: f.hex }} title={f.name}></div>
                             ))}
                         </div>
 
                         {/* Title */}
-                        <h3 className="text-[14px] sm:text-[15px] font-medium text-gray-800 line-clamp-2 leading-snug mb-4">
+                        <h3 className="text-[14px] sm:text-[15px] font-medium text-stone-850 line-clamp-2 leading-snug mb-4 font-serif">
                             {product.name}
                         </h3>
                     </div>
@@ -298,9 +304,9 @@ const Products = ({ filters = defaultFilters }) => {
                     <div className="flex items-center justify-between pt-2 mt-auto">
                         <div className="flex flex-col">
                             {mrp > sellingPrice && (
-                                <span className="text-[11px] text-gray-400 font-medium line-through">₹{mrp.toFixed(0)}</span>
+                                <span className="text-[10px] text-gray-400 font-medium line-through font-outfit">₹{mrp.toFixed(0)}</span>
                             )}
-                            <span className="text-[16px] sm:text-[17px] font-bold text-[#2E2E2E] tracking-tight">₹{sellingPrice.toFixed(2)}</span>
+                            <span className="text-base font-bold text-stone-900 tracking-tight font-outfit">₹{sellingPrice.toFixed(0)}</span>
                         </div>
 
                         {inCart ? (
@@ -309,26 +315,24 @@ const Products = ({ filters = defaultFilters }) => {
                                     e.stopPropagation();
                                     navigate('/cart');
                                 }}
-                                className="flex items-center gap-1.5 px-4 py-1.5 bg-[#81C784] text-white rounded-full transition-all shadow-sm hover:shadow-md active:scale-95"
+                                className="flex items-center justify-center px-4 py-1.5 bg-emerald-deep text-white hover:bg-gold-lustrous transition-all duration-350 text-[10px] font-bold uppercase tracking-wider rounded-xs shadow-xs cursor-pointer"
                             >
-                                <span className="text-[13px] font-medium tracking-wide">In Cart</span>
+                                <span className="text-[10px] font-bold tracking-wide">In Bag</span>
                             </button>
                         ) : (
                             <button
                                 onClick={(e) => handleAddToCart(e, product._id)}
                                 disabled={addingToCart === product._id || availablePieces <= 0}
-                                className={`flex items-center gap-1 px-4 py-1.5 text-white rounded-full transition-all shadow-sm hover:shadow-md active:scale-95 ${addingToCart === product._id || availablePieces <= 0
-                                    ? 'bg-gray-400 cursor-not-allowed'
-                                    : 'bg-[#1a382e] hover:bg-[#122b22] cursor-pointer'
-                                    }`}
+                                className={`flex items-center justify-center px-4 py-1.5 transition-all duration-350 text-[10px] font-bold uppercase tracking-wider rounded-xs shadow-xs cursor-pointer ${
+                                    addingToCart === product._id || availablePieces <= 0
+                                        ? 'bg-stone-300 text-stone-500 cursor-not-allowed'
+                                        : 'bg-white border border-emerald-deep text-emerald-deep hover:bg-emerald-deep hover:text-white'
+                                }`}
                             >
                                 {addingToCart === product._id ? (
-                                    <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-white"></div>
+                                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current"></div>
                                 ) : (
-                                    <>
-                                        <span className="text-[14px] font-medium leading-none mb-0.5">+</span>
-                                        <span className="text-[12px] font-medium tracking-wide">Cart</span>
-                                    </>
+                                    'Add to Bag'
                                 )}
                             </button>
                         )}
@@ -339,7 +343,7 @@ const Products = ({ filters = defaultFilters }) => {
     }, [isInCart, handleProductClick, handleAddToCart, addingToCart, navigate]);
 
     return (
-        <div className="w-full pb-20 md:pb-16 pt-2 md:pt-4" style={{ background: '#FFFDFD' }}>
+        <div className="w-full pb-20 md:pb-16 pt-2 md:pt-4 bg-cream-soft">
 
             {notification.show && (
                 <div className={`fixed top-16 sm:top-20 right-3 sm:right-6 left-3 sm:left-auto z-50 flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 rounded-lg shadow-lg transform transition-all ${notification.type === 'success'
@@ -358,31 +362,16 @@ const Products = ({ filters = defaultFilters }) => {
             <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
 
                 {loading ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                         {[...Array(8)].map((_, i) => (
-                            <div key={i} className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-sm border border-gray-100 p-3 sm:p-4">
-                                <Skeleton className="w-full aspect-[4/3] mb-4" />
+                            <div key={i} className="bg-white rounded-2xl overflow-hidden border border-gold-champagne/15 p-3 sm:p-4 animate-pulse">
+                                <Skeleton className="w-full aspect-[4/4.5] mb-4 bg-cream-base" />
                                 <div className="space-y-3">
-                                    <div className="flex justify-between items-start gap-2">
-                                        <Skeleton className="h-5 w-3/4" />
-                                        <Skeleton className="h-5 w-10" />
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <div className="space-y-2">
-                                            <Skeleton className="h-3 w-12" />
-                                            <Skeleton className="h-4 w-16" />
-                                        </div>
-                                        <div className="space-y-2 flex flex-col items-end">
-                                            <Skeleton className="h-3 w-12" />
-                                            <Skeleton className="h-4 w-16" />
-                                        </div>
-                                    </div>
-                                    <div className="pt-3 border-t border-gray-100 flex justify-between items-center">
-                                        <div className="space-y-1">
-                                            <Skeleton className="h-6 w-20" />
-                                            <Skeleton className="h-3 w-12" />
-                                        </div>
-                                        <Skeleton className="h-10 w-24" />
+                                    <Skeleton className="h-5 w-3/4 bg-cream-base" />
+                                    <Skeleton className="h-4 w-1/2 bg-cream-base" />
+                                    <div className="pt-3 border-t border-gold-champagne/10 flex justify-between items-center">
+                                        <Skeleton className="h-6 w-20 bg-cream-base" />
+                                        <Skeleton className="h-8 w-24 bg-cream-base" />
                                     </div>
                                 </div>
                             </div>
@@ -414,24 +403,24 @@ const Products = ({ filters = defaultFilters }) => {
                 )}
 
                 {!loading && !error && totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-2 sm:gap-4 mt-6 sm:mt-8">
+                    <div className="flex items-center justify-center gap-2 sm:gap-4 mt-8 sm:mt-12">
                         <button
                             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                             disabled={currentPage === 1}
-                            className="px-4 sm:px-6 py-2 sm:py-3 bg-white border-2 border-gray-300 rounded-lg font-semibold text-sm sm:text-base text-gray-700 hover:border-pink-600 hover:text-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-700 active:scale-95"
+                            className="px-5 py-2.5 bg-white border border-gold-champagne/40 rounded-xs font-semibold text-xs text-stone-700 hover:border-gold-lustrous hover:text-gold-lustrous transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 cursor-pointer uppercase tracking-wider"
                         >
                             <span className="hidden sm:inline">Previous</span>
                             <span className="sm:hidden">Prev</span>
                         </button>
                         <div className="flex items-center gap-2">
-                            <span className="text-gray-700 font-semibold text-sm sm:text-base">
+                            <span className="text-stone-600 font-semibold text-xs uppercase tracking-widest font-outfit">
                                 Page {currentPage} of {totalPages}
                             </span>
                         </div>
                         <button
                             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                             disabled={currentPage === totalPages}
-                            className="px-4 sm:px-6 py-2 sm:py-3 bg-white border-2 border-gray-300 rounded-lg font-semibold text-sm sm:text-base text-gray-700 hover:border-pink-600 hover:text-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-700 active:scale-95"
+                            className="px-5 py-2.5 bg-white border border-gold-champagne/40 rounded-xs font-semibold text-xs text-stone-700 hover:border-gold-lustrous hover:text-gold-lustrous transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 cursor-pointer uppercase tracking-wider"
                         >
                             Next
                         </button>

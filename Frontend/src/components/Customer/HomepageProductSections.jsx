@@ -15,18 +15,18 @@ const SectionCard = ({ product, accent = 'from-amber-100 via-white to-rose-100' 
         <button
             type="button"
             onClick={() => navigate(`/product/${product._id}`)}
-            className="group text-left bg-white rounded-[28px] border border-stone-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+            className="group text-left bg-white rounded-[16px] border border-gold-champagne/15 overflow-hidden shadow-xs hover:shadow-lg transition-all duration-350 hover:-translate-y-1 flex flex-col h-full"
         >
-            <div className={`relative aspect-[4/4.6] bg-gradient-to-br ${accent} p-5 overflow-hidden`}>
+            <div className="relative aspect-[4/4.6] bg-cream-base p-5 overflow-hidden border-b border-gold-champagne/10 flex-shrink-0 flex items-center justify-center">
                 {discount > 0 && (
-                    <div className="absolute top-4 left-4 rounded-full bg-[#1f3b2d] px-3 py-1 text-[11px] font-semibold text-white shadow-sm">
+                    <div className="absolute top-4 left-4 rounded-xs bg-luxury-crimson px-2.5 py-1 text-[9px] font-bold tracking-[0.1em] text-white shadow-sm uppercase">
                         {discount}% OFF
                     </div>
                 )}
                 <img
                     src={image}
                     alt={product.name}
-                    className="h-full w-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
+                    className="h-full w-full object-contain drop-shadow-md transition-transform duration-500 group-hover:scale-105"
                     onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = placeholderImg;
@@ -34,23 +34,25 @@ const SectionCard = ({ product, accent = 'from-amber-100 via-white to-rose-100' 
                 />
             </div>
 
-            <div className="p-5">
-                <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-stone-500">
-                    {product.category?.main || 'Collection'}
-                </p>
-                <h3 className="mb-3 line-clamp-2 text-[16px] font-semibold leading-snug text-stone-900">
-                    {product.name}
-                </h3>
-                <div className="flex items-end justify-between gap-3">
+            <div className="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                    <p className="mb-1.5 text-[9.5px] font-bold uppercase tracking-[0.25em] text-gold-lustrous">
+                        {product.category?.main || 'Collection'}
+                    </p>
+                    <h3 className="mb-3 line-clamp-2 text-[15px] font-medium leading-snug text-stone-850 font-serif">
+                        {product.name}
+                    </h3>
+                </div>
+                <div className="flex items-end justify-between gap-3 mt-4">
                     <div>
                         {mrp > sellingPrice && (
-                            <p className="text-xs text-stone-400 line-through">Rs. {mrp.toFixed(0)}</p>
+                            <p className="text-[11px] text-stone-400 font-medium line-through font-outfit">₹{mrp.toFixed(0)}</p>
                         )}
-                        <p className="text-xl font-bold tracking-tight text-stone-950">Rs. {sellingPrice.toFixed(0)}</p>
+                        <p className="text-lg font-bold tracking-tight text-stone-900 font-outfit">₹{sellingPrice.toFixed(0)}</p>
                     </div>
-                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#1f3b2d]">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-gold-lustrous">
                         View
-                        <FaArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
+                        <FaArrowRight className="w-3 h-3 transition-transform duration-350 group-hover:translate-x-1" />
                     </span>
                 </div>
             </div>
@@ -105,13 +107,13 @@ const HomepageProductSections = () => {
     }, []);
 
     const renderSection = (title, subtitle, products, accent, emptyTitle, emptyDescription) => (
-        <section className="mb-8 sm:mb-10">
-            <div className="mb-5 flex items-end justify-between gap-4">
+        <section className="mb-12 sm:mb-16">
+            <div className="mb-6 flex items-end justify-between gap-4 border-b border-gold-champagne/10 pb-4">
                 <div>
-                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-stone-500">{subtitle}</p>
-                    <h2 className="text-2xl font-semibold tracking-tight text-stone-950 sm:text-3xl">{title}</h2>
+                    <p className="mb-1.5 text-[9.5px] font-bold uppercase tracking-[0.28em] text-gold-lustrous">{subtitle}</p>
+                    <h2 className="text-2xl font-bold tracking-tight text-emerald-deep sm:text-3xl font-serif">{title}</h2>
                 </div>
-                <div className="hidden rounded-full border border-stone-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-stone-500 sm:block">
+                <div className="hidden rounded-full border border-gold-champagne/20 bg-white px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-lustrous sm:block">
                     {products.length} items
                 </div>
             </div>
@@ -131,9 +133,9 @@ const HomepageProductSections = () => {
     if (loading) {
         return (
             <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-10">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
                     {Array.from({ length: 4 }).map((_, index) => (
-                        <div key={index} className="h-[360px] rounded-[28px] border border-stone-200 bg-stone-100 animate-pulse" />
+                        <div key={index} className="h-[380px] rounded-[16px] border border-gold-champagne/15 bg-cream-base animate-pulse" />
                     ))}
                 </div>
             </div>
@@ -141,12 +143,12 @@ const HomepageProductSections = () => {
     }
 
     return (
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-10 sm:py-14">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-6 sm:py-10">
             {renderSection(
                 'Top Selling Products',
                 'Curated By Admin',
                 sections.topSellingProducts,
-                'from-amber-100 via-orange-50 to-white',
+                null,
                 'No top selling products selected yet',
                 'Turn on products from the admin homepage section and they will appear here immediately.'
             )}
@@ -155,7 +157,7 @@ const HomepageProductSections = () => {
                 'Recommended For You',
                 'Based On Buying History',
                 sections.recommendedProducts,
-                'from-emerald-100 via-teal-50 to-white',
+                null,
                 isCustomerLoggedIn ? 'No recommendation data yet' : 'Login to get personalized picks',
                 isCustomerLoggedIn
                     ? 'When this account has completed orders, this section will automatically show matching products.'

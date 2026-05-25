@@ -160,7 +160,7 @@ const CategoriesSpecificpage = () => {
 
     // Filter states
     const [filters, setFilters] = useState({
-        priceRange: [0, 50000],
+        priceRange: [0, 10000000],
         selectedBrands: [],
         selectedAges: [],
         selectedTags: [],

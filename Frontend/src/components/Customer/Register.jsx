@@ -5,8 +5,6 @@ import {
     FaEnvelope,
     FaEye,
     FaEyeSlash,
-    FaFacebook,
-    FaGoogle,
     FaMapMarkerAlt,
     FaPhone,
     FaCheckCircle,
@@ -135,9 +133,7 @@ const Register = () => {
                     <section className="relative hidden h-screen bg-[#f4efe7] p-10 lg:block">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(31,59,45,0.08),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(129,199,132,0.18),transparent_28%)]" />
                         <div className="relative">
-                            <div className="inline-flex items-center gap-2 rounded-full border border-stone-300 bg-white/80 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-stone-600">
-                                Create Customer Account
-                            </div>
+
                             <h1 className="mt-8 max-w-md text-5xl font-bold leading-[1.02] tracking-tight text-stone-950">
                                 Set up your account in a few easy steps.
                             </h1>
@@ -179,26 +175,6 @@ const Register = () => {
                                     {success}
                                 </div>
                             )}
-
-                            <div className="mb-6 grid grid-cols-2 gap-3">
-                                <button type="button" className="flex items-center justify-center gap-2 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm font-semibold text-stone-700 transition-all hover:border-stone-300 hover:bg-stone-50 active:scale-[0.98]">
-                                    <FaGoogle className="text-red-500" />
-                                    Google
-                                </button>
-                                <button type="button" className="flex items-center justify-center gap-2 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm font-semibold text-stone-700 transition-all hover:border-stone-300 hover:bg-stone-50 active:scale-[0.98]">
-                                    <FaFacebook className="text-blue-600" />
-                                    Facebook
-                                </button>
-                            </div>
-
-                            <div className="relative mb-6">
-                                <div className="absolute inset-0 flex items-center">
-                                    <div className="w-full border-t border-stone-200" />
-                                </div>
-                                <div className="relative flex justify-center">
-                                    <span className="bg-white px-4 text-xs font-medium uppercase tracking-[0.22em] text-stone-400">Or sign up with email</span>
-                                </div>
-                            </div>
 
                             <form onSubmit={handleSubmit} className="space-y-7">
                                 <div className="rounded-[28px] border border-stone-200 bg-stone-50 p-4 sm:p-5">

@@ -4,8 +4,6 @@ import {
     FaArrowRight,
     FaEye,
     FaEyeSlash,
-    FaFacebook,
-    FaGoogle,
     FaLock,
     FaCheckCircle,
     FaShieldAlt,
@@ -112,9 +110,7 @@ const Login = () => {
                 <section className="relative hidden h-screen overflow-hidden bg-[#1f3b2d] p-10 text-white lg:flex lg:flex-col lg:justify-between">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.18),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(129,199,132,0.2),transparent_28%)]" />
                     <div className="relative">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.3em]">
-                            Hey Azhagi Customer Access
-                        </div>
+
                         <h1 className="mt-8 max-w-md text-5xl font-bold leading-[1.02] tracking-tight">
                             Sign in to continue your shopping journey.
                         </h1>
@@ -172,26 +168,6 @@ const Login = () => {
                                 {success}
                             </div>
                         )}
-
-                        <div className="mb-6 grid grid-cols-2 gap-3">
-                            <button type="button" className="flex items-center justify-center gap-2 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm font-semibold text-stone-700 transition-all hover:border-stone-300 hover:bg-stone-50 active:scale-[0.98]">
-                                <FaGoogle className="text-red-500" />
-                                Google
-                            </button>
-                            <button type="button" className="flex items-center justify-center gap-2 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm font-semibold text-stone-700 transition-all hover:border-stone-300 hover:bg-stone-50 active:scale-[0.98]">
-                                <FaFacebook className="text-blue-600" />
-                                Facebook
-                            </button>
-                        </div>
-
-                        <div className="relative mb-6">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-stone-200" />
-                            </div>
-                            <div className="relative flex justify-center">
-                                <span className="bg-white px-4 text-xs font-medium uppercase tracking-[0.22em] text-stone-400">Or continue with email</span>
-                            </div>
-                        </div>
 
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <div>

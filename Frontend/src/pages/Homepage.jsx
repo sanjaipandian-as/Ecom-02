@@ -10,7 +10,7 @@ const Homepage = () => {
     const [filters, setFilters] = useState({
         sortBy: 'relevance',
         category: '',
-        priceRange: [0, 50000]
+        priceRange: [0, 10000000]
     });
 
     const handleFiltersChange = (newFilters) => {
