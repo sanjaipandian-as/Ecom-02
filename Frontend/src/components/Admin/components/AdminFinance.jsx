@@ -146,7 +146,7 @@ const AdminFinance = ({ refreshId }) => {
 
         doc.setFontSize(22);
         doc.setTextColor(79, 70, 229); // Indigo-600
-        doc.text("Hey Azhagi - Financial Report", 14, 20);
+        doc.text("HA - Financial Report", 14, 20);
 
         doc.setFontSize(10);
         doc.setTextColor(100);

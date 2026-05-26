@@ -313,7 +313,7 @@ const AdminSettings = ({ onNavigate }) => {
                                         <label className={labelClasses}>Store Name</label>
                                         <input
                                             type="text"
-                                            defaultValue="Hey Azhagi"
+                                            defaultValue="HA"
                                             className={inputClasses}
                                         />
                                     </div>

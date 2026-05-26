@@ -34,7 +34,7 @@ const slideContents = [
     ctaLink: "/category/bracelets"
   },
   {
-    subtitle: "HEY AZHAGI SAVINGS PLANS",
+    subtitle: "HA SAVINGS PLANS",
     title: "Flexi-100 Savings Scheme",
     desc: "Invest monthly starting from ₹1,000. Get 100% discount on Wastage (VA) at maturity, plus one free monthly installment contribution from our brand.",
     badge: "11 MONTH SCHEME",

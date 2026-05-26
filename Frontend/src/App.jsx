@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import React, { Suspense, lazy } from 'react';
 import AppSkeleton from './components/Common/AppSkeleton';
 import { ToastContainer } from 'react-toastify'
@@ -6,14 +6,15 @@ import 'react-toastify/dist/ReactToastify.css'
 const Homepage = lazy(() => import('./pages/Homepage'));
 const ProductsPage = lazy(() => import('./pages/ProductsPage'));
 import './App.css'
-import Login from './components/Customer/Login'
-import Register from './components/Customer/Register'
 import Settings from './pages/Settings'
 import Adminlogin from './components/Admin/components/Adminlogin'
 import Adminhome from './components/Admin/Adminpages/Adminhome'
 import Productview from './components/Customer/Prouductview'
 import Payment from './components/Customer/Payment'
 import Checkout from './components/Customer/Checkout'
+import Login from './components/Customer/Login'
+import Register from './components/Customer/Register'
+import AuthModal from './components/Customer/AuthModal'
 import CartPage from './pages/CartPage'
 import WishlistPage from './pages/WishlistPage'
 import SearchResults from './pages/SearchResults'
@@ -58,22 +59,16 @@ function App() {
           <Route path="/category/:categorySlug" element={<CategoriesSpecificpage />} />
           <Route path="/shop/:sellerId" element={<ShopProductsPage />} />
 
-
-
           <Route
             path="/Login"
             element={
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
+              <Navigate to="/?auth=login" replace />
             }
           />
           <Route
             path="/Register"
             element={
-              <PublicRoute>
-                <Register />
-              </PublicRoute>
+              <Navigate to="/?auth=register" replace />
             }
           />
           <Route
@@ -93,7 +88,6 @@ function App() {
             }
           />
 
-
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="/shipping" element={<Shipping />} />
@@ -102,7 +96,6 @@ function App() {
           <Route path="/faqs" element={<FAQs />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<Contact />} />
-
 
           <Route
             path="/Settings"
@@ -145,13 +138,13 @@ function App() {
             }
           />
 
-
           <Route path="/Support" element={<Support />} />
           <Route path="/Affiliate" element={<Affiliate />} />
           <Route path="/BrandRegistry" element={<BrandRegistry />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
+      <AuthModal />
       <ToastContainer
         position="top-right"
         autoClose={3000}

@@ -120,7 +120,7 @@ const Adminsidebar = ({ onNavigate, activePage = 'Dashboard', onOpenUploadModal,
                         </div>
                         <div>
                             <h1 className="text-xl font-bold tracking-tight leading-none font-hero">
-                                <span className="text-[#81C784]">Hey Azhagi</span> <span className="text-slate-900">E-Com</span>
+                                <span className="text-[#81C784]">HA</span> <span className="text-slate-900">E-Com</span>
                             </h1>
                             <p className="text-[10px] font-bold text-indigo-650 tracking-[0.2em] uppercase mt-1">Admin Panel</p>
                         </div>

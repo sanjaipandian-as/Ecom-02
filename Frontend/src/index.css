@@ -3,6 +3,7 @@
 
 @theme {
   /* High-Authority Branding - Plus Jakarta Sans */
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
   --font-plus: 'Plus Jakarta Sans', sans-serif;
 
   /* Financial & Premium Numerical - Outfit */
@@ -15,6 +16,8 @@
   --color-emerald-deep: #0b1410;
   --color-emerald-dark: #12221b;
   --color-emerald-light: #2b4c3c;
+  --color-pale-green: #e2ece7;
+  --color-dark-pale-green: #6d9b7a;
   
   --color-gold-champagne: #c5a880;
   --color-gold-lustrous: #b4925a;
@@ -37,7 +40,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   background-color: #faf9f6;
   color: #1c1c1c;
   -webkit-font-smoothing: antialiased;

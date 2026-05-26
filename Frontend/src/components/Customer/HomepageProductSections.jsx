@@ -153,15 +153,13 @@ const HomepageProductSections = () => {
                 'Turn on products from the admin homepage section and they will appear here immediately.'
             )}
 
-            {renderSection(
+            {isCustomerLoggedIn && renderSection(
                 'Recommended For You',
                 'Based On Buying History',
                 sections.recommendedProducts,
                 null,
-                isCustomerLoggedIn ? 'No recommendation data yet' : 'Login to get personalized picks',
-                isCustomerLoggedIn
-                    ? 'When this account has completed orders, this section will automatically show matching products.'
-                    : 'This section uses customer buying history, so it stays empty until a customer signs in and has order history.'
+                'No recommendation data yet',
+                'When this account has completed orders, this section will automatically show matching products.'
             )}
         </div>
     );
