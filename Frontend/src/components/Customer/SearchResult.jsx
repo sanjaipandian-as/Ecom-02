@@ -619,7 +619,7 @@ const SearchResult = () => {
             </div>
 
             {showMobileFilters && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 lg:hidden" onClick={() => setShowMobileFilters(false)}>
+                <div className="fixed inset-0 bg-black/50 z-50 lg:hidden" onClick={() => setShowMobileFilters(false)}>
                     <div className="absolute left-0 top-0 bottom-0 w-[280px] sm:w-80 bg-white" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-200">
                             <h2 className="text-base sm:text-lg font-bold text-gray-800">Filters</h2>

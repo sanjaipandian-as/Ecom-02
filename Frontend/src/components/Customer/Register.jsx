@@ -61,9 +61,13 @@ const Register = () => {
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
+        let val = type === 'checkbox' ? checked : value;
+        if (name === 'phone') {
+            val = val.replace(/\D/g, '').slice(0, 10);
+        }
         setFormData((prev) => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value
+            [name]: val
         }));
         if (error) setError('');
     };
@@ -83,6 +87,11 @@ const Register = () => {
             return;
         }
 
+        if (formData.phone.length !== 10) {
+            setError('Please enter a valid 10-digit mobile number.');
+            return;
+        }
+
         if (!formData.agreeToTerms) {
             setError('Please accept the Terms & Conditions and Privacy Policy to continue.');
             return;
@@ -96,7 +105,12 @@ const Register = () => {
                 email: formData.email,
                 phone: formData.phone,
                 password: formData.password,
-                address: `${formData.addressLine1}${formData.addressLine2 ? `, ${formData.addressLine2}` : ''}, ${formData.city}, ${formData.state} - ${formData.postalCode}`.trim()
+                address: `${formData.addressLine1}${formData.addressLine2 ? `, ${formData.addressLine2}` : ''}, ${formData.city}, ${formData.state} - ${formData.postalCode}`.trim(),
+                addressLine1: formData.addressLine1,
+                addressLine2: formData.addressLine2,
+                city: formData.city,
+                state: formData.state,
+                postalCode: formData.postalCode
             };
 
             const response = await API.post('/customer/auth/register', registrationData);
@@ -245,7 +259,9 @@ const Register = () => {
                                                     value={formData.phone}
                                                     onChange={handleChange}
                                                     className={`${inputClasses} pl-11`}
-                                                    placeholder="+91 98765 43210"
+                                                    placeholder="9876543210"
+                                                    maxLength="10"
+                                                    pattern="[0-9]{10}"
                                                     required
                                                 />
                                             </div>

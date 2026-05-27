@@ -256,7 +256,7 @@ const TermsAndConditions = () => {
                         </h1>
                     </div>
 
-                    <div className="flex items-center gap-2 bg-white bg-opacity-20 px-3 py-1.5 rounded text-sm hover:bg-opacity-30 transition-all cursor-pointer">
+                    <div className="flex items-center gap-2 bg-white/20 px-3 py-1.5 rounded text-sm hover:bg-white/30 transition-all cursor-pointer">
                         <FaGlobe className="text-white w-4 h-4" />
                         <select
                             value={language}

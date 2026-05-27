@@ -13,7 +13,8 @@ import {
     MdClose,
     MdAssignmentReturn,
     MdLiveHelp,
-    MdAutoAwesome
+    MdAutoAwesome,
+    MdTrendingUp
 } from 'react-icons/md';
 
 const Adminsidebar = ({ onNavigate, activePage = 'Dashboard', onOpenUploadModal, isOpen, onClose }) => {
@@ -80,6 +81,7 @@ const Adminsidebar = ({ onNavigate, activePage = 'Dashboard', onOpenUploadModal,
         { name: 'Support Tickets', icon: MdLiveHelp },
         { name: 'Hero Section', icon: MdViewCarousel },
         { name: 'Top Selling Products', icon: MdAutoAwesome },
+        { name: 'Viral Products', icon: MdTrendingUp },
         { name: 'Finance', icon: MdAttachMoney },
     ];
 

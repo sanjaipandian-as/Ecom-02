@@ -1,4 +1,5 @@
 import Customer from "../models/Customer.js";
+import Address from "../models/Address.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -20,7 +21,7 @@ export const registerCustomer = async (req, res) => {
   try {
     console.log("=== Registration Attempt Started ===");
     console.log("Body:", req.body);
-    const { name, email, phone, password, address } = req.body;
+    const { name, email, phone, password, address, addressLine1, addressLine2, city, state, postalCode } = req.body;
 
     if (!name || !email || !phone || !password) {
       console.log("❌ Registration Failed: Missing fields", { name: !!name, email: !!email, phone: !!phone, password: !!password });
@@ -60,6 +61,24 @@ export const registerCustomer = async (req, res) => {
     });
 
     console.log("✅ Customer created successfully:", user._id);
+
+    // Create the default Address record for the Address Settings page
+    if (addressLine1 || city || state || postalCode) {
+      console.log("Creating default address document in DB...");
+      await Address.create({
+        customerId: user._id,
+        fullname: name,
+        phone: phone,
+        pincode: postalCode || "",
+        state: state || "",
+        city: city || "",
+        addressLine: addressLine1 || "",
+        landmark: addressLine2 || "",
+        isDefault: true
+      });
+      console.log("✅ Address document created successfully");
+    }
+
     const token = generateToken(user._id);
 
     // remove password before response
@@ -101,12 +120,30 @@ export const loginCustomer = async (req, res) => {
 
     if (!email || !password) {
       return res.status(400).json({
-        message: "Email and password are required",
+        message: "Email/Phone and password are required",
       });
     }
 
-    // ⭐ IMPORTANT: explicitly fetch password
-    const user = await Customer.findOne({ email }).select("+password");
+    // ⭐ IMPORTANT: explicitly fetch password by email or phone lookup (flexible phone format matching)
+    const cleanedInput = email.trim();
+    const digitsOnly = cleanedInput.replace(/\D/g, '');
+    const last10Digits = digitsOnly.length >= 10 ? digitsOnly.slice(-10) : '';
+
+    const queryConditions = [
+      { email: cleanedInput.toLowerCase() }
+    ];
+
+    if (last10Digits) {
+      // Construct regex to match the last 10 digits ignoring non-digit characters in between (e.g. spaces, dashes)
+      const regexStr = last10Digits.split('').join('\\D*');
+      queryConditions.push({ phone: { $regex: new RegExp(regexStr + '$') } });
+    } else {
+      queryConditions.push({ phone: cleanedInput });
+    }
+
+    const user = await Customer.findOne({
+      $or: queryConditions
+    }).select("+password");
 
     if (!user) {
       return res.status(404).json({

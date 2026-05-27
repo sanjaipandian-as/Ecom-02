@@ -28,7 +28,11 @@ const Login = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    const emailLooksValid = useMemo(() => /\S+@\S+\.\S+/.test(email), [email]);
+    const emailOrPhoneLooksValid = useMemo(() => {
+        const emailRegex = /\S+@\S+\.\S+/;
+        const phoneRegex = /^\+?[0-9\s-]{10,15}$/;
+        return emailRegex.test(email) || phoneRegex.test(email.replace(/\s+/g, ''));
+    }, [email]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -171,19 +175,19 @@ const Login = () => {
 
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <div>
-                                <label htmlFor="email" className="mb-2 block text-sm font-semibold text-stone-700">Email address</label>
+                                <label htmlFor="email" className="mb-2 block text-sm font-semibold text-stone-700">Email address or Mobile number</label>
                                 <input
-                                    type="email"
+                                    type="text"
                                     id="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     className={inputClasses}
-                                    placeholder="you@example.com"
+                                    placeholder="you@example.com or +91 98765 43210"
                                     required
                                 />
                                 {email && (
-                                    <p className={`mt-2 text-xs font-medium ${emailLooksValid ? 'text-emerald-600' : 'text-amber-600'}`}>
-                                        {emailLooksValid ? 'Email looks good.' : 'Please enter a valid email address.'}
+                                    <p className={`mt-2 text-xs font-medium ${emailOrPhoneLooksValid ? 'text-emerald-600' : 'text-amber-600'}`}>
+                                        {emailOrPhoneLooksValid ? 'Input looks good.' : 'Please enter a valid email address or mobile number.'}
                                     </p>
                                 )}
                             </div>

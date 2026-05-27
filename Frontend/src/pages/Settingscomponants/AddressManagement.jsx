@@ -40,6 +40,10 @@ const AddressManagement = () => {
 
     const handleAddAddress = async (e) => {
         e.preventDefault();
+        if (addressForm.phone.length !== 10) {
+            alert('Please enter a valid 10-digit phone number');
+            return;
+        }
         try {
             await API.post('/address', addressForm);
             alert('Address added successfully!');
@@ -54,6 +58,10 @@ const AddressManagement = () => {
 
     const handleUpdateAddress = async (e) => {
         e.preventDefault();
+        if (addressForm.phone.length !== 10) {
+            alert('Please enter a valid 10-digit phone number');
+            return;
+        }
         try {
             await API.put(`/address/${editingAddress}`, addressForm);
             alert('Address updated successfully!');
@@ -201,9 +209,11 @@ const AddressManagement = () => {
                                 <input
                                     type="tel"
                                     value={addressForm.phone}
-                                    onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
+                                    onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
                                     className={inputClasses}
-                                    placeholder="+91 98765 43210"
+                                    placeholder="9876543210"
+                                    maxLength="10"
+                                    pattern="[0-9]{10}"
                                     required
                                 />
                             </div>

@@ -79,7 +79,11 @@ export default function AuthModal() {
         }
     }, [isOpen]);
 
-    const emailLooksValid = useMemo(() => /\S+@\S+\.\S+/.test(email), [email]);
+    const emailOrPhoneLooksValid = useMemo(() => {
+        const emailRegex = /\S+@\S+\.\S+/;
+        const phoneRegex = /^\+?[0-9\s-]{10,15}$/;
+        return emailRegex.test(email) || phoneRegex.test(email.replace(/\s+/g, ''));
+    }, [email]);
 
     const passwordStrength = useMemo(() => {
         const pass = regFormData.password;
@@ -100,9 +104,13 @@ export default function AuthModal() {
 
     const handleRegChange = (e) => {
         const { name, value, type, checked } = e.target;
+        let val = type === 'checkbox' ? checked : value;
+        if (name === 'phone') {
+            val = val.replace(/\D/g, '').slice(0, 10);
+        }
         setRegFormData((prev) => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value
+            [name]: val
         }));
         if (regError) setRegError('');
     };
@@ -206,6 +214,11 @@ export default function AuthModal() {
             return;
         }
 
+        if (regFormData.phone.length !== 10) {
+            setRegError('Please enter a valid 10-digit mobile number.');
+            return;
+        }
+
         if (!regFormData.agreeToTerms) {
             setRegError('Please accept the Terms & Conditions and Privacy Policy.');
             return;
@@ -219,7 +232,12 @@ export default function AuthModal() {
                 email: regFormData.email,
                 phone: regFormData.phone,
                 password: regFormData.password,
-                address: `${regFormData.addressLine1}${regFormData.addressLine2 ? `, ${regFormData.addressLine2}` : ''}, ${regFormData.city}, ${regFormData.state} - ${regFormData.postalCode}`.trim()
+                address: `${regFormData.addressLine1}${regFormData.addressLine2 ? `, ${regFormData.addressLine2}` : ''}, ${regFormData.city}, ${regFormData.state} - ${regFormData.postalCode}`.trim(),
+                addressLine1: regFormData.addressLine1,
+                addressLine2: regFormData.addressLine2,
+                city: regFormData.city,
+                state: regFormData.state,
+                postalCode: regFormData.postalCode
             };
 
             const response = await API.post('/customer/auth/register', registrationData);
@@ -296,21 +314,21 @@ export default function AuthModal() {
                             )}
 
                             <div>
-                                <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1.5">Email Address</label>
+                                <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1.5">Email Address or Mobile number</label>
                                 <div className="relative">
                                     <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-lustrous/50 w-3.5 h-3.5" />
                                     <input
-                                        type="email"
+                                        type="text"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="your@email.com"
+                                        placeholder="your@email.com or +91 98765 43210"
                                         required
                                         className="w-full rounded-xl border border-stone-200 bg-cream-base/20 pl-10 pr-4 py-3 text-xs text-stone-900 outline-none transition-all placeholder:text-stone-400 focus:border-gold-lustrous focus:bg-white focus:ring-4 focus:ring-gold-lustrous/10"
                                     />
                                 </div>
                                 {email && (
-                                    <p className={`mt-1.5 text-[10px] font-semibold ${emailLooksValid ? 'text-emerald-700' : 'text-amber-700'}`}>
-                                        {emailLooksValid ? '✓ Email format looks good' : '✗ Please enter a valid email'}
+                                    <p className={`mt-1.5 text-[10px] font-semibold ${emailOrPhoneLooksValid ? 'text-emerald-700' : 'text-amber-700'}`}>
+                                        {emailOrPhoneLooksValid ? '✓ Input looks good' : '✗ Please enter a valid email or mobile number'}
                                     </p>
                                 )}
                             </div>
@@ -468,7 +486,9 @@ export default function AuthModal() {
                                                 name="phone"
                                                 value={regFormData.phone}
                                                 onChange={handleRegChange}
-                                                placeholder="+91 98765 43210"
+                                                placeholder="9876543210"
+                                                maxLength="10"
+                                                pattern="[0-9]{10}"
                                                 required
                                                 className="w-full rounded-xl border border-stone-200 bg-cream-base/20 pl-8 pr-3 py-2 text-xs text-stone-900 outline-none transition-all placeholder:text-stone-400 focus:border-gold-lustrous focus:bg-white focus:ring-2 focus:ring-gold-lustrous/10"
                                             />

@@ -4,7 +4,7 @@ import API from '../../../../api';
 import Topbar from '../Topbar';
 import Sidebar from '../Sidebar';
 import Footer from '../Footer';
-import { FaArrowLeft, FaFilter, FaTimes, FaShoppingCart, FaStar, FaHeart, FaCheckCircle } from 'react-icons/fa';
+import { FaArrowLeft, FaShoppingCart, FaStar, FaHeart, FaCheckCircle } from 'react-icons/fa';
 import { BsFillBagHeartFill } from 'react-icons/bs';
 import placeholderImg from "../../../assets/Placeholder.png";
 
@@ -150,7 +150,6 @@ const CategoriesSpecificpage = () => {
     const [totalProducts, setTotalProducts] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [showMobileFilters, setShowMobileFilters] = useState(false);
 
     // Cart and Wishlist states
     const [cartItems, setCartItems] = useState([]);
@@ -297,7 +296,6 @@ const CategoriesSpecificpage = () => {
     const handleFiltersChange = useCallback((newFilters) => {
         setFilters(newFilters);
         setCurrentPage(1); // Reset to first page when filters change
-        setShowMobileFilters(false);
     }, []);
 
     const handleProductClick = useCallback((productId) => {
@@ -405,15 +403,6 @@ const CategoriesSpecificpage = () => {
                                     {loading ? 'Loading...' : `${totalProducts} product${totalProducts !== 1 ? 's' : ''} found`}
                                 </p>
                             </div>
-
-                            {/* Mobile Filter Button */}
-                            <button
-                                onClick={() => setShowMobileFilters(true)}
-                                className="md:hidden flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
-                            >
-                                <FaFilter />
-                                <span>Filters</span>
-                            </button>
                         </div>
                     </div>
 
@@ -519,35 +508,6 @@ const CategoriesSpecificpage = () => {
 
                 <Footer />
             </div>
-
-            {/* Mobile Filters Modal */}
-            {showMobileFilters && (
-                <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end">
-                    <div className="bg-white w-full max-h-[85vh] rounded-t-3xl overflow-y-auto">
-                        <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between z-10">
-                            <h3 className="text-lg font-bold text-gray-800">Filters</h3>
-                            <button
-                                onClick={() => setShowMobileFilters(false)}
-                                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
-                            >
-                                <FaTimes className="text-gray-600" />
-                            </button>
-                        </div>
-
-                        <div className="p-4">
-                            <p className="text-sm text-gray-600 mb-4">
-                                Use the sidebar filters on desktop for a better filtering experience.
-                            </p>
-                            <button
-                                onClick={() => setShowMobileFilters(false)}
-                                className="w-full bg-primary text-white py-3 rounded-lg hover:bg-primary/90 transition-colors"
-                            >
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

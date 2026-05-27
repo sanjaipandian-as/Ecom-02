@@ -73,6 +73,7 @@ const EmptyState = ({ title, description }) => (
 const HomepageProductSections = () => {
     const [sections, setSections] = useState({
         topSellingProducts: [],
+        viralProducts: [],
         recommendedProducts: [],
     });
     const [loading, setLoading] = useState(true);
@@ -84,12 +85,14 @@ const HomepageProductSections = () => {
                 const response = await API.get('/products/customer/homepage-sections');
                 setSections({
                     topSellingProducts: response.data?.topSellingProducts || [],
+                    viralProducts: response.data?.viralProducts || [],
                     recommendedProducts: response.data?.recommendedProducts || [],
                 });
             } catch (error) {
                 console.error('Failed to load homepage sections:', error);
                 setSections({
                     topSellingProducts: [],
+                    viralProducts: [],
                     recommendedProducts: [],
                 });
             } finally {
@@ -110,7 +113,7 @@ const HomepageProductSections = () => {
         <section className="mb-12 sm:mb-16">
             <div className="mb-6 flex items-end justify-between gap-4 border-b border-gold-champagne/10 pb-4">
                 <div>
-                    <p className="mb-1.5 text-[9.5px] font-bold uppercase tracking-[0.28em] text-gold-lustrous">{subtitle}</p>
+                    {subtitle && <p className="mb-1.5 text-[9.5px] font-bold uppercase tracking-[0.28em] text-gold-lustrous">{subtitle}</p>}
                     <h2 className="text-2xl font-bold tracking-tight text-emerald-deep sm:text-3xl font-serif">{title}</h2>
                 </div>
                 <div className="hidden rounded-full border border-gold-champagne/20 bg-white px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-lustrous sm:block">
@@ -146,10 +149,19 @@ const HomepageProductSections = () => {
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-6 sm:py-10">
             {renderSection(
                 'Top Selling Products',
-                'Curated By Admin',
+                null,
                 sections.topSellingProducts,
                 null,
                 'No top selling products selected yet',
+                'Turn on products from the admin homepage section and they will appear here immediately.'
+            )}
+
+            {renderSection(
+                'Viral Products',
+                null,
+                sections.viralProducts,
+                null,
+                'No viral products selected yet',
                 'Turn on products from the admin homepage section and they will appear here immediately.'
             )}
 

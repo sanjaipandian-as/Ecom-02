@@ -60,7 +60,7 @@ const useDocumentTitle = () => {
             '/Affiliate': 'Affiliate Program',
             '/BrandRegistry': 'Brand Registry',
             '/advertise': 'Advertise Your Products',
-            '/sell': 'Sell on Anti Turnish Jewellery',
+            '/sell': 'Sell on Hey Azhagi',
 
             // Footer Links
             '/careers': 'Careers',
@@ -71,7 +71,7 @@ const useDocumentTitle = () => {
             '/legal': 'Legal Information',
         };
 
-        let pageTitle = 'Anti Turnish Jewellery';
+        let pageTitle = 'Hey Azhagi';
 
         // Check for exact route match first
         if (routeTitles[path]) {
@@ -107,7 +107,7 @@ const useDocumentTitle = () => {
             pageTitle = settingsTitles[settingsPage] || 'Settings';
         }
 
-        document.title = `${pageTitle} - Anti Turnish Jewellery`;
+        document.title = `${pageTitle} - Hey Azhagi`;
     }, [location.pathname]);
 };
 

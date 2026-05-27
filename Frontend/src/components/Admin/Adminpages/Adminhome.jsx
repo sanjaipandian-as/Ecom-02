@@ -11,6 +11,7 @@ import AdminRefundsManagement from '../components/AdminRefundsManagement';
 import AdminSupportTickets from '../components/AdminSupportTickets';
 import ProductUploadModal from '../components/ProductUploadModal';
 import AdminTopSellingProducts from '../components/AdminTopSellingProducts';
+import AdminViralProducts from '../components/AdminViralProducts';
 
 const Adminhome = () => {
     const [activePage, setActivePage] = useState('Dashboard');
@@ -49,6 +50,8 @@ const Adminhome = () => {
                 return <AdminHeroManagement refreshId={refreshId} />;
             case 'Top Selling Products':
                 return <AdminTopSellingProducts refreshId={refreshId} />;
+            case 'Viral Products':
+                return <AdminViralProducts refreshId={refreshId} />;
             case 'Finance':
                 return <AdminFinance refreshId={refreshId} />;
             case 'Settings':

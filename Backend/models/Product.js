@@ -143,6 +143,12 @@ const ProductSchema = new Schema(
       index: true,
     },
 
+    showInViral: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+
     views: { type: Number, default: 0 },
     sold_count: { type: Number, default: 0 },
 

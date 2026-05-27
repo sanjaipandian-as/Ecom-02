@@ -47,6 +47,10 @@ const AccountSettings = ({ userData, setUserData }) => {
     const labelClasses = 'mb-2 block text-sm font-semibold text-slate-700';
 
     const handleSaveProfile = async () => {
+        if (editedData.phone && editedData.phone.length !== 10) {
+            alert('Please enter a valid 10-digit phone number');
+            return;
+        }
         try {
             setSaving(true);
             const userRole = localStorage.getItem('userRole') || sessionStorage.getItem('userRole');
@@ -251,10 +255,12 @@ const AccountSettings = ({ userData, setUserData }) => {
                             <input
                                 type="tel"
                                 value={isEditingProfile ? editedData.phone : userData.phone}
-                                onChange={(e) => setEditedData({ ...editedData, phone: e.target.value })}
+                                onChange={(e) => setEditedData({ ...editedData, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
                                 disabled={!isEditingProfile}
                                 className={`${inputClasses} ${!isEditingProfile ? 'cursor-not-allowed bg-slate-50 text-slate-500' : ''}`}
-                                placeholder="+91 98765 43210"
+                                placeholder="9876543210"
+                                maxLength="10"
+                                pattern="[0-9]{10}"
                             />
                         </div>
                     </div>

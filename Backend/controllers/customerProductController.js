@@ -474,12 +474,21 @@ export const getHomepageSections = async (req, res) => {
       .sort({ updatedAt: -1, sold_count: -1 })
       .limit(8);
 
+    const viralProducts = await Product.find({
+      is_deleted: { $ne: true },
+      stock: { $gt: 0 },
+      showInViral: true,
+    })
+      .sort({ updatedAt: -1, sold_count: -1 })
+      .limit(8);
+
     const tokenUserId = req.role === "customer" ? req.user?._id?.toString() : null;
     const canPersonalize = mongoose.Types.ObjectId.isValid(tokenUserId);
 
     if (!canPersonalize) {
       return res.json({
         topSellingProducts,
+        viralProducts,
         recommendedProducts: [],
       });
     }
@@ -503,6 +512,7 @@ export const getHomepageSections = async (req, res) => {
     if (!orders.length) {
       return res.json({
         topSellingProducts,
+        viralProducts,
         recommendedProducts: [],
       });
     }
@@ -559,6 +569,7 @@ export const getHomepageSections = async (req, res) => {
 
     return res.json({
       topSellingProducts,
+      viralProducts,
       recommendedProducts,
     });
   } catch (err) {

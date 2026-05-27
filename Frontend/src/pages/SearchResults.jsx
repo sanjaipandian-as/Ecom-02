@@ -341,7 +341,7 @@ const SearchResults = () => {
                                 {searchResults.map((product) => {
                                     const isInCart = cartItems.some(item => (item.productId?._id || item.productId) === product._id);
                                     const cartItem = cartItems.find(item => (item.productId?._id || item.productId) === product._id);
-                                    const discount = product.pricing?.mrp && product.pricing?.selling_price 
+                                    const discount = product.pricing?.mrp && product.pricing?.selling_price
                                         ? Math.round(((product.pricing.mrp - product.pricing.selling_price) / product.pricing.mrp) * 100)
                                         : 0;
 
@@ -374,11 +374,10 @@ const SearchResults = () => {
                                                 <button
                                                     onClick={(e) => toggleWishlist(e, product._id)}
                                                     disabled={togglingWishlist === product._id}
-                                                    className={`absolute top-3.5 right-3.5 w-9 h-9 rounded-full flex items-center justify-center shadow-sm border transition-all duration-300 hover:scale-105 active:scale-95 z-10 ${
-                                                        wishlistItems.includes(product._id)
+                                                    className={`absolute top-3.5 right-3.5 w-9 h-9 rounded-full flex items-center justify-center shadow-sm border transition-all duration-300 hover:scale-105 active:scale-95 z-10 ${wishlistItems.includes(product._id)
                                                             ? 'bg-rose-50 border-rose-100 text-rose-500 hover:bg-rose-100/80'
                                                             : 'bg-white/90 backdrop-blur-sm border-slate-100 text-slate-400 hover:text-rose-500 hover:bg-white'
-                                                    }`}
+                                                        }`}
                                                 >
                                                     {togglingWishlist === product._id ? (
                                                         <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-current"></div>
@@ -424,9 +423,8 @@ const SearchResults = () => {
                                                         <FaStar className="w-2.5 h-2.5 text-amber-500" />
                                                         <span className="text-xs font-bold text-slate-600">4.2</span>
                                                     </div>
-                                                    <span className={`text-[10px] font-bold uppercase tracking-wider ${
-                                                        product.stock > 0 ? 'text-emerald-600' : 'text-slate-400'
-                                                    }`}>
+                                                    <span className={`text-[10px] font-bold uppercase tracking-wider ${product.stock > 0 ? 'text-emerald-600' : 'text-slate-400'
+                                                        }`}>
                                                         {product.stock > 0 ? 'In Stock' : 'Sold Out'}
                                                     </span>
                                                 </div>
@@ -457,11 +455,10 @@ const SearchResults = () => {
                                                         <button
                                                             onClick={(e) => addToCart(e, product)}
                                                             disabled={addingToCart === product._id || product.stock <= 0}
-                                                            className={`h-9 w-9 flex items-center justify-center rounded-xl transition-all ${
-                                                                product.stock <= 0
+                                                            className={`h-9 w-9 flex items-center justify-center rounded-xl transition-all ${product.stock <= 0
                                                                     ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-100'
                                                                     : 'bg-[#81C784] hover:bg-[#72b775] text-white shadow-sm hover:shadow active:scale-95'
-                                                            }`}
+                                                                }`}
                                                         >
                                                             {addingToCart === product._id ? (
                                                                 <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-white"></div>
@@ -492,7 +489,7 @@ const SearchResults = () => {
 
             {/* Mobile Filter Modal */}
             {showMobileFilters && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 lg:hidden" onClick={() => setShowMobileFilters(false)}>
+                <div className="fixed inset-0 bg-black/50 z-50 lg:hidden" onClick={() => setShowMobileFilters(false)}>
                     <div className="w-80 h-full bg-white overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
                         <div className="p-4 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white z-10">
                             <h2 className="font-bold text-lg text-gray-900">Filters</h2>

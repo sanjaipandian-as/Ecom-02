@@ -332,3 +332,33 @@ export const toggleTopSellingProduct = async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 };
+
+// Toggle homepage viral visibility
+export const toggleViralProduct = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { showInViral } = req.body;
+
+    if (typeof showInViral !== "boolean") {
+      return res.status(400).json({ message: "showInViral must be a boolean" });
+    }
+
+    const product = await Product.findByIdAndUpdate(
+      productId,
+      { $set: { showInViral } },
+      { new: true, runValidators: true }
+    );
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    return res.json({
+      message: `Product ${showInViral ? "added to" : "removed from"} viral section`,
+      product,
+    });
+  } catch (err) {
+    console.error("Toggle viral product error:", err);
+    return res.status(500).json({ error: err.message });
+  }
+};

@@ -41,7 +41,7 @@ const Settings = () => {
             tickets: 'Support Tickets',
             notifications: 'Notifications'
         };
-        document.title = `${tabTitles[activeTab] || 'Settings'} - Anti Turnish Jewellery`;
+        document.title = `${tabTitles[activeTab] || 'Settings'} - Hey Azhagi`;
     }, [activeTab]);
 
     const fetchUserData = async () => {
