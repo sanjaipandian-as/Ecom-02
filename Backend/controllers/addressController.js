@@ -5,9 +5,21 @@ export const addAddress = async (req, res) => {
   try {
     const customerId = req.user._id;
 
+    // ⭐ SECURITY FIX (VULN-10): Whitelist allowed fields instead of spreading req.body
+    // This prevents mass-assignment attacks (e.g., injecting a foreign customerId)
+    const { fullname, phone, pincode, state, city, addressLine, landmark, country, isDefault } = req.body;
+
     const newAddress = await Address.create({
-      customerId,
-      ...req.body
+      customerId, // Always use authenticated user's ID
+      fullname,
+      phone,
+      pincode,
+      state,
+      city,
+      addressLine,
+      landmark: landmark || "",
+      country: country || "India",
+      isDefault: isDefault || false
     });
 
     res.json({
@@ -87,12 +99,17 @@ export const setDefaultAddress = async (req, res) => {
       { $set: { isDefault: false } }
     );
 
-    // Set new default
-    const address = await Address.findByIdAndUpdate(
-      addressId,
+    // ⭐ SECURITY FIX (VULN-6): Filter by customerId to prevent IDOR
+    // Without this, a customer could set any user's address as their default
+    const address = await Address.findOneAndUpdate(
+      { _id: addressId, customerId },
       { isDefault: true },
       { new: true }
     );
+
+    if (!address) {
+      return res.status(404).json({ message: "Address not found" });
+    }
 
     res.json({
       message: "Default address set",

@@ -212,12 +212,14 @@ const Productview = () => {
     };
 
     const handleVote = async (reviewId, type) => {
+        if (!isLoggedIn) return navigate('/Login');
         try {
             await API.post(`/reviews/vote/${reviewId}`, { type });
             const res = await API.get(`/reviews/${id}`);
             setReviews(res.data);
         } catch (e) {
             console.error('Error voting review:', e);
+            alert(e.response?.data?.message || 'Error voting review');
         }
     };
 

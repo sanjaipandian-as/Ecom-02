@@ -47,7 +47,8 @@ const slideContents = [
 const Hero = () => {
   const navigate = useNavigate();
   const [heroSlides, setHeroSlides] = useState([]);
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(1); // Start at index 1 (first real slide)
+  const [transitionEnabled, setTransitionEnabled] = useState(true);
 
   // Fetch slides from backend
   useEffect(() => {
@@ -67,136 +68,202 @@ const Hero = () => {
     fetchSlides();
   }, []);
 
+  const slides = heroSlides.length > 0 ? heroSlides : fallbackSlides;
+  const isLoopable = slides.length > 1;
+
+  // Append clones for infinite loop: last slide at start, first slide at end
+  const extendedSlides = isLoopable
+    ? [slides[slides.length - 1], ...slides, slides[0]]
+    : slides;
+
+  // Adjust starting index once slides load
+  useEffect(() => {
+    if (slides.length === 1) {
+      setCurrentSlide(0);
+    } else if (slides.length > 1) {
+      setCurrentSlide(1);
+    }
+  }, [heroSlides]);
+
+  // Jump transitions for infinite loop resetting
+  useEffect(() => {
+    if (!isLoopable) return;
+
+    if (currentSlide === 0) {
+      // Jump to last real slide index
+      const timer = setTimeout(() => {
+        setTransitionEnabled(false);
+        setCurrentSlide(slides.length);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+    
+    if (currentSlide === slides.length + 1) {
+      // Jump to first real slide index
+      const timer = setTimeout(() => {
+        setTransitionEnabled(false);
+        setCurrentSlide(1);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [currentSlide, slides.length, isLoopable]);
+
+  // Re-enable transition after reset jump
+  useEffect(() => {
+    if (!transitionEnabled) {
+      const timer = setTimeout(() => {
+        setTransitionEnabled(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [transitionEnabled]);
+
   // Auto-slide functionality
   useEffect(() => {
-    if (heroSlides.length <= 1) return;
+    if (!isLoopable) return;
 
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 7000);
+      handleNext();
+    }, 2000);
     return () => clearInterval(timer);
-  }, [heroSlides.length]);
+  }, [slides.length, currentSlide, transitionEnabled, isLoopable]);
+
+  const handleNext = () => {
+    if (!transitionEnabled) return;
+    setCurrentSlide((prev) => prev + 1);
+  };
+
+  const handlePrev = () => {
+    if (!transitionEnabled) return;
+    setCurrentSlide((prev) => prev - 1);
+  };
 
   return (
-    <div className="relative w-full bg-cream-base border-b border-gold-champagne/20 font-sans h-[480px] lg:h-[580px] overflow-hidden">
+    <div className="relative w-full bg-cream-base border-b border-gold-champagne/20 font-sans h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
       
-      {/* Inner Content Slider */}
-      <div className="relative h-full w-full overflow-hidden">
-        {heroSlides.map((slide, index) => {
-          const content = slideContents[index % slideContents.length];
-          const isActive = index === currentSlide;
+      {/* Sliding Track Container */}
+      <div 
+        className={`flex h-full ${transitionEnabled ? 'transition-transform duration-[800ms]' : ''}`}
+        style={{ 
+          transform: `translate3d(-${extendedSlides.length > 0 ? (currentSlide / extendedSlides.length) * 100 : 0}%, 0, 0)`,
+          width: `${extendedSlides.length > 0 ? extendedSlides.length * 100 : 100}%`,
+          transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)'
+        }}
+      >
+        {extendedSlides.map((slide, index) => {
+          // Map index to original slide info for correct contents
+          let originalIndex = index;
+          if (isLoopable) {
+            originalIndex = index - 1;
+            if (originalIndex < 0) {
+              originalIndex = slides.length - 1;
+            } else if (originalIndex >= slides.length) {
+              originalIndex = 0;
+            }
+          }
+          
+          const content = slideContents[originalIndex % slideContents.length];
+          
+          // Determine visual active state (handles entry animation trigger)
+          let currentOriginalIndex = currentSlide;
+          if (isLoopable) {
+            currentOriginalIndex = currentSlide - 1;
+            if (currentOriginalIndex < 0) {
+              currentOriginalIndex = slides.length - 1;
+            } else if (currentOriginalIndex >= slides.length) {
+              currentOriginalIndex = 0;
+            }
+          }
+          const isActive = originalIndex === currentOriginalIndex;
           
           return (
             <div 
               key={index} 
-              className={`absolute inset-0 flex flex-col md:flex-row transition-all duration-1000 ease-in-out ${isActive ? 'opacity-100 z-10 scale-100 pointer-events-auto' : 'opacity-0 z-0 scale-95 pointer-events-none'}`}
+              className="h-full relative overflow-hidden flex-shrink-0"
+              style={{ width: `${100 / extendedSlides.length}%` }}
             >
-              {/* Left Half: Editorial Text */}
-              <div className="w-full md:w-[50%] p-6 md:p-12 lg:p-20 flex flex-col justify-center text-left relative bg-cream-soft h-[55%] md:h-full">
-                
-                {/* Double gold layout frame for premium paper look */}
-                <div className="absolute inset-4 md:inset-8 border border-gold-champagne/15 pointer-events-none rounded-none"></div>
-                <div className="absolute inset-5 md:inset-9 border border-gold-champagne/5 pointer-events-none rounded-none"></div>
-                
-                {/* Premium elements inside slide */}
-                <div className="relative z-10">
-                  <span className="text-gold-lustrous text-xs font-bold tracking-[0.25em] uppercase block mb-2 md:mb-3">
-                    {content.subtitle}
-                  </span>
-                  
-                  <h1 
-                    className="text-emerald-deep text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight mb-4"
-                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                  >
-                    {content.title}
-                  </h1>
-
-                  {/* VA / MC Luxury Seal Badge */}
-                  <div className="inline-flex flex-col mb-5">
-                    <div className="border border-gold-champagne/50 text-gold-lustrous font-semibold text-xs sm:text-xs px-3.5 py-1.5 tracking-[0.2em] uppercase bg-white/60 backdrop-blur-xs shadow-xs self-start rounded-xs">
-                      {content.badge}
-                    </div>
-                    <span className="text-emerald-light text-[9px] sm:text-[10px] font-bold tracking-[0.1em] uppercase mt-1.5 ml-1">
-                      {content.badgeDesc}
-                    </span>
-                  </div>
-
-                  <p className="text-slate-650 text-xs sm:text-sm font-normal leading-relaxed mb-6 max-w-md">
-                    {content.desc}
-                  </p>
-
-                  <div className="flex flex-wrap gap-3">
-                    <button
-                      onClick={() => navigate(content.ctaLink)}
-                      className="px-6 py-3 bg-emerald-deep border border-emerald-deep text-cream-base hover:bg-gold-lustrous hover:border-gold-lustrous hover:shadow-lg transition-all duration-350 text-xs font-bold uppercase tracking-widest hover:scale-[1.02] active:scale-95 cursor-pointer rounded-xs"
-                    >
-                      {content.ctaText}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Half: Jewelry Showcase Image (Ken Burns effect) */}
-              <div className="w-full md:w-[50%] h-[45%] md:h-full relative overflow-hidden bg-[#090f0c]">
+              {/* Full background Image with Ken Burns effect */}
+              <div className="absolute inset-0 z-0 overflow-hidden bg-[#090f0c]">
                 <div 
-                  className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[7000ms] ease-out ${isActive ? 'scale-110' : 'scale-100'}`}
+                  className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[7000ms] ease-out ${isActive ? 'scale-105' : 'scale-100'}`}
                   style={{ backgroundImage: `url(${slide.image})` }}
                 >
-                  {/* Dark radial glow overlay to frame jewelry details */}
-                  <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/50 via-black/10 to-transparent mix-blend-multiply"></div>
-                </div>
-                {/* Double gold picture frame */}
-                <div className="absolute inset-3 border border-white/10 pointer-events-none"></div>
-                <div className="absolute inset-4 border border-gold-champagne/20 pointer-events-none"></div>
-
-                {/* Trust watermark */}
-                <div className="absolute bottom-4 right-4 bg-emerald-deep/80 backdrop-blur-md px-3 py-1.5 border border-gold-champagne/20 rounded-xs">
-                  <span className="text-white text-[9px] font-bold tracking-[0.2em] uppercase flex items-center gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-gold-lustrous" /> 100% BIS 916 HALLMARKED
-                  </span>
+                  {/* Subtle dark radial & linear overlay combination to ensure white text pops beautifully */}
+                  <div className="absolute inset-0 bg-black/40"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/40"></div>
                 </div>
               </div>
+
+              {/* Centered Editorial Text Overlay */}
+              <div className="relative z-10 flex flex-col items-center justify-center text-center h-full px-6 md:px-12 lg:px-24">
+                
+                <span className={`text-gold-champagne text-xs sm:text-sm font-bold tracking-[0.3em] uppercase block mb-3 ${isActive ? 'animate-fade-up' : 'opacity-0'}`}>
+                  {content.subtitle}
+                </span>
+                
+                <h1 
+                  className={`text-white text-3xl sm:text-5xl lg:text-6xl font-bold leading-[1.15] tracking-tight mb-4 max-w-4xl drop-shadow-md ${isActive ? 'animate-fade-up' : 'opacity-0'}`}
+                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                >
+                  {content.title}
+                </h1>
+
+                {/* VA / MC Luxury Seal Badge - translucent modern glass design */}
+                <div className={`inline-flex items-center gap-2 sm:gap-3 mb-6 bg-white/15 backdrop-blur-xs border border-white/20 px-4 py-2 rounded-full shadow-xs ${isActive ? 'animate-fade-up' : 'opacity-0'}`}>
+                  <span className="text-gold-champagne font-extrabold text-[10px] sm:text-xs tracking-[0.15em] uppercase">
+                    {content.badge}
+                  </span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold-lustrous"></span>
+                  <span className="text-white/90 text-[10px] sm:text-xs font-semibold tracking-[0.1em] uppercase">
+                    {content.badgeDesc}
+                  </span>
+                </div>
+
+                <p className={`text-white/80 text-xs sm:text-base font-normal leading-relaxed mb-8 max-w-2xl drop-shadow-xs ${isActive ? 'animate-fade-up' : 'opacity-0'}`}>
+                  {content.desc}
+                </p>
+
+                <div className={`flex justify-center ${isActive ? 'animate-fade-up' : 'opacity-0'}`}>
+                  <button
+                    onClick={() => navigate(content.ctaLink)}
+                    className="px-8 py-3.5 bg-gold-lustrous border border-gold-lustrous text-white hover:bg-white hover:text-black hover:border-white transition-all duration-350 text-xs sm:text-sm font-bold uppercase tracking-widest hover:scale-[1.05] active:scale-95 cursor-pointer rounded-xs"
+                  >
+                    {content.ctaText}
+                  </button>
+                </div>
+              </div>
+
+              {/* Trust watermark absolute bottom-right */}
+              <div className="absolute bottom-6 right-6 md:right-12 z-20 bg-emerald-deep/80 backdrop-blur-md px-3.5 py-2 border border-gold-champagne/20 rounded-xs shadow-md hidden sm:block">
+                <span className="text-white text-[9px] font-bold tracking-[0.2em] uppercase flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-gold-lustrous" /> 100% BIS 916 HALLMARKED
+                </span>
+              </div>
+
             </div>
           );
         })}
       </div>
 
       {/* Navigation Controls: Custom Premium Slider UI */}
-      {heroSlides.length > 1 && (
-        <div className="absolute bottom-4 left-6 md:left-12 right-6 md:right-12 z-20 flex justify-between items-center bg-transparent pointer-events-none">
-          
-          {/* Pagination text & gold slider timeline */}
-          <div className="flex items-center gap-4 pointer-events-auto">
-            <span className="text-emerald-deep text-xs font-bold tracking-widest font-mono">
-              {String(currentSlide + 1).padStart(2, '0')} <span className="text-gold-champagne font-sans">/</span> {String(heroSlides.length).padStart(2, '0')}
-            </span>
-            <div className="w-24 h-[2px] bg-gold-champagne/20 overflow-hidden">
-              <div 
-                className="h-full bg-gold-lustrous transition-all duration-7000 ease-linear"
-                style={{ width: `${((currentSlide + 1) / heroSlides.length) * 100}%` }}
-              ></div>
-            </div>
-          </div>
-
-          {/* Slider Direction Arrow Buttons */}
-          <div className="flex gap-2 pointer-events-auto">
-            <button
-              onClick={() => setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
-              className="w-9 h-9 border border-gold-champagne/45 bg-cream-base hover:bg-gold-lustrous hover:border-gold-lustrous text-emerald-deep hover:text-white flex items-center justify-center transition-all duration-300 active:scale-90 cursor-pointer shadow-xs rounded-full"
-              aria-label="Previous slide"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setCurrentSlide((prev) => (prev + 1) % heroSlides.length)}
-              className="w-9 h-9 border border-gold-champagne/45 bg-cream-base hover:bg-gold-lustrous hover:border-gold-lustrous text-emerald-deep hover:text-white flex items-center justify-center transition-all duration-300 active:scale-90 cursor-pointer shadow-xs rounded-full"
-              aria-label="Next slide"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-
-        </div>
+      {isLoopable && (
+        <>
+          {/* Slider Direction Arrow Buttons on Left and Right sides */}
+          <button
+            onClick={handlePrev}
+            className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 w-10 h-10 border border-white/20 bg-black/30 hover:bg-white hover:text-black text-white flex items-center justify-center transition-all duration-300 active:scale-90 cursor-pointer rounded-full backdrop-blur-md shadow-lg"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={handleNext}
+            className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 w-10 h-10 border border-white/20 bg-black/30 hover:bg-white hover:text-black text-white flex items-center justify-center transition-all duration-300 active:scale-90 cursor-pointer rounded-full backdrop-blur-md shadow-lg"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </>
       )}
 
     </div>

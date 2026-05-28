@@ -35,6 +35,7 @@ const Products = ({ filters = defaultFilters }) => {
 
                 // Check if any filters are active
                 const hasActiveFilters =
+                    (filters.categories && filters.categories.length > 0) ||
                     filters.category ||
                     (filters.sortBy && filters.sortBy !== 'relevance') ||
                     (filters.priceRange && (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000000)) ||
@@ -49,7 +50,9 @@ const Products = ({ filters = defaultFilters }) => {
 
                 if (hasActiveFilters) {
                     // Use filter endpoint
-                    if (filters.category) {
+                    if (filters.categories && filters.categories.length > 0) {
+                        queryParams.append('categories', filters.categories.join(','));
+                    } else if (filters.category) {
                         queryParams.append('category', filters.category);
                     }
 

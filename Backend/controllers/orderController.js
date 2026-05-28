@@ -17,11 +17,38 @@ export const executeOrderPlacement = async (customerId, orderData) => {
     razorpayDetails = null
   } = orderData;
 
-  // 1. Calculate final total (Security Check)
-  const totalAmount = items.reduce((sum, item) => sum + item.quantity * item.price, 0);
+  // ⭐ SECURITY FIX (VULN-2/4): Re-resolve ALL prices from the database
+  // NEVER trust prices passed in from callers (especially the payment flow)
+  const secureItems = [];
+  for (const item of items) {
+    // Validate quantity is a positive integer within bounds
+    const quantity = parseInt(item.quantity, 10);
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 100) {
+      throw new Error(`Invalid quantity (${item.quantity}) for product: ${item.productId}`);
+    }
+
+    const product = await Product.findOne({ _id: item.productId, is_deleted: { $ne: true } });
+    if (!product) {
+      throw new Error(`Product not found or unavailable: ${item.productId}`);
+    }
+
+    const serverPrice = product.pricing?.selling_price || product.price || 0;
+    if (serverPrice <= 0) {
+      throw new Error(`Invalid pricing for product: ${product.name}`);
+    }
+
+    secureItems.push({
+      productId: product._id,
+      quantity: quantity,
+      price: serverPrice // ⭐ Server-resolved price ONLY
+    });
+  }
+
+  // 1. Calculate final total from server-verified prices
+  const totalAmount = secureItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
   // 2. ATOMIC STOCK DEDUCTION
-  for (const item of items) {
+  for (const item of secureItems) {
     const product = await Product.findOneAndUpdate(
       {
         _id: item.productId,
@@ -41,7 +68,7 @@ export const executeOrderPlacement = async (customerId, orderData) => {
   // 3. Create E-com Order Record
   const order = await Order.create({
     customerId,
-    items,
+    items: secureItems,
     totalAmount,
     shippingAddress,
     paymentMethod,
@@ -266,15 +293,10 @@ export const cancelOrder = async (req, res) => {
 
     await order.save();
 
-    // ⭐ STOCK REPLENISHMENT (Atomic)
-    for (const item of order.items) {
-      await Product.findByIdAndUpdate(item.productId, {
-        $inc: {
-          stock: item.quantity,
-          sold_count: -item.quantity
-        }
-      });
-    }
+    // ⭐ SECURITY FIX (VULN-5): Only replenish stock when order is fully cancelled,
+    // NOT when it's just a cancellation_requested (pending admin approval).
+    // Stock will be restored by admin when they confirm the cancellation in adminOrderController.
+    // This prevents phantom inventory from repeated request/reject cycles.
 
     // ⭐ NOTIFICATION
     await createNotification({

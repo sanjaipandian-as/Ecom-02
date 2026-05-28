@@ -44,6 +44,12 @@ const reviewSchema = new mongoose.Schema(
       up: { type: Number, default: 0 },
       down: { type: Number, default: 0 }
     },
+    voters: [
+      {
+        customerId: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
+        voteType: { type: String, enum: ["up", "down"] }
+      }
+    ],
   },
   { timestamps: true }
 );

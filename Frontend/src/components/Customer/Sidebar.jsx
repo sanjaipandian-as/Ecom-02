@@ -11,13 +11,14 @@ import {
 } from 'react-icons/fa';
 import { BsFillBagHeartFill } from 'react-icons/bs';
 
-const Sidebar = ({ showFilters = false, onFiltersChange, categories = [], maxPrice = 10000000 }) => {
+const Sidebar = ({ showFilters = false, onFiltersChange, categories = [], minPrice = 0, maxPrice = 10000000 }) => {
     const navigate = useNavigate();
 
     // Filter states
     const [sortBy, setSortBy] = useState('relevance');
     const [selectedCategories, setSelectedCategories] = useState([]);
-    const [priceRange, setPriceRange] = useState([0, maxPrice]);
+    const [priceRange, setPriceRange] = useState([minPrice, maxPrice]);
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
     const [expandedSections, setExpandedSections] = useState({
         sortBy: true,
         categories: true,
@@ -65,23 +66,35 @@ const Sidebar = ({ showFilters = false, onFiltersChange, categories = [], maxPri
     // Render filter sidebar
     if (showFilters) {
         return (
-            <div className="hidden md:block w-72 bg-white border-r border-gray-200 h-[calc(100vh-80px)] overflow-y-auto sticky top-20">
+            <div className={`
+                bg-white md:border-r border-gray-200 
+                md:w-72 md:h-[calc(100vh-80px)] md:overflow-y-auto md:sticky md:top-20
+                fixed bottom-0 left-0 right-0 z-50 md:static md:z-auto transition-all duration-300
+                ${isMobileOpen ? 'max-h-[85vh] overflow-y-auto rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.2)] pb-10' : 'max-h-[76px] overflow-hidden shadow-[0_-4px_20px_rgba(0,0,0,0.1)] md:max-h-none md:shadow-none md:rounded-none md:pb-0'}
+            `}>
                 <div className="p-6">
                     {/* Header */}
-                    <div className="flex items-center justify-between mb-6">
+                    <div 
+                        className="flex items-center justify-between mb-6 md:mb-6 cursor-pointer md:cursor-default"
+                        onClick={() => setIsMobileOpen(!isMobileOpen)}
+                    >
                         <div className="flex items-center gap-2">
                             <FaFilter className="w-5 h-5 text-primary" />
                             <h2 className="text-xl font-bold text-gray-800">Filters</h2>
+                            <span className="md:hidden ml-2 text-gray-500">
+                                {isMobileOpen ? <FaChevronUp className="w-4 h-4" /> : <FaChevronDown className="w-4 h-4" />}
+                            </span>
                         </div>
                         <button
-                            onClick={clearAllFilters}
+                            onClick={(e) => { e.stopPropagation(); clearAllFilters(); }}
                             className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                         >
                             Clear All
                         </button>
                     </div>
 
-                    {/* Sort By Section */}
+                    <div className={isMobileOpen ? 'block' : 'hidden md:block'}>
+                        {/* Sort By Section */}
                     <div className="mb-6">
                         <button
                             onClick={() => toggleSection('sortBy')}
@@ -200,6 +213,7 @@ const Sidebar = ({ showFilters = false, onFiltersChange, categories = [], maxPri
                                 />
                             </div>
                         )}
+                    </div>
                     </div>
                 </div>
             </div>

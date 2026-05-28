@@ -168,6 +168,32 @@ const CategoriesSpecificpage = () => {
         isGreenCrackers: false
     });
 
+    const [minPrice, setMinPrice] = useState(0);
+    const [maxPrice, setMaxPrice] = useState(10000000);
+    const [categories, setCategories] = useState([]);
+
+    // Fetch filter options for Sidebar
+    useEffect(() => {
+        const fetchFilterOptions = async () => {
+            try {
+                const response = await API.get('/products/customer/filter-options');
+                const data = response.data;
+                setCategories(data.categories || []);
+                setMinPrice(data.priceRange?.min || 0);
+                setMaxPrice(data.priceRange?.max || 10000000);
+                
+                // Also update the initial filters state to match real bounds
+                setFilters(prev => ({
+                    ...prev,
+                    priceRange: [data.priceRange?.min || 0, data.priceRange?.max || 10000000]
+                }));
+            } catch (err) {
+                console.error('Error fetching filter options:', err);
+            }
+        };
+        fetchFilterOptions();
+    }, []);
+
     // Fetch cart and wishlist on mount
     useEffect(() => {
         fetchCart();
@@ -225,27 +251,29 @@ const CategoriesSpecificpage = () => {
             };
 
             // Add category filter
-            if (categorySlug) {
+            if (filters.categories && filters.categories.length > 0) {
+                params.categories = filters.categories.join(',');
+            } else if (categorySlug) {
                 params.mainCategory = categorySlug;
             }
 
             // Add brand filters
-            if (filters.selectedBrands.length > 0) {
+            if (filters.selectedBrands?.length > 0) {
                 params.brands = filters.selectedBrands.join(',');
             }
 
             // Add age filters
-            if (filters.selectedAges.length > 0) {
+            if (filters.selectedAges?.length > 0) {
                 params.ageCategories = filters.selectedAges.join(',');
             }
 
             // Add tag filters
-            if (filters.selectedTags.length > 0) {
+            if (filters.selectedTags?.length > 0) {
                 params.tags = filters.selectedTags.join(',');
             }
 
             // Add rating filter
-            if (filters.selectedRatings.length > 0) {
+            if (filters.selectedRatings?.length > 0) {
                 params.minRating = Math.min(...filters.selectedRatings);
             }
 
@@ -294,7 +322,7 @@ const CategoriesSpecificpage = () => {
     };
 
     const handleFiltersChange = useCallback((newFilters) => {
-        setFilters(newFilters);
+        setFilters(prev => ({ ...prev, ...newFilters }));
         setCurrentPage(1); // Reset to first page when filters change
     }, []);
 
@@ -382,23 +410,34 @@ const CategoriesSpecificpage = () => {
     }, [wishlistItems]);
 
     return (
-        <div className="flex w-full h-screen bg-gray-50">
-            
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+            <Topbar />
 
-            <div className="flex flex-col flex-1 h-screen overflow-y-auto relative">
-                <Topbar />
+            {/* Main Content with Sidebar */}
+            <div className="flex-1 w-full mx-auto flex flex-col-reverse md:flex-row-reverse items-start mt-4">
+                
+                {/* Filter Sidebar - Right Side */}
+                <Sidebar 
+                    showFilters={true} 
+                    onFiltersChange={handleFiltersChange}
+                    categories={categories}
+                    minPrice={minPrice}
+                    maxPrice={maxPrice}
+                    initialCategory={categoryName}
+                />
 
-                {/* Main Content */}
-                <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+                <div className="flex-1 w-full min-w-0 pb-16 px-4 sm:px-6 lg:px-8">
                     {/* Header */}
                     <div className="mb-6">
 
 
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                             <div>
-                                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
-                                    {categoryName}
-                                </h1>
+                                <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                                    {filters.categories && filters.categories.length > 0 
+                                        ? filters.categories.join(', ') 
+                                        : categoryName}
+                                </h2>
                                 <p className="text-sm md:text-base text-gray-600 mt-1">
                                     {loading ? 'Loading...' : `${totalProducts} product${totalProducts !== 1 ? 's' : ''} found`}
                                 </p>
@@ -505,9 +544,9 @@ const CategoriesSpecificpage = () => {
                         </>
                     )}
                 </div>
-
-                <Footer />
             </div>
+
+            <Footer />
         </div>
     );
 };

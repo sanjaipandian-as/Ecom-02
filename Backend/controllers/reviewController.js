@@ -7,6 +7,11 @@ export const addReview = async (req, res) => {
     const customerId = req.user._id;
     const { productId, rating, title, reviewText, tags } = req.body;
 
+    // ⭐ SECURITY FIX (VULN-8): Validate rating is between 1 and 5
+    const numRating = Number(rating);
+    if (!numRating || numRating < 1 || numRating > 5 || !Number.isFinite(numRating)) {
+      return res.status(400).json({ message: "Rating must be a number between 1 and 5." });
+    }
     // Check if the user has purchased the product
     const hasPurchased = await Order.findOne({
       customerId,
@@ -63,6 +68,12 @@ export const updateReview = async (req, res) => {
     const customerId = req.user._id;
     const { reviewId } = req.params;
     const { rating, reviewText } = req.body;
+
+    // ⭐ SECURITY FIX (VULN-8): Validate rating is between 1 and 5
+    const numRating = Number(rating);
+    if (!numRating || numRating < 1 || numRating > 5 || !Number.isFinite(numRating)) {
+      return res.status(400).json({ message: "Rating must be a number between 1 and 5." });
+    }
 
     const review = await Review.findOneAndUpdate(
       { _id: reviewId, customerId },
@@ -165,6 +176,7 @@ export const canReviewProduct = async (req, res) => {
 // Vote on a review's helpfulness
 export const voteReview = async (req, res) => {
   try {
+    const customerId = req.user._id;
     const { reviewId } = req.params;
     const { type } = req.body; // "up" or "down"
 
@@ -172,14 +184,42 @@ export const voteReview = async (req, res) => {
       return res.status(400).json({ message: "Invalid vote type" });
     }
 
-    const field = type === "up" ? "helpfulVotes.up" : "helpfulVotes.down";
-    const review = await Review.findByIdAndUpdate(
-      reviewId,
-      { $inc: { [field]: 1 } },
-      { new: true }
+    const review = await Review.findById(reviewId);
+    if (!review) return res.status(404).json({ message: "Review not found" });
+
+    const existingVoteIndex = review.voters.findIndex(
+      v => v.customerId.toString() === customerId.toString()
     );
 
-    if (!review) return res.status(404).json({ message: "Review not found" });
+    if (existingVoteIndex !== -1) {
+      const existingVote = review.voters[existingVoteIndex];
+      if (existingVote.voteType === type) {
+        return res.status(400).json({ message: "You have already voted this way" });
+      }
+      
+      if (existingVote.voteType === "up") {
+        review.helpfulVotes.up = Math.max(0, review.helpfulVotes.up - 1);
+      } else {
+        review.helpfulVotes.down = Math.max(0, review.helpfulVotes.down - 1);
+      }
+      
+      if (type === "up") {
+        review.helpfulVotes.up += 1;
+      } else {
+        review.helpfulVotes.down += 1;
+      }
+      
+      review.voters[existingVoteIndex].voteType = type;
+    } else {
+      if (type === "up") {
+        review.helpfulVotes.up += 1;
+      } else {
+        review.helpfulVotes.down += 1;
+      }
+      review.voters.push({ customerId, voteType: type });
+    }
+
+    await review.save();
 
     return res.json(review);
   } catch (err) {

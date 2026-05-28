@@ -107,8 +107,13 @@ export const filterProducts = async (req, res) => {
     // Build query object
     const query = { is_deleted: { $ne: true } };
 
-    // Category Filter
-    if (req.query.category) {
+    // Category Filter (Multiple categories support)
+    if (req.query.categories) {
+      const categories = req.query.categories.split(',');
+      if (categories.length > 0) {
+        query['category.main'] = { $in: categories.map(c => new RegExp(`^${c}$`, 'i')) };
+      }
+    } else if (req.query.category) {
       query['category.main_slug'] = req.query.category;
     }
 

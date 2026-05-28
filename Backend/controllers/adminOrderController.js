@@ -1,4 +1,5 @@
 import Order from "../models/Order.js";
+import Product from "../models/Product.js";
 import { createNotification } from "./notificationController.js";
 import { decrypt } from "../utils/cryptoUtils.js";
 
@@ -129,11 +130,27 @@ export const cancelOrder = async (req, res) => {
 
     if (!order) return res.status(404).json({ message: "Order not found" });
 
+    // ⭐ Prevent double-cancellation
+    if (order.status === "cancelled") {
+      return res.status(400).json({ message: "Order is already cancelled." });
+    }
+
     order.status = "cancelled";
     order.paymentStatus = "failed";
     await order.save();
 
-    res.json({ message: "Order cancelled successfully", order });
+    // ⭐ SECURITY FIX (VULN-11 + VULN-5): Restore stock when admin confirms cancellation
+    // This is the authoritative stock restore point (customer cancel only requests, admin confirms)
+    for (const item of order.items) {
+      await Product.findByIdAndUpdate(item.productId, {
+        $inc: {
+          stock: item.quantity,
+          sold_count: -item.quantity
+        }
+      });
+    }
+
+    res.json({ message: "Order cancelled successfully. Stock restored.", order });
 
   } catch (err) {
     res.status(500).json({ error: err.message });

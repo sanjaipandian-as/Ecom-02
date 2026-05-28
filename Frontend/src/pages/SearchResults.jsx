@@ -75,6 +75,7 @@ const SearchResults = () => {
     });
     const [categories, setCategories] = useState([]);
     const [maxPrice, setMaxPrice] = useState(10000000);
+    const [minPrice, setMinPrice] = useState(0);
 
     useEffect(() => {
         if (query) {
@@ -144,11 +145,13 @@ const SearchResults = () => {
             });
             setCategories(Object.values(categoryMap));
 
-            // Calculate max price
+            // Calculate min and max price
             const prices = products.map(p => p.pricing?.selling_price || p.price || 0);
             const max = prices.length > 0 ? Math.max(...prices) : 10000000;
+            const min = prices.length > 0 ? Math.min(...prices) : 0;
             setMaxPrice(max);
-            setFilters(prev => ({ ...prev, priceRange: [0, max] }));
+            setMinPrice(min);
+            setFilters(prev => ({ ...prev, priceRange: [min, max] }));
 
             setError('');
         } catch (err) {
@@ -262,14 +265,15 @@ const SearchResults = () => {
             <Topbar />
 
             {/* Main Content Area */}
-            <div className="flex-1 max-w-[1600px] w-full mx-auto flex items-start">
+            <div className="flex-1 max-w-[1600px] w-full mx-auto flex flex-col-reverse md:flex-row-reverse items-start">
 
-                {/* Filter Sidebar - Sticky Left */}
+                {/* Filter Sidebar - Sticky Right */}
                 <Sidebar
                     showFilters={true}
                     onFiltersChange={handleFiltersChange}
                     categories={categories}
                     maxPrice={maxPrice}
+                    minPrice={minPrice}
                 />
 
                 {/* Product Grid Area */}

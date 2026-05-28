@@ -7,29 +7,45 @@ export const addToCart = async (req, res) => {
     const customerId = req.user._id;
     const { productId, quantity } = req.body;
 
+    // ⭐ SECURITY FIX (VULN-9): Validate quantity is a positive integer
+    const qty = parseInt(quantity, 10);
+    if (!Number.isInteger(qty) || qty < 1 || qty > 100) {
+      return res.status(400).json({ message: "Quantity must be a positive integer (max 100)." });
+    }
+
     const product = await Product.findOne({ _id: productId, is_deleted: { $ne: true } });
     if (!product) return res.status(404).json({ message: "Product not available" });
-
-    // ⭐ CHECK STOCK
-    if (product.stock < quantity) {
-      return res.status(400).json({ message: `Only ${product.stock} pieces available in stock` });
-    }
 
     let cart = await Cart.findOne({ customerId });
 
     if (!cart) {
+      // ⭐ CHECK STOCK for new cart
+      if (product.stock < qty) {
+        return res.status(400).json({ message: `Only ${product.stock} pieces available in stock` });
+      }
       cart = await Cart.create({
         customerId,
-        items: [{ productId, quantity }]
+        items: [{ productId, quantity: qty }]
       });
     } else {
       const itemIndex = cart.items.findIndex(
         (item) => item.productId.toString() === productId
       );
       if (itemIndex >= 0) {
-        cart.items[itemIndex].quantity += quantity;
+        // ⭐ SECURITY FIX: Check TOTAL quantity (existing + new) against stock
+        const newTotalQuantity = cart.items[itemIndex].quantity + qty;
+        if (product.stock < newTotalQuantity) {
+          return res.status(400).json({ 
+            message: `Only ${product.stock} pieces available in stock. You already have ${cart.items[itemIndex].quantity} in cart.` 
+          });
+        }
+        cart.items[itemIndex].quantity = newTotalQuantity;
       } else {
-        cart.items.push({ productId, quantity });
+        // ⭐ CHECK STOCK for new item
+        if (product.stock < qty) {
+          return res.status(400).json({ message: `Only ${product.stock} pieces available in stock` });
+        }
+        cart.items.push({ productId, quantity: qty });
       }
       await cart.save();
     }

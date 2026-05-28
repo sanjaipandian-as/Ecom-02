@@ -20,7 +20,6 @@ const generateToken = (id) => {
 export const registerCustomer = async (req, res) => {
   try {
     console.log("=== Registration Attempt Started ===");
-    console.log("Body:", req.body);
     const { name, email, phone, password, address, addressLine1, addressLine2, city, state, postalCode } = req.body;
 
     if (!name || !email || !phone || !password) {
