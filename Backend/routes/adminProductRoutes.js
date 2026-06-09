@@ -12,9 +12,13 @@ import {
   getAllProductsCount,
   toggleTopSellingProduct,
   toggleViralProduct,
+  bulkInventoryUpdate,
 } from "../controllers/adminProductController.js";
 
 const router = express.Router();
+
+// Bulk inventory update
+router.post("/bulk-inventory", authenticate, isAdmin, bulkInventoryUpdate);
 
 // Create product (with image upload)
 router.post("/", authenticate, isAdmin, upload.array("images", 5), createProduct);

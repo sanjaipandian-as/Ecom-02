@@ -17,16 +17,16 @@ const SectionCard = ({ product, accent = 'from-amber-100 via-white to-rose-100' 
             onClick={() => navigate(`/product/${product._id}`)}
             className="group text-left bg-white rounded-[16px] border border-gold-champagne/15 overflow-hidden shadow-xs hover:shadow-lg transition-all duration-350 hover:-translate-y-1 flex flex-col h-full"
         >
-            <div className="relative aspect-[4/4.6] bg-cream-base p-5 overflow-hidden border-b border-gold-champagne/10 flex-shrink-0 flex items-center justify-center">
+            <div className="relative aspect-square bg-cream-base overflow-hidden border-b border-gold-champagne/10 flex-shrink-0">
                 {discount > 0 && (
-                    <div className="absolute top-4 left-4 rounded-xs bg-luxury-crimson px-2.5 py-1 text-[9px] font-bold tracking-[0.1em] text-white shadow-sm uppercase">
+                    <div className="absolute top-4 left-4 z-10 rounded-xs bg-luxury-crimson px-2.5 py-1 text-[9px] font-bold tracking-[0.1em] text-white shadow-sm uppercase">
                         {discount}% OFF
                     </div>
                 )}
                 <img
                     src={image}
                     alt={product.name}
-                    className="h-full w-full object-contain drop-shadow-md transition-transform duration-500 group-hover:scale-105"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                     onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = placeholderImg;
@@ -34,16 +34,16 @@ const SectionCard = ({ product, accent = 'from-amber-100 via-white to-rose-100' 
                 />
             </div>
 
-            <div className="p-5 flex-1 flex flex-col justify-between">
+            <div className="p-4 flex-1 flex flex-col justify-between">
                 <div>
-                    <p className="mb-1.5 text-[9.5px] font-bold uppercase tracking-[0.25em] text-gold-lustrous">
+                    <p className="mb-1 text-[9.5px] font-bold uppercase tracking-[0.25em] text-gold-lustrous">
                         {product.category?.main || 'Collection'}
                     </p>
-                    <h3 className="mb-3 line-clamp-2 text-[15px] font-medium leading-snug text-stone-850 font-serif">
+                    <h3 className="mb-2 line-clamp-2 text-[15px] font-medium leading-snug text-stone-850 font-serif">
                         {product.name}
                     </h3>
                 </div>
-                <div className="flex items-end justify-between gap-3 mt-4">
+                <div className="flex items-end justify-between gap-3 mt-3">
                     <div>
                         {mrp > sellingPrice && (
                             <p className="text-[11px] text-stone-400 font-medium line-through font-outfit">₹{mrp.toFixed(0)}</p>
@@ -70,7 +70,7 @@ const EmptyState = ({ title, description }) => (
     </div>
 );
 
-const HomepageProductSections = () => {
+const HomepageProductSections = ({ hideTopSelling = false }) => {
     const [sections, setSections] = useState({
         topSellingProducts: [],
         viralProducts: [],
@@ -147,7 +147,7 @@ const HomepageProductSections = () => {
 
     return (
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-6 sm:py-10">
-            {renderSection(
+            {!hideTopSelling && renderSection(
                 'Top Selling Products',
                 null,
                 sections.topSellingProducts,

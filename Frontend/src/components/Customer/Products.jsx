@@ -250,7 +250,7 @@ const Products = ({ filters = defaultFilters }) => {
                 className="bg-white rounded-[16px] overflow-hidden hover:shadow-lg sm:hover:-translate-y-1 transition-all duration-350 border border-gold-champagne/15 cursor-pointer active:scale-98 animate-fade-in flex flex-col h-full group w-full"
             >
                 {/* Image & Background Section */}
-                <div className="relative w-full aspect-square sm:aspect-[4/4.5] overflow-hidden flex-shrink-0 p-4 flex flex-col bg-cream-base border-b border-gold-champagne/10">
+                <div className="relative w-full aspect-square sm:aspect-[4/4.5] overflow-hidden flex-shrink-0 flex flex-col bg-white border-b border-gold-champagne/10">
                     
                     {/* Top Badge */}
                     <div className="absolute top-4 left-4 z-20">
@@ -266,11 +266,11 @@ const Products = ({ filters = defaultFilters }) => {
                     </div>
 
                     {/* Product Image */}
-                    <div className="flex-1 w-full h-full flex items-center justify-center p-4 z-10 relative">
+                    <div className="flex-1 w-full h-full z-10 relative">
                         <img
                             src={(product.images?.filter(img => img && img.trim() !== '')?.[0]) || placeholderImg}
                             alt={product.name}
-                            className="w-full h-full object-contain mix-blend-multiply drop-shadow-md group-hover:scale-105 transition-transform duration-500"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             loading="lazy"
                             onError={(e) => {
                                 e.target.onerror = null;

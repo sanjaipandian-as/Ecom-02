@@ -27,7 +27,7 @@ const AppSkeleton = () => {
             </div>
 
             {/* Navigation Bar Skeleton */}
-            <div className="hidden md:flex w-full h-16 bg-white border-b border-gray-200 items-center justify-center gap-8 mb-1">
+            <div className="hidden md:flex w-full h-16 bg-white border-b border-gray-200 items-center justify-center gap-8 mb-1 transition-all duration-300">
                 <Skeleton className="h-8 w-20" />
                 <Skeleton className="h-8 w-20" />
                 <Skeleton className="h-8 w-20" />

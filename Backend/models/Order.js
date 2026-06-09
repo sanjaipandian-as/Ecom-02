@@ -18,6 +18,8 @@ const orderSchema = new mongoose.Schema(
           required: true,
         },
 
+        sku: { type: String }, // Store SKU at time of order
+
         quantity: {
           type: Number,
           required: true,
@@ -29,8 +31,27 @@ const orderSchema = new mongoose.Schema(
           required: true,
           min: 0,
         },
+
+        taxAmount: { type: Number, default: 0 },
       },
     ],
+
+    subTotal: {
+      type: Number,
+      required: true,
+      min: 0,
+      default: 0,
+    },
+
+    taxTotal: {
+      type: Number,
+      default: 0,
+    },
+
+    shippingFee: {
+      type: Number,
+      default: 0,
+    },
 
     totalAmount: {
       type: Number,
@@ -111,14 +132,17 @@ const orderSchema = new mongoose.Schema(
 orderSchema.pre("save", async function () {
   if (this.isModified("items") || this.isNew || this.totalAmount === 0) {
     if (this.items && this.items.length > 0) {
-      const calculatedTotal = this.items.reduce((sum, item) => {
+      const calculatedSubTotal = this.items.reduce((sum, item) => {
         return sum + ((item.price || 0) * (item.quantity || 0));
       }, 0);
 
-      // Only overwrite if it's 0 or we explicitly want to recalculate
-      if (this.totalAmount === 0 || this.isModified("items")) {
-        this.totalAmount = calculatedTotal;
-      }
+      const calculatedTaxTotal = this.items.reduce((sum, item) => {
+        return sum + (item.taxAmount || 0);
+      }, 0);
+
+      this.subTotal = calculatedSubTotal;
+      this.taxTotal = calculatedTaxTotal;
+      this.totalAmount = calculatedSubTotal + calculatedTaxTotal + (this.shippingFee || 0);
     }
   }
 });

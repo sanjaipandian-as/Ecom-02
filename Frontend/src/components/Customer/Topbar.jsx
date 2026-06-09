@@ -1,6 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
-import { FaSearch, FaBell, FaUser, FaSignOutAlt, FaBars, FaTimes, FaHome, FaShoppingBag, FaCog } from 'react-icons/fa';
-import { BsFillBagHeartFill } from 'react-icons/bs';
+import { 
+  Search, 
+  Bell, 
+  User, 
+  LogOut, 
+  Menu, 
+  X, 
+  Home, 
+  ShoppingBag, 
+  Settings, 
+  ShoppingCart, 
+  ChevronDown,
+  HelpCircle,
+  Heart
+} from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import API from '../../../api';
@@ -17,7 +30,15 @@ const Searchbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showSearchBar, setShowSearchBar] = useState(false);
     const [categories, setCategories] = useState([]);
-    const [isCategoriesExpanded, setIsCategoriesExpanded] = useState(false);
+    const [isCategoriesExpanded, setIsCategoriesExpanded] = useState(() => {
+        const saved = localStorage.getItem('isTopbarExpanded');
+        return saved !== null ? JSON.parse(saved) : true;
+    });
+
+    useEffect(() => {
+        localStorage.setItem('isTopbarExpanded', JSON.stringify(isCategoriesExpanded));
+    }, [isCategoriesExpanded]);
+
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -36,13 +57,8 @@ const Searchbar = () => {
     const isHomePage = location.pathname === '/';
 
     useEffect(() => {
-        if (!isHomePage) {
-            setIsScrolled(true);
-            return;
-        }
-
         const handleScroll = () => {
-            if (window.scrollY > 50) {
+            if (window.scrollY > 20) {
                 setIsScrolled(true);
             } else {
                 setIsScrolled(false);
@@ -53,26 +69,43 @@ const Searchbar = () => {
         handleScroll();
 
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [isHomePage]);
+    }, []);
 
     const [notifications, setNotifications] = useState([]);
     const [showNotifications, setShowNotifications] = useState(false);
     const [loadingNotifications, setLoadingNotifications] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
 
-    const navItems = [
-        { label: 'Shop', path: '/products', icon: FaShoppingBag },
-        { label: 'Bestsellers', path: '/category/bestsellers', icon: FaShoppingBag },
-        { label: 'Support', path: '/Support', icon: FaUser },
-        { label: 'About', path: '/about', icon: FaHome }
+    const navItems = categories.length > 0 ? categories : [
+        { label: 'Viral skin glow kit', path: '/category/viral-skin-glow-kit' },
+        { label: 'Viral skin whitening kit', path: '/category/viral-skin-whitening-kit' },
+        { label: 'Best Sellers', path: '/category/best-sellers' },
+        { label: 'Face wash', path: '/category/face-wash' },
+        { label: 'Serums', path: '/category/serums' },
+        { label: 'Sunscreen/ Moisture', path: '/category/sunscreen-moisture' },
+        { label: 'Face pack', path: '/category/face-pack' },
+        { label: 'Soaps', path: '/category/soaps' },
+        { label: 'Eye care', path: '/category/eye-care' },
+        { label: 'Lip care', path: '/category/lip-care' },
+        { label: 'Face cream', path: '/category/face-cream' }
     ];
 
     const mobileLinks = [
         { label: 'Home', path: '/' },
-        { label: 'Shop', path: '/products' },
-        { label: 'Bestsellers', path: '/category/bestsellers' },
+        ...(categories.length > 0 ? categories : [
+            { label: 'Viral skin glow kit', path: '/category/viral-skin-glow-kit' },
+            { label: 'Viral skin whitening kit', path: '/category/viral-skin-whitening-kit' },
+            { label: 'Best Sellers', path: '/category/best-sellers' },
+            { label: 'Face wash', path: '/category/face-wash' },
+            { label: 'Serums', path: '/category/serums' },
+            { label: 'Sunscreen/ Moisture', path: '/category/sunscreen-moisture' },
+            { label: 'Face pack', path: '/category/face-pack' },
+            { label: 'Soaps', path: '/category/soaps' },
+            { label: 'Eye care', path: '/category/eye-care' },
+            { label: 'Lip care', path: '/category/lip-care' },
+            { label: 'Face cream', path: '/category/face-cream' }
+        ]),
         { label: 'Support', path: '/Support' },
-        { label: 'About Us', path: '/about' },
         { label: 'My Wishlist', path: '/Wishlist' },
         { label: 'My Cart', path: '/Cart' }
     ];
@@ -216,13 +249,13 @@ const Searchbar = () => {
                 const response = await API.get('/categories');
                 if (response.data && response.data.length > 0) {
                     const mapped = response.data
-                        .filter(cat => cat.isActive !== false)
+                        .filter(cat => cat.isActive !== false && cat.showInTopbar === true)
                         .map(cat => {
                             const slug = cat.name.toLowerCase()
                                 .replace(/[^a-z0-9]+/g, '-')
                                 .replace(/(^-|-$)+/g, '');
                             return {
-                                name: cat.name,
+                                label: cat.name,
                                 path: `/category/${slug}`
                             };
                         });
@@ -502,441 +535,211 @@ const Searchbar = () => {
     };
 
     return (
-        <div
-            className={`z-50 transition-all duration-300 sticky top-0 border-b shadow-xs py-2 text-black bg-dark-pale-green ${isScrolled ? 'shadow-xs border-black/15' : 'border-black/15'}`}
+        <header
+            className={`z-50 transition-all duration-300 sticky top-0 bg-white w-full ${isScrolled ? 'shadow-md' : 'border-b border-gray-100'}`}
         >
-            <div className="px-4 sm:px-6 md:px-8 xl:px-10 w-full flex items-center justify-between gap-3 min-h-[56px]">
+            {/* Top Row: Search, Logo, User Actions */}
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20 sm:h-24">
+                
+                {/* Categories Toggle (Desktop) */}
+                <button
+                    onClick={() => setIsCategoriesExpanded(!isCategoriesExpanded)}
+                    className="hidden lg:flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded-xl transition-all mr-4 border border-gray-100 shadow-sm active:scale-95"
+                    title={isCategoriesExpanded ? "Hide Categories" : "Show Categories"}
+                >
+                    {isCategoriesExpanded ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                    <span className="text-sm font-bold uppercase tracking-wider">Categories</span>
+                </button>
 
-                {/* Logo and Brand Title (Sharp edges) */}
-                <div className="flex items-center gap-3 lg:gap-6 flex-1 min-w-0">
+                {/* Search Bar (Left) */}
+                <div className="hidden lg:flex items-center relative flex-1 max-w-[300px]" ref={desktopSearchRef}>
+                    <div className="relative w-full group">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-gray-600 transition-colors w-4 h-4" />
+                        <input
+                            type="text"
+                            placeholder='Search For "Baby care"'
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            onFocus={() => setShowSuggestions(searchQuery.trim().length > 1)}
+                            className="w-full pl-11 pr-4 py-2.5 rounded-lg text-sm bg-gray-50 border border-transparent focus:bg-white focus:border-gray-200 focus:outline-none transition-all placeholder:text-gray-400"
+                        />
+                    </div>
+
+                    {/* Suggestions Box */}
+                    {showSuggestions && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto py-2 animate-scale-up">
+                            {loadingSuggestions ? (
+                                <div className="p-4 text-center">
+                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900 mx-auto"></div>
+                                </div>
+                            ) : suggestions.length > 0 ? (
+                                suggestions.map((suggestion, index) => (
+                                    <button
+                                        key={suggestion._id}
+                                        onClick={() => handleSearch(suggestion.name)}
+                                        className={`w-full px-4 py-2 text-left transition-colors flex items-center gap-3 text-sm ${index === selectedSuggestionIndex ? 'bg-gray-50' : 'hover:bg-gray-50'}`}
+                                    >
+                                        <Search className="w-3.5 h-3.5 text-gray-400" />
+                                        <span>{suggestion.name}</span>
+                                    </button>
+                                ))
+                            ) : (
+                                <div className="p-4 text-center text-sm text-gray-500">No results found</div>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                {/* Mobile Menu Toggle (Left on mobile) */}
+                <button
+                    onClick={() => setIsMobileMenuOpen(true)}
+                    className="lg:hidden p-2 -ml-2 text-gray-600 hover:text-black transition-colors"
+                >
+                    <Menu className="w-6 h-6" />
+                </button>
+
+                {/* Logo (Center) */}
+                <div className="flex-shrink-0 flex items-center justify-center lg:flex-1">
                     <button
                         onClick={() => handleNavigation('/')}
-                        className="flex items-center gap-3 py-1 pr-2 shrink-0 min-w-0 rounded-none cursor-pointer"
-                        title="Go to home"
+                        className="flex flex-col items-center group transition-transform duration-300 active:scale-95"
                     >
                         <img
-                            src="/HABG.png"
-                            alt="HA logo"
-                            className="w-10 h-10 object-cover shadow-md ring-2 ring-gold-champagne/30 rounded-full shrink-0 transition-transform duration-500 hover:rotate-12"
+                            src="/Plenora.jpeg"
+                            alt="PLENORA Logo"
+                            className="h-12 sm:h-16 w-auto object-contain transition-transform group-hover:scale-105"
                         />
-                        <span className="flex flex-col items-start text-left min-w-0">
-                            <span className="font-serif text-base sm:text-lg font-bold tracking-[0.08em] uppercase text-black leading-none">
-                                Hey Azhagi
-                            </span>
-                            <span className="hidden sm:block text-[7px] font-bold tracking-[0.32em] uppercase text-black mt-1.5">
-                                anti tarnish fashion Jewellery
-                            </span>
+                        <span className="mt-1 text-lg sm:text-xl font-bold tracking-[0.2em] text-gray-900 uppercase">
+                            PLENORA
                         </span>
                     </button>
-
-                    {/* Search Bar Input (Pill shape, premium border) */}
-                    <div className="hidden lg:flex items-center relative z-20 flex-1 max-w-[28rem]" ref={desktopSearchRef}>
-                        <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-black w-[12px] h-[12px]" />
-                        <input
-                            type="text"
-                            placeholder="Search our collections..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            onFocus={() => setShowSuggestions(searchQuery.trim().length > 1)}
-                            className="w-full pl-10 pr-4 py-2 rounded-full text-xs font-semibold focus:outline-none transition-all bg-cream-base text-black placeholder:text-slate-500 border border-black/20 focus:border-black focus:bg-white focus:ring-0 focus:shadow-xs"
-                        />
-
-                        {/* Suggestions Box */}
-                        {showSuggestions && (
-                            <div
-                                className="absolute top-full left-0 right-0 mt-2 border border-gold-champagne/20 rounded-2xl shadow-xl z-50 max-h-96 overflow-y-auto bg-white/95 backdrop-blur-md py-2"
-                            >
-                                {loadingSuggestions ? (
-                                    <div className="p-4 text-center text-gray-500">
-                                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 mx-auto" style={{ borderBottomColor: '#b4925a' }}></div>
-                                    </div>
-                                ) : suggestions.length > 0 ? (
-                                    <div className="py-1">
-                                        {suggestions.map((suggestion, index) => (
-                                            <button
-                                                key={suggestion._id}
-                                                onClick={() => handleSearch(suggestion.name)}
-                                                className={`w-full px-4 py-2 text-left transition-colors flex items-center gap-3 text-xs text-slate-800 ${index === selectedSuggestionIndex ? 'bg-cream-dark' : 'hover:bg-cream-base'}`}
-                                            >
-                                                <FaSearch className="w-3 h-3 text-black" />
-                                                <span>{suggestion.name}</span>
-                                            </button>
-                                        ))}
-                                    </div>
-                                ) : searchQuery.trim().length > 1 ? (
-                                    <div className="p-4 text-center text-xs text-gray-500">
-                                        No suggestions found
-                                    </div>
-                                ) : null}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Navigation Items */}
-                    <div className="hidden lg:flex items-center gap-3 text-[15px] font-medium tracking-wide shrink-0">
-                        {navItems.map((item) => (
-                            <button
-                                key={item.label}
-                                onClick={() => handleNavigation(item.path)}
-                                className={`relative px-3.5 py-2 transition-all duration-350 font-bold text-[10.5px] uppercase tracking-[0.24em] cursor-pointer ${isNavItemActive(item.path)
-                                    ? 'text-black after:absolute after:bottom-0 after:left-3.5 after:right-3.5 after:h-[2px] after:bg-black'
-                                    : 'text-black/70 hover:text-black after:absolute after:bottom-0 after:left-3.5 after:right-3.5 after:h-[2px] after:bg-black after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300'
-                                    }`}
-                            >
-                                {item.label}
-                            </button>
-                        ))}
-                    </div>
                 </div>
 
-                {/* Right Side Buttons: Cart, Wishlist, Profile */}
-                <div className="flex items-center justify-end gap-1.5 shrink-0">
-
-                    {/* Mobile search toggle */}
-                    <button
-                        onClick={() => {
-                            setShowSearchBar((prev) => !prev);
-                            setIsMobileMenuOpen(false);
-                        }}
-                        className="lg:hidden w-9 h-9 rounded-full bg-cream-base hover:bg-black/10 flex items-center justify-center transition text-black hover:text-black/80 cursor-pointer"
-                        title="Search"
-                    >
-                        <FaSearch className="w-3.5 h-3.5" />
-                    </button>
-
-                    {/* Mobile menu toggle */}
-                    <button
-                        onClick={() => {
-                            setIsMobileMenuOpen(!isMobileMenuOpen);
-                            setShowSearchBar(false);
-                            setShowNotifications(false);
-                        }}
-                        className="lg:hidden w-9 h-9 rounded-full bg-cream-base hover:bg-black/10 flex items-center justify-center transition text-black hover:text-black/80 cursor-pointer"
-                        aria-label="Toggle navigation menu"
-                    >
-                        {isMobileMenuOpen ? <FaTimes className="w-3.5 h-3.5" /> : <FaBars className="w-3.5 h-3.5" />}
-                    </button>
-
-                    {userRole !== 'admin' && (
+                {/* Right Actions */}
+                <div className="flex items-center justify-end flex-1 gap-2 sm:gap-4 lg:gap-6">
+                    
+                    {/* User Account */}
+                    <div className="relative group">
                         <button
-                            onClick={() => navigate('/Wishlist')}
-                            className="hidden lg:flex w-9 h-9 rounded-full bg-transparent hover:bg-black/10 items-center justify-center transition-all duration-300 text-black hover:text-black/70 hover:-translate-y-0.5 cursor-pointer"
-                            title="Wishlist"
+                            onClick={() => {
+                                if (!isLoggedIn) {
+                                    navigate(getAuthPath('login'));
+                                } else {
+                                    handleNavigation(userRole === 'admin' ? '/admin-Dashboard' : userRole === 'seller' ? '/seller-home' : '/Settings');
+                                }
+                            }}
+                            className="flex items-center gap-1.5 py-2 px-1 text-gray-700 hover:text-black transition-colors"
                         >
-                            <BsFillBagHeartFill className="w-3.5 h-3.5" />
+                            <span className="text-sm font-medium hidden md:block">
+                                {isLoggedIn ? userName.split(' ')[0] : 'Hello'}
+                            </span>
+                            <User className="w-5 h-5" />
                         </button>
-                    )}
-
-                    {userRole !== 'admin' && (
-                        <button
-                            onClick={() => navigate('/Cart')}
-                            className="hidden lg:flex w-9 h-9 rounded-full bg-transparent hover:bg-black/10 items-center justify-center transition-all duration-300 text-black hover:text-black/70 hover:-translate-y-0.5 cursor-pointer"
-                            title="Cart"
-                        >
-                            <FaShoppingBag className="w-3.5 h-3.5" />
-                        </button>
-                    )}
-
-                    {/* Notifications drawer trigger */}
-                    <div className="hidden lg:block relative" ref={notificationRef}>
-                        <button
-                            onClick={() => setShowNotifications(!showNotifications)}
-                            className="w-9 h-9 rounded-full bg-transparent hover:bg-black/10 flex items-center justify-center transition-all duration-300 text-black hover:text-black/70 hover:-translate-y-0.5 relative cursor-pointer"
-                            title="Notifications"
-                        >
-                            <FaBell className="w-3.5 h-3.5" />
-                            {unreadCount > 0 && (
-                                <span className="absolute top-0.5 right-0.5 w-4 h-4 text-white text-[8px] font-bold rounded-full flex items-center justify-center border border-white bg-luxury-crimson animate-pulse">
-                                    {unreadCount > 9 ? '9+' : unreadCount}
-                                </span>
-                            )}
-                        </button>
-
-                        {/* Notifications popup */}
-                        {showNotifications && isLoggedIn && (
-                            <div className="fixed sm:absolute top-16 sm:top-full left-2 right-2 sm:left-auto sm:right-0 mt-2 w-auto sm:w-80 md:w-96 bg-white border border-gold-champagne/25 rounded-2xl shadow-xl z-50 max-h-[calc(100vh-5rem)] sm:max-h-[500px] overflow-hidden flex flex-col">
-                                <div className="p-3 sm:p-4 border-b border-gray-100 bg-cream-soft flex-shrink-0">
-                                    <div className="flex items-center justify-between mb-1">
-                                        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">Notifications</h3>
-                                        <div className="flex items-center gap-2">
-                                            {unreadCount > 0 && (
-                                                <button
-                                                    onClick={markAllAsRead}
-                                                    className="text-[10px] font-bold text-gold-lustrous hover:text-emerald-deep transition-colors px-2 py-0.5 hover:bg-cream-base rounded-full cursor-pointer"
-                                                >
-                                                    Mark all read
-                                                </button>
-                                            )}
-                                            <button
-                                                onClick={() => setShowNotifications(false)}
-                                                className="sm:hidden p-1 hover:bg-cream-base rounded-full transition-colors cursor-pointer"
-                                            >
-                                                <FaTimes className="w-3 h-3 text-gray-650" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                    {unreadCount > 0 && (
-                                        <p className="text-[10px] text-gray-500 font-medium">
-                                            You have {unreadCount} unread notification{unreadCount === 1 ? '' : 's'}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="overflow-y-auto flex-1 overscroll-contain custom-scrollbar">
-                                    {loadingNotifications ? (
-                                        <div className="p-8 text-center">
-                                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gold-lustrous mx-auto"></div>
-                                        </div>
-                                    ) : notifications.length === 0 ? (
-                                        <div className="p-8 text-center">
-                                            <FaBell className="w-8 h-8 text-gray-350 mx-auto mb-2" />
-                                            <p className="text-[10px] text-gray-505 font-bold uppercase tracking-wider">No notifications yet</p>
-                                        </div>
-                                    ) : (
-                                        <div className="divide-y divide-gray-100">
-                                            {notifications.map((notification) => (
-                                                <div
-                                                    key={notification._id}
-                                                    onClick={() => !notification.isRead && markAsRead(notification._id)}
-                                                    className={`p-3 sm:p-4 hover:bg-cream-base/50 transition-colors cursor-pointer ${!notification.isRead ? 'bg-cream-base/10' : ''}`}
-                                                >
-                                                    <div className="flex items-start gap-2.5">
-                                                        <span className="text-base flex-shrink-0 mt-0.5">
-                                                            {getNotificationIcon(notification.type)}
-                                                        </span>
-                                                        <div className="flex-1 min-w-0 text-left">
-                                                            <div className="flex items-start justify-between gap-2 mb-0.5">
-                                                                <h4 className={`text-[11px] font-bold leading-tight ${!notification.isRead ? 'text-gray-900 font-extrabold' : 'text-gray-700'}`}>
-                                                                    {notification.title}
-                                                                </h4>
-                                                                {!notification.isRead && (
-                                                                    <div className="w-1.5 h-1.5 bg-gold-lustrous rounded-full flex-shrink-0 mt-1"></div>
-                                                                )}
-                                                            </div>
-                                                            <p className="text-[11px] text-gray-500 line-clamp-2 mb-1">
-                                                                {notification.message}
-                                                            </p>
-                                                            <p className="text-[9px] text-gray-400">
-                                                                {getTimeAgo(notification.createdAt)}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
                     </div>
 
-                    {/* Auth Status & Account Toggles */}
-                    {!isLoggedIn ? (
-                        <button
-                            onClick={() => navigate(getAuthPath('login'))}
-                            className="hidden lg:flex w-9 h-9 rounded-full bg-transparent hover:bg-black/10 items-center justify-center transition-all duration-300 text-black hover:text-black/70 hover:-translate-y-0.5 cursor-pointer"
-                            title="Login"
-                        >
-                            <FaUser className="w-3.5 h-3.5" />
-                        </button>
-                    ) : (
-                        <>
-                            <button
-                                onClick={() => navigate(userRole === 'admin' ? '/admin-Dashboard' : userRole === 'seller' ? '/seller-home' : '/Settings')}
-                                className="hidden lg:flex w-9 h-9 rounded-full bg-transparent hover:bg-black/10 items-center justify-center transition-all duration-300 text-black hover:text-black/70 hover:-translate-y-0.5 cursor-pointer"
-                                title={userRole === 'admin' ? "Admin Dashboard" : userRole === 'seller' ? "Seller Dashboard" : "Settings"}
-                            >
-                                {userRole === 'admin' ? <FaCog className="w-3.5 h-3.5" /> : <FaUser className="w-3.5 h-3.5" />}
-                            </button>
-                            <button
-                                onClick={handleLogout}
-                                className="hidden lg:flex w-9 h-9 rounded-full bg-transparent hover:bg-luxury-crimson/10 items-center justify-center transition-all duration-300 text-black hover:text-luxury-crimson hover:-translate-y-0.5 cursor-pointer"
-                                title="Logout"
-                            >
-                                <FaSignOutAlt className="w-3.5 h-3.5" />
-                            </button>
-                        </>
-                    )}
-
+                    {/* Cart */}
+                    <button
+                        onClick={() => navigate('/Cart')}
+                        className="relative p-2 text-gray-700 hover:text-black transition-all hover:scale-110"
+                    >
+                        <ShoppingCart className="w-6 h-6" />
+                        <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-[#FF9800] text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white">
+                            0
+                        </span>
+                    </button>
                 </div>
             </div>
-            {/* Mobile Search Bar - Visible on smaller screens */}
-            {(showSearchBar || searchQuery.trim()) && (
-                <div className="lg:hidden px-4 sm:px-6 pb-2.5 pt-2 bg-dark-pale-green" ref={mobileSearchRef}>
-                    <div className="relative">
-                        <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-black w-[12px] h-[12px] z-10" />
-                        <input
-                            type="text"
-                            placeholder="Search jewellery..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            onFocus={() => setShowSuggestions(searchQuery.trim().length > 1)}
-                            className="w-full pl-10 pr-4 py-2 rounded-full text-xs font-semibold focus:outline-none transition-all bg-cream-base text-black placeholder:text-slate-500 border border-black/20 focus:border-black focus:ring-0"
-                        />
 
-                        {showSuggestions && suggestions.length > 0 && (
-                            <div
-                                className="absolute top-full left-0 right-0 mt-1.5 border border-gold-champagne/20 rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto bg-white"
-                            >
-                                <div className="py-1">
-                                    {suggestions.map((suggestion, index) => (
-                                        <button
-                                            key={suggestion._id}
-                                            onClick={() => handleSearch(suggestion.name)}
-                                            className="w-full px-4 py-2.5 text-left transition-colors flex items-center gap-3 text-xs text-slate-800 hover:bg-cream-base"
-                                        >
-                                            <FaSearch className="w-3 h-3 text-gold-lustrous" />
-                                            <span>{suggestion.name}</span>
-                                        </button>
-                                    ))}
+            {/* Bottom Row: Navigation Links (Desktop only) */}
+            {isCategoriesExpanded && (
+                <nav className="hidden lg:block border-t border-gray-100 bg-white animate-fade-in overflow-hidden transition-all duration-300">
+                    <div className="max-w-[1400px] mx-auto px-4 flex justify-center items-stretch gap-6 xl:gap-8 h-16">
+                        {navItems.map((item) => (
+                            <div key={item.label} className="relative group flex items-center">
+                                {item.badge && (
+                                    <span className="absolute -top-1 left-1/2 -translate-x-1/2 bg-[#D32F2F] text-white text-[8px] font-bold px-2 py-0.5 rounded-sm uppercase whitespace-nowrap animate-bounce z-10">
+                                        {item.badge}
+                                    </span>
+                                )}
+                                <button
+                                    onClick={() => handleNavigation(item.path)}
+                                    className={`text-[11px] font-bold uppercase tracking-[0.05em] transition-colors relative h-full flex items-center text-center px-1 leading-tight max-w-[120px] ${location.pathname === item.path ? 'text-gray-900' : 'text-gray-700 hover:text-black'}`}
+                                    style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+                                >
+                                    <span className="relative py-2">
+                                        {item.label}
+                                        <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-gray-900 transition-transform duration-300 ${location.pathname === item.path ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`} />
+                                    </span>
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </nav>
+            )}
+
+            {/* Mobile Sidebar */}
+            {isMobileMenuOpen && (
+                <div className="fixed inset-0 z-[100] lg:hidden">
+                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
+                    <div className="fixed inset-y-0 left-0 w-full max-w-[300px] bg-white shadow-2xl flex flex-col animate-slide-right">
+                        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+                            <img src="/Plenora.jpeg" alt="Logo" className="h-10 w-auto" />
+                            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 -mr-2">
+                                <X className="w-6 h-6 text-gray-500" />
+                            </button>
+                        </div>
+                        
+                        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                            <div className="space-y-4">
+                                {mobileLinks.map((link) => (
+                                    <button
+                                        key={link.label}
+                                        onClick={() => handleNavigation(link.path)}
+                                        className="w-full text-left text-lg font-bold text-gray-800 hover:text-black transition-colors flex items-center justify-between"
+                                    >
+                                        {link.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {isLoggedIn ? (
+                            <div className="p-6 border-t border-gray-100 space-y-4">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-700">
+                                        {userName.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-900">{userName}</h4>
+                                        <p className="text-xs text-gray-500 capitalize">{userRole}</p>
+                                    </div>
                                 </div>
+                                <button onClick={handleLogout} className="w-full py-3 bg-red-50 text-red-600 rounded-xl font-bold flex items-center justify-center gap-2">
+                                    <LogOut className="w-4 h-4" />
+                                    Logout
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="p-6 border-t border-gray-100 grid grid-cols-2 gap-3">
+                                <button
+                                    onClick={() => handleNavigation(getAuthPath('login'))}
+                                    className="py-3 px-4 border border-gray-200 rounded-xl font-bold text-sm text-center"
+                                >
+                                    Login
+                                </button>
+                                <button
+                                    onClick={() => handleNavigation(getAuthPath('register'))}
+                                    className="py-3 px-4 bg-black text-white rounded-xl font-bold text-sm text-center"
+                                >
+                                    Sign Up
+                                </button>
                             </div>
                         )}
                     </div>
                 </div>
             )}
-            {isMobileMenuOpen && (
-                <div className="fixed inset-0 z-[100] lg:hidden flex">
-                    {/* Backdrop Overlay */}
-                    <div
-                        className="fixed inset-0 bg-black/45 backdrop-blur-xs transition-opacity duration-300"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    />
-
-                    {/* Drawer Panel */}
-                    <div
-                        className="relative w-full max-w-[300px] bg-white h-[100dvh] max-h-[100dvh] shadow-2xl flex flex-col p-6 justify-between animate-slide-right z-10"
-                    >
-                        {/* Close Button Header */}
-                        <div className="flex items-center justify-between mb-6">
-                            <button
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className="text-stone-850 hover:text-black transition p-2 -ml-2 cursor-pointer"
-                                aria-label="Close menu"
-                            >
-                                <FaTimes className="w-5 h-5" />
-                            </button>
-                        </div>
-
-                        {/* Scrollable Links Container */}
-                        <div className="flex-1 overflow-y-auto space-y-4 py-2 scrollbar-none pb-16">
-                            {mobileLinks.map((link) => {
-                                const isShopLink = link.label === 'Shop';
-                                return (
-                                    <div key={link.label} className="space-y-4">
-                                        <button
-                                            onClick={() => handleNavigation(link.path)}
-                                            className="w-full text-left font-serif text-[17px] font-medium text-stone-850 hover:text-gold-lustrous transition-colors duration-250 cursor-pointer block py-1"
-                                        >
-                                            {link.label}
-                                        </button>
-
-                                        {isShopLink && (
-                                            <div className="space-y-4">
-                                                <button
-                                                    onClick={() => setIsCategoriesExpanded(!isCategoriesExpanded)}
-                                                    className="w-full text-left font-serif text-[17px] font-medium text-stone-850 hover:text-gold-lustrous transition-colors duration-250 cursor-pointer flex items-center justify-between py-1"
-                                                >
-                                                    <span>Categories</span>
-                                                    <span className={`text-[10px] transition-transform duration-300 transform ${isCategoriesExpanded ? 'rotate-180' : ''}`}>
-                                                        ▼
-                                                    </span>
-                                                </button>
-
-                                                {isCategoriesExpanded && (
-                                                    <div className="pl-4 space-y-3.5 border-l border-stone-200/85 animate-slide-down">
-                                                        {categories.map((cat) => (
-                                                            <button
-                                                                key={cat.name}
-                                                                onClick={() => handleNavigation(cat.path)}
-                                                                className="w-full text-left font-serif text-[15px] font-medium text-stone-650 hover:text-gold-lustrous transition-colors duration-200 cursor-pointer block py-0.5"
-                                                            >
-                                                                {cat.name}
-                                                            </button>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
-
-                            {isLoggedIn && (
-                                <button
-                                    onClick={() => {
-                                        setShowNotifications((prev) => !prev);
-                                        setIsMobileMenuOpen(false);
-                                    }}
-                                    className="w-full text-left font-serif text-[17px] font-medium text-stone-850 hover:text-gold-lustrous transition-colors duration-250 cursor-pointer flex items-center justify-between py-1"
-                                >
-                                    <span>Notifications</span>
-                                    {unreadCount > 0 && (
-                                        <span className="min-w-[18px] h-[18px] px-1.5 text-white text-[9px] font-bold rounded-full flex items-center justify-center bg-luxury-crimson">
-                                            {unreadCount}
-                                        </span>
-                                    )}
-                                </button>
-                            )}
-
-                            {/* Divider */}
-                            <div className="h-px bg-stone-100 my-4" />
-
-                            {/* User Profile / Login status */}
-                            <div className="space-y-4 pt-2">
-                                {isLoggedIn ? (
-                                    <>
-                                        <div className="flex items-center gap-3 p-3 bg-stone-50 border border-stone-200/50 rounded-xl">
-                                            <div className="w-8 h-8 rounded-full bg-emerald-deep text-[#faf6e9] flex items-center justify-center font-bold text-xs flex-shrink-0">
-                                                {userName.charAt(0).toUpperCase()}
-                                            </div>
-                                            <div className="min-w-0">
-                                                <h4 className="text-xs font-bold text-gray-900 truncate">{userName}</h4>
-                                                <p className="text-[10px] text-gray-400 capitalize">{userRole}</p>
-                                            </div>
-                                        </div>
-                                        <button
-                                            onClick={() => handleNavigation(userRole === 'admin' ? '/admin-Dashboard' : userRole === 'seller' ? '/seller-home' : '/Settings')}
-                                            className="w-full text-left font-serif text-sm font-semibold text-stone-600 hover:text-gold-lustrous transition-colors duration-200 cursor-pointer flex items-center gap-2"
-                                        >
-                                            <FaCog className="w-4 h-4 text-stone-500" />
-                                            <span>{userRole === 'admin' ? 'Dashboard' : 'Account Settings'}</span>
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                handleLogout();
-                                                setIsMobileMenuOpen(false);
-                                            }}
-                                            className="w-full text-left font-serif text-sm font-semibold text-red-650 hover:text-red-800 transition-colors duration-200 cursor-pointer flex items-center gap-2"
-                                        >
-                                            <FaSignOutAlt className="w-4 h-4 text-red-400" />
-                                            <span>Logout</span>
-                                        </button>
-                                    </>
-                                ) : (
-                                    <div className="grid grid-cols-2 gap-3 pt-2">
-                                        <button
-                                            onClick={() => handleNavigation(getAuthPath('login'))}
-                                            className="px-4 py-2.5 text-xs font-bold border border-black/20 rounded-xl text-black hover:border-black hover:bg-black/5 transition text-center uppercase tracking-wider cursor-pointer"
-                                        >
-                                            Login
-                                        </button>
-                                        <button
-                                            onClick={() => handleNavigation(getAuthPath('register'))}
-                                            className="px-4 py-2.5 text-xs font-bold text-white bg-emerald-deep border border-emerald-deep rounded-xl hover:bg-emerald-light transition text-center uppercase tracking-wider shadow-xs cursor-pointer"
-                                        >
-                                            Sign Up
-                                        </button>
-                                    </div>
-                                )}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )}
-        </div>
+        </header>
     );
 };
 

@@ -11,7 +11,7 @@ const AdminCategoryManagement = () => {
     const [showModal, setShowModal] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [currentCategory, setCurrentCategory] = useState(null);
-    const [formData, setFormData] = useState({ name: '', icon: null, displayOrder: 0 });
+    const [formData, setFormData] = useState({ name: '', icon: null, displayOrder: 0, showInTopbar: false });
     const [imagePreview, setImagePreview] = useState(null);
     const [submitting, setSubmitting] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -57,6 +57,7 @@ const AdminCategoryManagement = () => {
         const data = new FormData();
         data.append('name', formData.name);
         data.append('displayOrder', formData.displayOrder);
+        data.append('showInTopbar', formData.showInTopbar);
         if (formData.icon) {
             data.append('icon', formData.icon);
         }
@@ -86,7 +87,12 @@ const AdminCategoryManagement = () => {
 
     const handleEdit = (category) => {
         setCurrentCategory(category);
-        setFormData({ name: category.name, icon: null, displayOrder: category.displayOrder || 0 });
+        setFormData({ 
+            name: category.name, 
+            icon: null, 
+            displayOrder: category.displayOrder || 0,
+            showInTopbar: category.showInTopbar || false
+        });
         setImagePreview(category.icon);
         setEditMode(true);
         setShowModal(true);
@@ -110,7 +116,7 @@ const AdminCategoryManagement = () => {
     const openCreateModal = () => {
         setEditMode(false);
         setCurrentCategory(null);
-        setFormData({ name: '', icon: null, displayOrder: 0 });
+        setFormData({ name: '', icon: null, displayOrder: 0, showInTopbar: false });
         setImagePreview(null);
         setShowModal(true);
     };
@@ -119,7 +125,7 @@ const AdminCategoryManagement = () => {
         setShowModal(false);
         setEditMode(false);
         setCurrentCategory(null);
-        setFormData({ name: '', icon: null, displayOrder: 0 });
+        setFormData({ name: '', icon: null, displayOrder: 0, showInTopbar: false });
         setImagePreview(null);
     };
 
@@ -234,10 +240,17 @@ const AdminCategoryManagement = () => {
                                 <h3 className="text-lg font-bold text-slate-900 mb-2 uppercase tracking-tight group-hover:text-indigo-600 transition-colors font-hero truncate">
                                     {category.name}
                                 </h3>
-                                <div className="flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Active</span>
-                                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-auto">Order: {category.displayOrder || 0}</span>
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <div className="flex items-center gap-1">
+                                        <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active</span>
+                                    </div>
+                                    {category.showInTopbar && (
+                                        <span className="px-2 py-0.5 bg-indigo-50 text-indigo-650 text-[9px] font-bold uppercase tracking-widest border border-indigo-100">
+                                            Topbar
+                                        </span>
+                                    )}
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-auto">Order: {category.displayOrder || 0}</span>
                                 </div>
                             </div>
 
@@ -308,6 +321,19 @@ const AdminCategoryManagement = () => {
                                     className={inputStyle}
                                     placeholder="0"
                                 />
+                            </div>
+
+                            <div className="flex items-center gap-3 bg-white p-4 border border-slate-200">
+                                <input
+                                    type="checkbox"
+                                    id="showInTopbar"
+                                    checked={formData.showInTopbar}
+                                    onChange={(e) => setFormData({ ...formData, showInTopbar: e.target.checked })}
+                                    className="w-5 h-5 accent-indigo-600 cursor-pointer"
+                                />
+                                <label htmlFor="showInTopbar" className="text-xs font-bold text-slate-700 uppercase tracking-widest cursor-pointer">
+                                    Show in Topbar Navigation
+                                </label>
                             </div>
 
                             <div>

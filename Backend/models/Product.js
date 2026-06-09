@@ -92,14 +92,52 @@ const ProductSchema = new Schema(
     },
 
     // ==============================
-    // 📊 INVENTORY
+    // 📊 INVENTORY & LOGISTICS
     // ==============================
+    sku: {
+      type: String,
+      unique: true,
+      required: [true, "SKU is required"],
+      trim: true,
+      index: true,
+    },
+
     stock: {
       type: Number,
       required: [true, "Stock quantity is required"],
       min: [0, "Stock cannot be negative"],
       default: 0,
       index: true,
+    },
+
+    low_stock_threshold: {
+      type: Number,
+      default: 10,
+    },
+
+    shipping: {
+      weight: { type: Number, default: 0 }, // in grams
+      dimensions: {
+        length: { type: Number, default: 0 }, // in cm
+        width: { type: Number, default: 0 },
+        height: { type: Number, default: 0 },
+      },
+    },
+
+    tax_class: {
+      type: String,
+      default: "standard",
+      enum: ["standard", "reduced", "exempt"],
+    },
+
+    hsn_code: {
+      type: String,
+      trim: true,
+    },
+
+    supplier: {
+      name: { type: String, trim: true },
+      id: { type: String, trim: true },
     },
 
     // ==============================
@@ -132,6 +170,12 @@ const ProductSchema = new Schema(
     },
 
     is_featured: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+
+    is_new_arrival: {
       type: Boolean,
       default: false,
       index: true,

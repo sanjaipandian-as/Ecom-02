@@ -15,6 +15,26 @@ const AdminProductManagement = ({ onOpenUploadModal, refreshId }) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [productToDelete, setProductToDelete] = useState(null);
 
+    const handleToggleHomepageSection = async (productId, section, value) => {
+        try {
+            const endpoint = section === 'showInTopSelling' 
+                ? `/admin/products/${productId}/toggle-top-selling`
+                : `/admin/products/${productId}/toggle-viral`;
+            
+            await API.put(endpoint, { [section]: value });
+            
+            // Update local state
+            setProducts(prev => prev.map(p => 
+                p._id === productId ? { ...p, [section]: value } : p
+            ));
+            
+            toast.success(`Product updated successfully`);
+        } catch (error) {
+            console.error('Error toggling product section:', error);
+            toast.error('Failed to update product visibility');
+        }
+    };
+
     const categories = ['all', 'Body Care', 'Skin Care', 'Face Care', 'Hair Care'];
 
     useEffect(() => {
@@ -176,6 +196,34 @@ const AdminProductManagement = ({ onOpenUploadModal, refreshId }) => {
                                     <div className="backdrop-blur-md bg-rose-500/90 text-white text-[11px] font-black px-3 py-1.5 rounded-xl shadow-[0_4px_12px_rgba(244,63,94,0.3)]">
                                         -{product.pricing?.discount_percentage || 0}%
                                     </div>
+                                </div>
+
+                                {/* Quick Toggles - Bottom of Image */}
+                                <div className="absolute bottom-4 left-4 right-4 flex gap-2">
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleToggleHomepageSection(product._id, 'showInTopSelling', !product.showInTopSelling);
+                                        }}
+                                        className={`flex-1 py-2 rounded-xl text-[9px] font-black uppercase tracking-tighter transition-all backdrop-blur-md border ${product.showInTopSelling
+                                                ? 'bg-emerald-500/90 text-white border-emerald-400'
+                                                : 'bg-white/60 text-slate-600 border-white/40 hover:bg-white/80'
+                                            }`}
+                                    >
+                                        {product.showInTopSelling ? 'Best Seller ✓' : 'Best Seller'}
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleToggleHomepageSection(product._id, 'showInViral', !product.showInViral);
+                                        }}
+                                        className={`flex-1 py-2 rounded-xl text-[9px] font-black uppercase tracking-tighter transition-all backdrop-blur-md border ${product.showInViral
+                                                ? 'bg-amber-500/90 text-white border-amber-400'
+                                                : 'bg-white/60 text-slate-600 border-white/40 hover:bg-white/80'
+                                            }`}
+                                    >
+                                        {product.showInViral ? 'Viral ✓' : 'Viral'}
+                                    </button>
                                 </div>
                             </div>
 

@@ -9,14 +9,24 @@ const AdminHeroManagement = ({ refreshId }) => {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingSlide, setEditingSlide] = useState(null);
+    const [products, setProducts] = useState([]);
     const [formData, setFormData] = useState({
         order: 0,
-        image: null
+        image: null,
+        title: '',
+        subtitle: '',
+        desc: '',
+        price: '',
+        badge: '',
+        ctaText: '',
+        ctaLink: '',
+        product: ''
     });
     const [previewImage, setPreviewImage] = useState(null);
 
     useEffect(() => {
         fetchSlides();
+        fetchProducts();
     }, [refreshId]);
 
     const fetchSlides = async () => {
@@ -32,19 +42,44 @@ const AdminHeroManagement = ({ refreshId }) => {
         }
     };
 
+    const fetchProducts = async () => {
+        try {
+            const response = await API.get('/products/customer');
+            setProducts(response.data || []);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+    };
+
     const handleOpenModal = (slide = null) => {
         if (slide) {
             setEditingSlide(slide);
             setFormData({
                 order: slide.order,
-                image: null
+                image: null,
+                title: slide.title || '',
+                subtitle: slide.subtitle || '',
+                desc: slide.desc || '',
+                price: slide.price || '',
+                badge: slide.badge || '',
+                ctaText: slide.ctaText || '',
+                ctaLink: slide.ctaLink || '',
+                product: slide.product?._id || slide.product || ''
             });
             setPreviewImage(slide.image);
         } else {
             setEditingSlide(null);
             setFormData({
                 order: slides.length + 1,
-                image: null
+                image: null,
+                title: '',
+                subtitle: '',
+                desc: '',
+                price: '',
+                badge: '',
+                ctaText: 'Shop Now',
+                ctaLink: '/products',
+                product: ''
             });
             setPreviewImage(null);
         }
@@ -56,7 +91,15 @@ const AdminHeroManagement = ({ refreshId }) => {
         setEditingSlide(null);
         setFormData({
             order: 0,
-            image: null
+            image: null,
+            title: '',
+            subtitle: '',
+            desc: '',
+            price: '',
+            badge: '',
+            ctaText: '',
+            ctaLink: '',
+            product: ''
         });
         setPreviewImage(null);
     };
@@ -78,6 +121,15 @@ const AdminHeroManagement = ({ refreshId }) => {
         e.preventDefault();
         const data = new FormData();
         data.append('order', formData.order);
+        data.append('title', formData.title);
+        data.append('subtitle', formData.subtitle);
+        data.append('desc', formData.desc);
+        data.append('price', formData.price);
+        data.append('badge', formData.badge);
+        data.append('ctaText', formData.ctaText);
+        data.append('ctaLink', formData.ctaLink);
+        data.append('product', formData.product);
+        
         if (formData.image) {
             data.append('image', formData.image);
         }
@@ -221,6 +273,23 @@ const AdminHeroManagement = ({ refreshId }) => {
                         </div>
 
                         <form onSubmit={handleSubmit} className="p-5 md:p-8 space-y-6 md:space-y-8">
+                            {/* Product Selection (Crucial for ratings/pricing) */}
+                            <div className="space-y-4">
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">Link to Product (Optional)</label>
+                                <select
+                                    name="product"
+                                    value={formData.product}
+                                    onChange={handleInputChange}
+                                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10 outline-none font-semibold text-slate-900 transition-all appearance-none"
+                                >
+                                    <option value="">No Product Linked</option>
+                                    {products.map(p => (
+                                        <option key={p._id} value={p._id}>{p.name} (₹{p.pricing?.selling_price})</option>
+                                    ))}
+                                </select>
+                                <p className="text-[10px] text-slate-400 font-medium">If a product is linked, its real-time ratings and pricing will be shown in the hero section.</p>
+                            </div>
+
                             {/* Image Upload */}
                             <div className="space-y-4">
                                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">Banner Image</label>
@@ -245,9 +314,58 @@ const AdminHeroManagement = ({ refreshId }) => {
                                 </div>
                             </div>
 
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-4">
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">Title</label>
+                                    <input
+                                        type="text"
+                                        name="title"
+                                        value={formData.title}
+                                        onChange={handleInputChange}
+                                        placeholder="Main Heading"
+                                        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10 outline-none font-semibold text-slate-900 transition-all"
+                                    />
+                                </div>
+                                <div className="space-y-4">
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">Badge</label>
+                                    <input
+                                        type="text"
+                                        name="badge"
+                                        value={formData.badge}
+                                        onChange={handleInputChange}
+                                        placeholder="e.g. BEST SELLER"
+                                        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10 outline-none font-semibold text-slate-900 transition-all"
+                                    />
+                                </div>
+                            </div>
+
                             <div className="space-y-4">
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">Display Order</label>
-                                <div className="relative">
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">Description</label>
+                                <textarea
+                                    name="desc"
+                                    value={formData.desc}
+                                    onChange={handleInputChange}
+                                    placeholder="Brief description of the product or offer..."
+                                    rows="3"
+                                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10 outline-none font-semibold text-slate-900 transition-all resize-none"
+                                ></textarea>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-4">
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">CTA Text</label>
+                                    <input
+                                        type="text"
+                                        name="ctaText"
+                                        value={formData.ctaText}
+                                        onChange={handleInputChange}
+                                        placeholder="Shop Now"
+                                        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10 outline-none font-semibold text-slate-900 transition-all"
+                                    />
+                                </div>
+                                <div className="space-y-4">
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">Display Order</label>
+                                    <div className="relative">
                                     <input
                                         type="number"
                                         name="order"
@@ -262,8 +380,9 @@ const AdminHeroManagement = ({ refreshId }) => {
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div className="pt-2 flex flex-col-reverse md:flex-row gap-3 md:gap-4">
+                        <div className="pt-2 flex flex-col-reverse md:flex-row gap-3 md:gap-4">
                                 <button
                                     type="button"
                                     onClick={handleCloseModal}

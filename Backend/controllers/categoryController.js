@@ -2,7 +2,7 @@ import Category from "../models/Category.js";
 
 export const addCategory = async (req, res) => {
   try {
-    const { name, displayOrder } = req.body;
+    const { name, displayOrder, showInTopbar } = req.body;
 
     const existing = await Category.findOne({ name });
     if (existing) {
@@ -14,7 +14,8 @@ export const addCategory = async (req, res) => {
     const category = await Category.create({
       name,
       icon,
-      displayOrder: displayOrder || 0
+      displayOrder: displayOrder || 0,
+      showInTopbar: showInTopbar === 'true' || showInTopbar === true
     });
 
     return res.json({
@@ -42,13 +43,14 @@ export const getCategories = async (req, res) => {
 export const updateCategory = async (req, res) => {
   try {
     const { categoryId } = req.params;
-    const { name, displayOrder } = req.body;
+    const { name, displayOrder, showInTopbar } = req.body;
 
     const updated = await Category.findByIdAndUpdate(
       categoryId,
       {
         name,
         displayOrder,
+        showInTopbar: showInTopbar === 'true' || showInTopbar === true,
         icon: req.file ? req.file.path : undefined
       },
       { new: true }

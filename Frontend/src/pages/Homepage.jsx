@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import Products from '../components/Customer/Products';
 import Searchbar from '../components/Customer/Topbar';
-import Settings from './Settings';
 import LandingPage from '../components/Customer/LandingPage';
 import Footer from '../components/Customer/Footer';
 import HomepageProductSections from '../components/Customer/HomepageProductSections';
+import BestSellers from '../components/Customer/Landing/BestSellers';
 
 const Homepage = () => {
     const [filters, setFilters] = useState({
@@ -18,13 +18,14 @@ const Homepage = () => {
     };
 
     return (
-        <div className="flex flex-col w-full min-h-screen bg-gray-50">
+        <div className="flex flex-col w-full min-h-screen bg-white">
             <Searchbar />
 
             {/* Main Content */}
             <div className="flex-1 w-full">
                 <LandingPage />
-                <HomepageProductSections />
+                <BestSellers />
+                <HomepageProductSections hideTopSelling={true} />
                 <Products filters={filters} />
                 <Footer />
             </div>

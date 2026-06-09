@@ -87,7 +87,9 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
         weight: '',
         gender: '',
         is_featured: false,
-        is_new_arrival: false
+        is_new_arrival: false,
+        showInTopSelling: false,
+        showInViral: false
     });
 
     const [activeTab, setActiveTab] = useState('general');
@@ -149,7 +151,9 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
             weight: '',
             gender: '',
             is_featured: false,
-            is_new_arrival: false
+            is_new_arrival: false,
+            showInTopSelling: false,
+            showInViral: false
         });
         setPreviewImages([]);
         setNewImages([]);
@@ -401,6 +405,55 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
                                                     { value: 'Kids', label: 'Kids' }
                                                 ]}
                                             />
+                                        </div>
+                                        <div className="col-span-1 md:col-span-2">
+                                            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest mb-4 font-hero border-b border-slate-100 pb-2">Product Visibility & Status</h3>
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                                <div className="flex items-center gap-3 bg-slate-50 p-4 border border-slate-200">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="is_featured"
+                                                        name="is_featured"
+                                                        checked={formData.is_featured}
+                                                        onChange={handleChange}
+                                                        className="w-5 h-5 accent-indigo-600 cursor-pointer"
+                                                    />
+                                                    <label htmlFor="is_featured" className="text-[10px] font-bold text-slate-700 uppercase tracking-widest cursor-pointer">Featured</label>
+                                                </div>
+                                                <div className="flex items-center gap-3 bg-slate-50 p-4 border border-slate-200">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="is_new_arrival"
+                                                        name="is_new_arrival"
+                                                        checked={formData.is_new_arrival}
+                                                        onChange={handleChange}
+                                                        className="w-5 h-5 accent-indigo-600 cursor-pointer"
+                                                    />
+                                                    <label htmlFor="is_new_arrival" className="text-[10px] font-bold text-slate-700 uppercase tracking-widest cursor-pointer">New Arrival</label>
+                                                </div>
+                                                <div className="flex items-center gap-3 bg-slate-50 p-4 border border-slate-200">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="showInTopSelling"
+                                                        name="showInTopSelling"
+                                                        checked={formData.showInTopSelling}
+                                                        onChange={handleChange}
+                                                        className="w-5 h-5 accent-indigo-600 cursor-pointer"
+                                                    />
+                                                    <label htmlFor="showInTopSelling" className="text-[10px] font-bold text-slate-700 uppercase tracking-widest cursor-pointer">Best Seller</label>
+                                                </div>
+                                                <div className="flex items-center gap-3 bg-slate-50 p-4 border border-slate-200">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="showInViral"
+                                                        name="showInViral"
+                                                        checked={formData.showInViral}
+                                                        onChange={handleChange}
+                                                        className="w-5 h-5 accent-indigo-600 cursor-pointer"
+                                                    />
+                                                    <label htmlFor="showInViral" className="text-[10px] font-bold text-slate-700 uppercase tracking-widest cursor-pointer">Viral Product</label>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div className="col-span-1 md:col-span-2">
                                             <label className={labelClasses}>Description <span className="text-red-500">*</span></label>

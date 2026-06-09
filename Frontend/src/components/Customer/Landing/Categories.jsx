@@ -125,136 +125,74 @@ const Categories = () => {
     const totalSlides = Math.ceil(categories.length / visibleCards) || 1
 
     return (
-        <section className="w-full pt-6 pb-12 md:pt-8 md:pb-16 overflow-hidden bg-cream-soft">
-            <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 px-2 gap-4">
-                    <div className="flex flex-col items-start text-left">
-                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 tracking-tight text-emerald-deep">
-                            Curated <span className="text-gold-lustrous font-normal italic font-serif">Collections</span>
-                        </h2>
-                        <p className="text-slate-600 font-sans text-sm md:text-base max-w-xl leading-relaxed">
-                            Discover our handpicked selection of premium, anti-tarnish jewelry designed to bring timeless elegance and confidence to your everyday look.
-                        </p>
-                    </div>
-
-                    {/* Right side design to fill empty space */}
-                    <div className="hidden md:flex items-center gap-6 pb-1">
-                        <div className="flex flex-col text-right">
-                            <span className="text-[12px] font-bold tracking-[0.2em] uppercase text-emerald-deep">Premium Quality</span>
-                            <span className="text-[10px] text-slate-400 font-medium uppercase tracking-[0.1em] mt-0.5">Anti-Tarnish & Hypoallergenic</span>
-                        </div>
-                        <div className="h-10 w-px bg-gold-champagne/20"></div>
-                        <button 
-                            onClick={() => navigate('/products')}
-                            className="group flex items-center gap-2.5 bg-white border border-gold-lustrous text-gold-lustrous hover:bg-gold-lustrous hover:text-white transition-all duration-350 shadow-xs px-5 py-2.5 text-xs font-bold uppercase tracking-widest cursor-pointer rounded-xs"
-                        >
-                            Explore All <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                        </button>
-                    </div>
-                </div>
-
-                <div className="relative group/nav">
-                    {/* Navigation Arrows - Left */}
-                    {!loading && categories.length > visibleCards && (
+        <section className="w-full pt-12 pb-16 bg-white overflow-hidden">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Header with Title and Controls */}
+                <div className="flex items-center justify-between mb-12">
+                    <div className="flex-1"></div>
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center flex-[2]">
+                        What's on your mind?
+                    </h2>
+                    <div className="flex items-center justify-end gap-3 flex-1">
                         <button
                             onClick={() => scroll('left')}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/80 backdrop-blur-md border border-gold-champagne/25 rounded-full flex items-center justify-center text-emerald-deep shadow-sm hover:bg-gold-lustrous hover:text-white hover:border-gold-lustrous transition-all duration-350 opacity-0 group-hover/nav:opacity-100 hidden md:flex cursor-pointer"
-                            aria-label="Previous categories"
+                            className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95"
+                            aria-label="Previous"
                         >
                             <ChevronLeft className="w-5 h-5" />
                         </button>
-                    )}
-
-                    {/* Navigation Arrows - Right */}
-                    {!loading && categories.length > visibleCards && (
                         <button
                             onClick={() => scroll('right')}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/80 backdrop-blur-md border border-gold-champagne/25 rounded-full flex items-center justify-center text-emerald-deep shadow-sm hover:bg-gold-lustrous hover:text-white hover:border-gold-lustrous transition-all duration-350 opacity-0 group-hover/nav:opacity-100 hidden md:flex cursor-pointer"
-                            aria-label="Next categories"
+                            className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95"
+                            aria-label="Next"
                         >
                             <ChevronRight className="w-5 h-5" />
                         </button>
-                    )}
-
-                    <div
-                        ref={scrollRef}
-                        className="w-full overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory flex py-4"
-                        style={{
-                            WebkitOverflowScrolling: 'touch',
-                            scrollbarWidth: 'none',
-                            msOverflowStyle: 'none',
-                            gap: `${gap}px`
-                        }}
-                    >
-                        {loading ? (
-                            [...Array(visibleCards + 1)].map((_, i) => (
-                                <div
-                                    key={i}
-                                    className="flex-shrink-0 rounded-lg animate-pulse"
-                                    style={{
-                                        minWidth: `${cardWidth}px`,
-                                        height: '420px',
-                                        backgroundColor: '#f3f4f6'
-                                    }}
-                                ></div>
-                            ))
-                        ) : categories.length === 0 ? (
-                            <div className="py-20 text-center w-full">
-                                <p className="text-gray-400 font-medium italic text-lg">Our vault is currently empty. Check back soon!</p>
-                            </div>
-                        ) : (
-                            categories.map((cat) => (
-                                <div
-                                    key={cat._id}
-                                    onClick={() => handleCategoryClick(cat.name)}
-                                    className="flex-shrink-0 relative transition-all duration-500 overflow-hidden cursor-pointer group snap-start border border-gold-champagne/15 hover:shadow-xl hover:border-gold-lustrous/40"
-                                    style={{
-                                        minWidth: `${cardWidth}px`,
-                                        width: `${cardWidth}px`,
-                                        height: '420px',
-                                        borderRadius: '4px'
-                                    }}
-                                >
-                                    {/* Full Height Background Image */}
-                                    {cat.icon ? (
-                                        <img
-                                            src={cat.icon}
-                                            alt={cat.name}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                                            loading="lazy"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">
-                                            <span className="text-4xl font-black uppercase tracking-widest">{cat.name.charAt(0)}</span>
-                                        </div>
-                                    )}
-
-                                    {/* Gradient Overlay */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-emerald-deep/95 via-black/10 to-transparent opacity-85 transition-opacity duration-500 group-hover:opacity-95"></div>
-
-                                    {/* Text and Button Overlay */}
-                                    <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center z-10 transform transition-all duration-500 group-hover:-translate-y-4">
-                                        <span className="text-gold-champagne text-xs font-bold uppercase tracking-[0.25em] mb-1">Explore</span>
-                                        <span 
-                                            className="text-white text-3xl font-bold mb-4 tracking-wide drop-shadow-lg" 
-                                            style={{ fontFamily: 'Playfair Display, Georgia, serif' }}
-                                        >
-                                            {cat.name}
-                                        </span>
-                                        <button className="bg-cream-base text-emerald-deep px-5 py-2 text-[10px] font-bold flex items-center gap-1.5 hover:bg-gold-lustrous hover:text-white transition-all duration-350 uppercase tracking-widest shadow-md rounded-xs">
-                                            Shop Collection <ArrowRight className="w-3.5 h-3.5" />
-                                        </button>
-                                    </div>
-                                </div>
-                            ))
-                        )}
                     </div>
                 </div>
 
-                <div className="md:hidden flex justify-center items-center gap-2 mt-6 text-sm font-medium" style={{ color: '#b4925a' }}>
-                    <ChevronLeft className="w-4 h-4 animate-pulse" />
-                    <span className="uppercase tracking-[0.2em] text-[9px] font-bold">Swipe to discover more</span>
-                    <ChevronRight className="w-4 h-4 animate-pulse" />
+                {/* Categories Grid/Scroll */}
+                <div
+                    ref={scrollRef}
+                    className="flex overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory gap-6 sm:gap-8 md:gap-10 pb-4"
+                    style={{
+                        WebkitOverflowScrolling: 'touch',
+                        scrollbarWidth: 'none',
+                        msOverflowStyle: 'none',
+                    }}
+                >
+                    {loading ? (
+                        [...Array(6)].map((_, i) => (
+                            <div key={i} className="flex-shrink-0 flex flex-col items-center animate-pulse">
+                                <div className="w-36 h-36 sm:w-44 sm:h-44 md:w-56 md:h-56 rounded-xl bg-gray-100 mb-4"></div>
+                                <div className="w-24 h-4 bg-gray-100 rounded"></div>
+                            </div>
+                        ))
+                    ) : (
+                        categories.map((cat, i) => (
+                            <button
+                                key={cat._id || i}
+                                onClick={() => handleCategoryClick(cat.name)}
+                                className="flex-shrink-0 flex flex-col items-center group cursor-pointer snap-center"
+                                style={{ width: 'auto' }}
+                            >
+                                {/* Box Image Container */}
+                                <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-56 md:h-56 mb-5 overflow-hidden rounded-xl border border-gray-100 shadow-sm group-hover:shadow-md transition-all duration-500">
+                                    <img
+                                        src={cat.icon || '/Placeholder.png'}
+                                        alt={cat.name}
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                    />
+                                    {/* Subtle Overlay */}
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"></div>
+                                </div>
+                                {/* Category Name */}
+                                <span className="text-sm sm:text-base font-bold text-gray-800 text-center max-w-[140px] sm:max-w-[180px] leading-tight group-hover:text-black transition-colors">
+                                    {cat.name}
+                                </span>
+                            </button>
+                        ))
+                    )}
                 </div>
             </div>
 

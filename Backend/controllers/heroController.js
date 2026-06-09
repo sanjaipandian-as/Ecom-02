@@ -5,8 +5,11 @@ import HeroSlide from '../models/HeroSlide.js';
 // ==========================================
 export const getHeroSlides = async (req, res) => {
     try {
-        // Return only image and order
-        const slides = await HeroSlide.find().select('image order').sort({ order: 1 });
+        // Return all fields for the slide and populate product data if exists
+        const slides = await HeroSlide.find()
+            .populate('product', 'name pricing averageRating totalReviews images description category')
+            .sort({ order: 1 });
+        
         res.status(200).json({
             success: true,
             slides
@@ -25,7 +28,17 @@ export const getHeroSlides = async (req, res) => {
 // ==========================================
 export const createHeroSlide = async (req, res) => {
     try {
-        const { order } = req.body;
+        const { 
+            order,
+            title,
+            subtitle,
+            desc,
+            price,
+            badge,
+            ctaText,
+            ctaLink,
+            product
+        } = req.body;
 
         // Image Handling
         let imageUrl = "";
@@ -39,7 +52,15 @@ export const createHeroSlide = async (req, res) => {
 
         const newSlide = new HeroSlide({
             image: imageUrl,
-            order: order ? Number(order) : 0
+            order: order ? Number(order) : 0,
+            title,
+            subtitle,
+            desc,
+            price,
+            badge,
+            ctaText,
+            ctaLink,
+            product: product || null
         });
 
         await newSlide.save();
@@ -70,6 +91,14 @@ export const updateHeroSlide = async (req, res) => {
         const { id } = req.params;
         const {
             order,
+            title,
+            subtitle,
+            desc,
+            price,
+            badge,
+            ctaText,
+            ctaLink,
+            product,
             image // specific case where simple URL string might be passed
         } = req.body;
 
@@ -79,6 +108,14 @@ export const updateHeroSlide = async (req, res) => {
         }
 
         if (order !== undefined) slide.order = Number(order);
+        if (title !== undefined) slide.title = title;
+        if (subtitle !== undefined) slide.subtitle = subtitle;
+        if (desc !== undefined) slide.desc = desc;
+        if (price !== undefined) slide.price = price;
+        if (badge !== undefined) slide.badge = badge;
+        if (ctaText !== undefined) slide.ctaText = ctaText;
+        if (ctaLink !== undefined) slide.ctaLink = ctaLink;
+        if (product !== undefined) slide.product = product || null;
 
         // Image update
         if (req.file) {

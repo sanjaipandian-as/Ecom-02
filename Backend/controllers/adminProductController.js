@@ -9,6 +9,9 @@ export const createProduct = async (req, res) => {
     let specificationsData = [];
     let tagsData = [];
     let isFeaturedData = false;
+    let isNewArrivalData = false;
+    let showInTopSellingData = false;
+    let showInViralData = false;
 
     // Handle various ways FormData can send nested data
     Object.keys(req.body).forEach(key => {
@@ -36,6 +39,12 @@ export const createProduct = async (req, res) => {
         tagsData = typeof req.body[key] === 'string' ? JSON.parse(req.body[key]) : req.body[key];
       } else if (key === 'is_featured') {
         isFeaturedData = req.body[key] === 'true' || req.body[key] === true;
+      } else if (key === 'is_new_arrival') {
+        isNewArrivalData = req.body[key] === 'true' || req.body[key] === true;
+      } else if (key === 'showInTopSelling') {
+        showInTopSellingData = req.body[key] === 'true' || req.body[key] === true;
+      } else if (key === 'showInViral') {
+        showInViralData = req.body[key] === 'true' || req.body[key] === true;
       }
     });
 
@@ -44,15 +53,16 @@ export const createProduct = async (req, res) => {
       description,
       brand,
       stock,
+      sku,
+      low_stock_threshold,
+      hsn_code,
     } = req.body;
 
-    // Validate required fields
-    console.log("Create Product Received Body:", JSON.stringify(req.body, null, 2));
-    console.log("Category Data:", categoryData);
-    console.log("Pricing Data:", pricingData);
-    console.log("Req Files:", req.files ? req.files.length : 0);
+    const shippingData = req.body.shipping ? (typeof req.body.shipping === 'string' ? JSON.parse(req.body.shipping) : req.body.shipping) : {};
+    const supplierData = req.body.supplier ? (typeof req.body.supplier === 'string' ? JSON.parse(req.body.supplier) : req.body.supplier) : {};
 
-    if (!name || !description || !brand || !categoryData?.main || !pricingData?.mrp || !pricingData?.selling_price) {
+    // Validate required fields
+    if (!name || !description || !brand || !categoryData?.main || !pricingData?.mrp || !pricingData?.selling_price || !sku) {
       return res.status(400).json({
         message: "Missing required fields",
         received: {
@@ -61,9 +71,16 @@ export const createProduct = async (req, res) => {
           brand: !!brand,
           category: !!categoryData?.main,
           mrp: !!pricingData?.mrp,
-          selling_price: !!pricingData?.selling_price
+          selling_price: !!pricingData?.selling_price,
+          sku: !!sku
         }
       });
+    }
+
+    // Check for unique SKU
+    const existingSku = await Product.findOne({ sku });
+    if (existingSku) {
+      return res.status(400).json({ message: `SKU ${sku} already exists.` });
     }
 
     // Handle image uploads
@@ -95,6 +112,7 @@ export const createProduct = async (req, res) => {
       name,
       description,
       brand,
+      sku,
       category: {
         main: categoryData.main,
         sub: categoryData.sub || "",
@@ -106,9 +124,27 @@ export const createProduct = async (req, res) => {
       },
       images: imageUrls,
       stock: stock || 0,
+      low_stock_threshold: low_stock_threshold || 10,
+      shipping: {
+        weight: shippingData.weight || 0,
+        dimensions: {
+          length: shippingData.dimensions?.length || 0,
+          width: shippingData.dimensions?.width || 0,
+          height: shippingData.dimensions?.height || 0,
+        },
+      },
+      tax_class: req.body.tax_class || "standard",
+      hsn_code: hsn_code || "",
+      supplier: {
+        name: supplierData.name || "",
+        id: supplierData.id || "",
+      },
       specifications: specificationsData || [],
       tags: tagsData || [],
       is_featured: isFeaturedData,
+      is_new_arrival: isNewArrivalData,
+      showInTopSelling: showInTopSellingData,
+      showInViral: showInViralData,
     });
 
     await product.save();
@@ -151,13 +187,24 @@ export const updateProduct = async (req, res) => {
     const updates = {};
 
     // Handle category fields (category[main], category[sub])
-    Object.keys(req.body).forEach(key => {
+    for (const key of Object.keys(req.body)) {
       if (key.startsWith('category[')) {
         const field = key.match(/category\[(.+)\]/)[1];
         updates[`category.${field}`] = req.body[key];
       } else if (key.startsWith('pricing[')) {
         const field = key.match(/pricing\[(.+)\]/)[1];
         updates[`pricing.${field}`] = req.body[key];
+      } else if (key.startsWith('shipping[')) {
+        if (key.includes('dimensions')) {
+          const field = key.match(/shipping\[dimensions\]\[(.+)\]/)[1];
+          updates[`shipping.dimensions.${field}`] = req.body[key];
+        } else {
+          const field = key.match(/shipping\[(.+)\]/)[1];
+          updates[`shipping.${field}`] = req.body[key];
+        }
+      } else if (key.startsWith('supplier[')) {
+        const field = key.match(/supplier\[(.+)\]/)[1];
+        updates[`supplier.${field}`] = req.body[key];
       } else if (key === 'specifications') {
         // Parse JSON string
         updates[key] = typeof req.body[key] === 'string' ? JSON.parse(req.body[key]) : req.body[key];
@@ -166,12 +213,19 @@ export const updateProduct = async (req, res) => {
         // Skip here, we'll handle them below
       } else if (key === 'existingImages' || key === 'existingImages[]') {
         // Skip, handled separately
-      } else if (key === 'is_featured' || key === 'is_new_arrival') {
+      } else if (key === 'is_featured' || key === 'is_new_arrival' || key === 'showInTopSelling' || key === 'showInViral') {
         updates[key] = req.body[key] === 'true' || req.body[key] === true;
+      } else if (key === 'sku') {
+        // Check if SKU is being changed and if it already exists
+        const existingSku = await Product.findOne({ sku: req.body[key], _id: { $ne: productId } });
+        if (existingSku) {
+          return res.status(400).json({ message: `SKU ${req.body[key]} already exists on another product.` });
+        }
+        updates[key] = req.body[key];
       } else {
         updates[key] = req.body[key];
       }
-    });
+    }
 
     // Handle array fields that come as field[]
     if (req.body['tags[]']) {
@@ -271,6 +325,32 @@ export const deleteProduct = async (req, res) => {
     }
 
     return res.json({ message: "Product deleted successfully", product });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+// ==============================
+// ⭐ BULK INVENTORY UPDATE
+// ==============================
+export const bulkInventoryUpdate = async (req, res) => {
+  try {
+    const { updates } = req.body; // Array of { productId, stock }
+
+    if (!Array.isArray(updates)) {
+      return res.status(400).json({ message: "Updates must be an array." });
+    }
+
+    const operations = updates.map(update => ({
+      updateOne: {
+        filter: { _id: update.productId },
+        update: { $set: { stock: update.stock } }
+      }
+    }));
+
+    await Product.bulkWrite(operations);
+
+    return res.json({ message: `Successfully updated ${updates.length} products.` });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

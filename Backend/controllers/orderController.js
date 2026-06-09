@@ -37,15 +37,30 @@ export const executeOrderPlacement = async (customerId, orderData) => {
       throw new Error(`Invalid pricing for product: ${product.name}`);
     }
 
+    // ⭐ PRODUCTION TAX CALCULATION (e.g., GST 18%)
+    let taxRate = 0.18; // Default 18%
+    if (product.tax_class === 'reduced') taxRate = 0.05;
+    if (product.tax_class === 'exempt') taxRate = 0;
+
+    const itemTaxAmount = serverPrice * quantity * taxRate;
+
     secureItems.push({
       productId: product._id,
+      sku: product.sku,
       quantity: quantity,
-      price: serverPrice // ⭐ Server-resolved price ONLY
+      price: serverPrice, // ⭐ Server-resolved price ONLY
+      taxAmount: itemTaxAmount
     });
   }
 
-  // 1. Calculate final total from server-verified prices
-  const totalAmount = secureItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
+  // 1. Calculate final totals from server-verified prices
+  const subTotal = secureItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
+  const taxTotal = secureItems.reduce((sum, item) => sum + item.taxAmount, 0);
+  
+  // Dynamic Shipping Logic (Simplified for production)
+  // E.g., Free shipping over ₹999, else ₹99
+  const shippingFee = subTotal > 999 ? 0 : 99;
+  const totalAmount = subTotal + taxTotal + shippingFee;
 
   // 2. ATOMIC STOCK DEDUCTION
   for (const item of secureItems) {
@@ -63,12 +78,21 @@ export const executeOrderPlacement = async (customerId, orderData) => {
     if (!product) {
       throw new Error(`Insufficient stock for product: ${item.productId}`);
     }
+
+    // Alert for low stock
+    if (product.stock <= product.low_stock_threshold) {
+      console.warn(`LOW STOCK ALERT: Product ${product.name} (SKU: ${product.sku}) is below threshold.`);
+      // Optional: Create admin notification
+    }
   }
 
   // 3. Create E-com Order Record
   const order = await Order.create({
     customerId,
     items: secureItems,
+    subTotal,
+    taxTotal,
+    shippingFee,
     totalAmount,
     shippingAddress,
     paymentMethod,
