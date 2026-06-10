@@ -17,6 +17,8 @@ import {
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import API from '../../../api';
+import Logo from '../Common/Logo';
+import plenoraBg from '/plenorabg.jpeg';
 
 const Searchbar = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -347,7 +349,7 @@ const Searchbar = () => {
             pageTitle = settingsTitles[settingsPage] || 'Settings';
         }
 
-        document.title = `${pageTitle} - Hey Azhagi`;
+        document.title = `${pageTitle} - Plenora`;
     }, [location.pathname]);
 
     useEffect(() => {
@@ -605,14 +607,9 @@ const Searchbar = () => {
                         onClick={() => handleNavigation('/')}
                         className="flex flex-col items-center group transition-transform duration-300 active:scale-95"
                     >
-                        <img
-                            src="/Plenora.jpeg"
-                            alt="PLENORA Logo"
-                            className="h-12 sm:h-16 w-auto object-contain transition-transform group-hover:scale-105"
-                        />
-                        <span className="mt-1 text-lg sm:text-xl font-bold tracking-[0.2em] text-gray-900 uppercase">
-                            PLENORA
-                        </span>
+                        <div className="h-12 sm:h-16 flex items-center justify-center">
+                            <Logo className="h-full w-auto" />
+                        </div>
                     </button>
                 </div>
 
@@ -620,7 +617,7 @@ const Searchbar = () => {
                 <div className="flex items-center justify-end flex-1 gap-2 sm:gap-4 lg:gap-6">
                     
                     {/* User Account */}
-                    <div className="relative group">
+                    <div className="relative group flex items-center gap-2">
                         <button
                             onClick={() => {
                                 if (!isLoggedIn) {
@@ -636,6 +633,16 @@ const Searchbar = () => {
                             </span>
                             <User className="w-5 h-5" />
                         </button>
+
+                        {isLoggedIn && (
+                            <button
+                                onClick={handleLogout}
+                                className="p-2 text-gray-500 hover:text-red-600 transition-all hover:bg-red-50 rounded-full"
+                                title="Logout"
+                            >
+                                <LogOut className="w-5 h-5" />
+                            </button>
+                        )}
                     </div>
 
                     {/* Cart */}
@@ -684,7 +691,7 @@ const Searchbar = () => {
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
                     <div className="fixed inset-y-0 left-0 w-full max-w-[300px] bg-white shadow-2xl flex flex-col animate-slide-right">
                         <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-                            <img src="/Plenora.jpeg" alt="Logo" className="h-10 w-auto" />
+                            <Logo className="h-10 w-auto" />
                             <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 -mr-2">
                                 <X className="w-6 h-6 text-gray-500" />
                             </button>
