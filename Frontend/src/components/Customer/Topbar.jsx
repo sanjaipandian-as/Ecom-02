@@ -605,8 +605,9 @@ const Searchbar = () => {
                 <div className="flex-shrink-0 flex items-center justify-center lg:flex-1">
                     <button
                         onClick={() => handleNavigation('/')}
-                        className="flex flex-col items-center group transition-transform duration-300 active:scale-95"
+                        className="flex items-center gap-3 group transition-transform duration-300 active:scale-95"
                     >
+                        <img src="/plenorabg.jpeg" alt="Plenora" className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform" />
                         <div className="h-12 sm:h-16 flex items-center justify-center">
                             <Logo className="h-full w-auto" />
                         </div>

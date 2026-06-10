@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../../../api';
+import Logo from '../../Common/Logo';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -69,6 +70,10 @@ const Hero = () => {
 
   return (
     <section className="relative w-full bg-white overflow-hidden py-12 lg:py-16">
+      {/* Background Decorative Logo */}
+      <div className="absolute top-0 right-0 w-1/2 h-full opacity-[0.03] pointer-events-none transform translate-x-1/4 -translate-y-1/4 select-none">
+        <Logo className="w-full h-full" />
+      </div>
       
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">

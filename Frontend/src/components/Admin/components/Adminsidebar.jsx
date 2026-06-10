@@ -16,6 +16,7 @@ import {
     MdAutoAwesome,
     MdTrendingUp
 } from 'react-icons/md';
+import Logo from '../../Common/Logo';
 
 const Adminsidebar = ({ onNavigate, activePage = 'Dashboard', onOpenUploadModal, isOpen, onClose }) => {
     const navigate = useNavigate();
@@ -117,13 +118,9 @@ const Adminsidebar = ({ onNavigate, activePage = 'Dashboard', onOpenUploadModal,
                 {/* Brand Section */}
                 <div className="px-8 mb-10 flex items-center justify-between">
                     <div className="flex items-center gap-4 group cursor-default">
-                        <div className="w-10 h-10 bg-slate-900 rounded-none flex items-center justify-center shadow-md shadow-slate-100 transition-transform duration-300">
-                            <span className="text-white font-bold text-xl font-hero">N</span>
-                        </div>
+                        <img src="/plenorabg.jpeg" alt="Logo" className="w-10 h-10 rounded-full object-cover" />
+                        <Logo className="h-10 w-auto" />
                         <div>
-                            <h1 className="text-xl font-bold tracking-tight leading-none font-hero">
-                                <span className="text-[#81C784]">HA</span> <span className="text-slate-900">E-Com</span>
-                            </h1>
                             <p className="text-[10px] font-bold text-indigo-650 tracking-[0.2em] uppercase mt-1">Admin Panel</p>
                         </div>
                     </div>

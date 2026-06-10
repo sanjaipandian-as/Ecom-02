@@ -11,8 +11,10 @@ import {
     MdMoreHoriz,
     MdCalendarToday,
     MdFilterList,
-    MdArrowForward
+    MdArrowForward,
+    MdOpenInNew
 } from 'react-icons/md';
+import Logo from '../../Common/Logo';
 import API from '../../../../api';
 import { toast } from 'react-toastify';
 
@@ -132,7 +134,12 @@ const AdminDashboard = ({ onOpenUploadModal, refreshId }) => {
     }
 
     return (
-        <div className="p-4 md:p-8 bg-slate-50/50 min-h-screen font-body text-slate-900">
+        <div className="p-4 md:p-8 bg-slate-50/50 min-h-screen font-body text-slate-900 relative">
+            {/* Background Logo Watermark */}
+            <div className="absolute top-0 right-0 w-1/3 h-1/2 opacity-[0.02] pointer-events-none transform translate-x-1/4 -translate-y-1/4 select-none overflow-hidden">
+                <Logo className="w-full h-full" />
+            </div>
+
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 md:mb-10 animate-slideUp">
                 <div>

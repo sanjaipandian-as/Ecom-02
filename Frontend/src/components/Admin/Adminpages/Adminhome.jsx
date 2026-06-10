@@ -12,6 +12,7 @@ import AdminSupportTickets from '../components/AdminSupportTickets';
 import ProductUploadModal from '../components/ProductUploadModal';
 import AdminTopSellingProducts from '../components/AdminTopSellingProducts';
 import AdminViralProducts from '../components/AdminViralProducts';
+import Logo from '../../Common/Logo';
 
 const Adminhome = () => {
     const [activePage, setActivePage] = useState('Dashboard');
@@ -69,8 +70,10 @@ const Adminhome = () => {
                     <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 text-white hover:bg-slate-800 rounded-none">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
                     </button>
-                    <span className="font-bold tracking-tight text-lg">
-                        <span className="text-[#81C784]">HA</span> <span className="text-white">Admin</span>
+                    <img src="/plenorabg.jpeg" alt="Plenora" className="h-8 w-8 rounded-full object-cover ml-2" />
+                    <Logo className="h-8 w-auto invert brightness-0" />
+                    <span className="font-bold tracking-tight text-lg text-white ml-1">
+                        Admin
                     </span>
                 </div>
                 <div className="w-8 h-8 bg-slate-800 border border-slate-700 text-slate-350 font-bold text-xs flex items-center justify-center rounded-none">

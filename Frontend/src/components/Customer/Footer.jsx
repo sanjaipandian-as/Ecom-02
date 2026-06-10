@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../../api';
+import Logo from '../Common/Logo';
 import {
     FaFacebookF,
     FaTwitter,
@@ -132,22 +133,18 @@ const Footer = () => {
                     {/* Brand Section */}
                     <div className="lg:col-span-2 pb-6 lg:pb-0 border-b border-gold-champagne/10 lg:border-none">
                         <div className="mb-6">
-                            <h2 className="mb-4 flex items-center gap-2 flex-wrap">
-                                <span
-                                    className="text-2xl font-bold tracking-[0.05em] uppercase text-gold-champagne leading-none"
-                                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                                >
-                                    Hey Azhagi
-                                </span>
-                            </h2>
+                            <div className="mb-4 flex items-center gap-3">
+                                <img src="/plenorabg.jpeg" alt="Plenora Logo" className="w-10 h-10 rounded-full object-cover" />
+                                <Logo className="h-10 w-auto" />
+                            </div>
                             <p className="text-[#a3b3ac] text-sm leading-relaxed max-w-sm">
-                                Elevating everyday elegance with our meticulously designed, premium anti-tarnish jewelry. Discover pieces that celebrate your inner brilliance.
+                                Elevating your natural beauty with Plenora's scientific skincare. Our meticulously crafted formulas combine botanical purity with clinical precision for radiant, healthy skin.
                             </p>
                         </div>
 
                         {/* Social Media Links */}
                         <div>
-                            <h4 className="text-xs font-bold uppercase tracking-[0.25em] mb-4 text-gold-champagne">Follow HA</h4>
+                            <h4 className="text-xs font-bold uppercase tracking-[0.25em] mb-4 text-gold-champagne">Follow PLENORA</h4>
                             <div className="flex gap-3">
                                 {[
                                     { icon: FaFacebookF, color: 'hover:bg-blue-600 hover:text-white', label: 'Facebook' },
