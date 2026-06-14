@@ -22,18 +22,17 @@ app.set('trust proxy', 1); // Respect proxy headers (important for Render/Vercel
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "http://localhost:5175",
-      "https://zippydemocom.vercel.app",
-      "https://ecom-02-eight.vercel.app"
-    ],
+    origin: true,
     credentials: true,
+    optionsSuccessStatus: 200
   })
 );
 
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }
+  })
+);
 
 // 1. JSON & URL Encoded Payload Size Limiting (Prevents large payload attacks)
 // MUST be before sanitization to populate req.body
