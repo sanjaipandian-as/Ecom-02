@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useSearchParams } from "react-router-dom"
 import React, { Suspense, lazy } from 'react';
 import AppSkeleton from './components/Common/AppSkeleton';
+import ServerWakeup from './components/Common/ServerWakeup';
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 const Homepage = lazy(() => import('./pages/Homepage'));
@@ -149,6 +150,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
+      <ServerWakeup />
       <AuthModal />
       <ToastContainer
         position="top-right"
