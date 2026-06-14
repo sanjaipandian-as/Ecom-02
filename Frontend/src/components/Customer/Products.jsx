@@ -14,24 +14,39 @@ const Products = ({ filters = defaultFilters }) => {
     const [notification, setNotification] = useState({ show: false, message: '', type: '' });
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [error, setError] = useState('');
     const [wishlistItems, setWishlistItems] = useState([]);
     const [togglingWishlist, setTogglingWishlist] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [cartItems, setCartItems] = useState([]);
+    const [prevFilters, setPrevFilters] = useState(filters);
 
     const isLoggedIn = useMemo(() => {
-        return !!localStorage.getItem('token');
+        return !!(localStorage.getItem('token') || sessionStorage.getItem('token'));
     }, []);
 
     useEffect(() => {
         const fetchAllData = async () => {
-            setLoading(true);
+            const filtersChanged = JSON.stringify(prevFilters) !== JSON.stringify(filters);
+            const targetPage = filtersChanged ? 1 : currentPage;
+
+            if (filtersChanged) {
+                setPrevFilters(filters);
+                setCurrentPage(1);
+            }
+
+            if (targetPage === 1) {
+                setLoading(true);
+            } else {
+                setLoadingMore(true);
+            }
+
             try {
                 // Build query parameters from filters
                 const queryParams = new URLSearchParams();
-                queryParams.append('page', currentPage);
+                queryParams.append('page', targetPage);
 
                 // Check if any filters are active
                 const hasActiveFilters =
@@ -93,7 +108,7 @@ const Products = ({ filters = defaultFilters }) => {
                     productsPromise = API.get(`/products/customer/filter?${queryParams.toString()}`);
                 } else {
                     // Use regular pagination endpoint
-                    productsPromise = API.get(`/products/customer/page?page=${currentPage}`);
+                    productsPromise = API.get(`/products/customer/page?page=${targetPage}`);
                 }
 
                 const promises = [productsPromise];
@@ -105,12 +120,15 @@ const Products = ({ filters = defaultFilters }) => {
                 const results = await Promise.allSettled(promises);
 
                 if (results[0].status === 'fulfilled') {
-                    setProducts(results[0].value.data.products || []);
+                    const newProducts = results[0].value.data.products || [];
+                    setProducts(prev => targetPage === 1 ? newProducts : [...prev, ...newProducts]);
                     setTotalPages(results[0].value.data.totalPages || 1);
                     setError('');
                 } else {
                     setError('Failed to load products. Please try again later.');
-                    setProducts([]);
+                    if (targetPage === 1) {
+                        setProducts([]);
+                    }
                 }
 
                 if (results[1]?.status === 'fulfilled') {
@@ -128,6 +146,7 @@ const Products = ({ filters = defaultFilters }) => {
                 setError('Failed to load products. Please try again later.');
             } finally {
                 setLoading(false);
+                setLoadingMore(false);
             }
         };
 
@@ -217,6 +236,7 @@ const Products = ({ filters = defaultFilters }) => {
 
             const response = await API.get('/cart');
             setCartItems(response.data.items || []);
+            window.dispatchEvent(new Event('cartUpdated'));
         } catch (error) {
             console.error('Add to cart error:', error);
             if (error.response?.status === 401) {
@@ -255,11 +275,11 @@ const Products = ({ filters = defaultFilters }) => {
                     {/* Top Badge */}
                     <div className="absolute top-4 left-4 z-20">
                         {discount > 0 ? (
-                            <span className="px-2.5 py-1 text-[9px] font-bold tracking-[0.1em] text-white bg-luxury-crimson rounded-xs shadow-xs uppercase">
+                            <span className="px-2.5 py-1 text-[11px] font-bold tracking-[0.12em] text-white bg-luxury-crimson rounded-xs shadow-xs uppercase">
                                 SALE
                             </span>
                         ) : (
-                            <span className="px-2.5 py-1 text-[9px] font-bold tracking-[0.1em] text-emerald-deep bg-gold-champagne/30 rounded-xs shadow-xs uppercase">
+                            <span className="px-2.5 py-1 text-[11px] font-bold tracking-[0.12em] text-emerald-deep bg-gold-champagne/30 rounded-xs shadow-xs uppercase">
                                 NEW
                             </span>
                         )}
@@ -281,7 +301,7 @@ const Products = ({ filters = defaultFilters }) => {
 
                     {availablePieces <= 0 && (
                         <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] z-30 flex items-center justify-center">
-                            <span className="text-stone-800 font-bold px-4 py-2 bg-white rounded-xs text-[11px] uppercase tracking-widest shadow-md">Out of Stock</span>
+                            <span className="text-stone-800 font-bold px-4 py-2 bg-white rounded-xs text-[12px] uppercase tracking-widest shadow-md">Out of Stock</span>
                         </div>
                     )}
                 </div>
@@ -291,14 +311,14 @@ const Products = ({ filters = defaultFilters }) => {
                     <div>
                         {/* Material Finishes */}
                         <div className="flex items-center gap-1 mb-3">
-                            <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-gold-lustrous mr-1">Finishes:</span>
+                            <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-gold-lustrous mr-1">Finishes:</span>
                             {finishes.map((f, i) => (
                                 <div key={i} className="w-2.5 h-2.5 rounded-full border border-white shadow-xs" style={{ backgroundColor: f.hex }} title={f.name}></div>
                             ))}
                         </div>
 
                         {/* Title */}
-                        <h3 className="text-[14px] sm:text-[15px] font-medium text-stone-850 line-clamp-2 leading-snug mb-4 font-serif">
+                        <h3 className="text-[16px] sm:text-[17px] md:text-lg font-medium text-stone-850 line-clamp-2 leading-relaxed mb-4 font-serif">
                             {product.name}
                         </h3>
                     </div>
@@ -307,9 +327,9 @@ const Products = ({ filters = defaultFilters }) => {
                     <div className="flex items-center justify-between pt-2 mt-auto">
                         <div className="flex flex-col">
                             {mrp > sellingPrice && (
-                                <span className="text-[10px] text-gray-400 font-medium line-through font-outfit">₹{mrp.toFixed(0)}</span>
+                                <span className="text-[12px] text-gray-400 font-medium line-through font-outfit">₹{mrp.toFixed(0)}</span>
                             )}
-                            <span className="text-base font-bold text-stone-900 tracking-tight font-outfit">₹{sellingPrice.toFixed(0)}</span>
+                            <span className="text-[18px] font-bold text-stone-900 tracking-tight font-outfit">₹{sellingPrice.toFixed(0)}</span>
                         </div>
 
                         {inCart ? (
@@ -318,15 +338,15 @@ const Products = ({ filters = defaultFilters }) => {
                                     e.stopPropagation();
                                     navigate('/cart');
                                 }}
-                                className="flex items-center justify-center px-4 py-1.5 bg-emerald-deep text-white hover:bg-gold-lustrous transition-all duration-350 text-[10px] font-bold uppercase tracking-wider rounded-xs shadow-xs cursor-pointer"
+                                className="flex items-center justify-center px-4 py-2 bg-emerald-deep text-white hover:bg-gold-lustrous transition-all duration-350 text-[12px] font-bold uppercase tracking-wider rounded-xs shadow-xs cursor-pointer"
                             >
-                                <span className="text-[10px] font-bold tracking-wide">In Bag</span>
+                                <span className="text-[12px] font-bold tracking-wide">In Bag</span>
                             </button>
                         ) : (
                             <button
                                 onClick={(e) => handleAddToCart(e, product._id)}
                                 disabled={addingToCart === product._id || availablePieces <= 0}
-                                className={`flex items-center justify-center px-4 py-1.5 transition-all duration-350 text-[10px] font-bold uppercase tracking-wider rounded-xs shadow-xs cursor-pointer ${
+                                className={`flex items-center justify-center px-4 py-2 transition-all duration-350 text-[12px] font-bold uppercase tracking-wider rounded-xs shadow-xs cursor-pointer ${
                                     addingToCart === product._id || availablePieces <= 0
                                         ? 'bg-stone-300 text-stone-500 cursor-not-allowed'
                                         : 'bg-white border border-emerald-deep text-emerald-deep hover:bg-emerald-deep hover:text-white'
@@ -405,28 +425,25 @@ const Products = ({ filters = defaultFilters }) => {
                     </div>
                 )}
 
-                {!loading && !error && totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-2 sm:gap-4 mt-8 sm:mt-12">
+                {!loading && !error && currentPage < totalPages && (
+                    <div className="flex flex-col items-center justify-center gap-4 mt-8 sm:mt-12">
                         <button
-                            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                            disabled={currentPage === 1}
-                            className="px-5 py-2.5 bg-white border border-gold-champagne/40 rounded-xs font-semibold text-xs text-stone-700 hover:border-gold-lustrous hover:text-gold-lustrous transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 cursor-pointer uppercase tracking-wider"
+                            onClick={() => setCurrentPage(prev => prev + 1)}
+                            disabled={loadingMore}
+                            className="px-8 py-3 bg-stone-900 text-white hover:bg-stone-800 border border-stone-900 font-bold text-xs uppercase tracking-[0.2em] transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 shadow-md flex items-center gap-2.5 rounded-xs cursor-pointer"
                         >
-                            <span className="hidden sm:inline">Previous</span>
-                            <span className="sm:hidden">Prev</span>
+                            {loadingMore ? (
+                                <>
+                                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                                    Loading More Essentials...
+                                </>
+                            ) : (
+                                "Load More Products"
+                            )}
                         </button>
-                        <div className="flex items-center gap-2">
-                            <span className="text-stone-600 font-semibold text-xs uppercase tracking-widest font-outfit">
-                                Page {currentPage} of {totalPages}
-                            </span>
-                        </div>
-                        <button
-                            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                            disabled={currentPage === totalPages}
-                            className="px-5 py-2.5 bg-white border border-gold-champagne/40 rounded-xs font-semibold text-xs text-stone-700 hover:border-gold-lustrous hover:text-gold-lustrous transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 cursor-pointer uppercase tracking-wider"
-                        >
-                            Next
-                        </button>
+                        <p className="text-[12px] font-bold text-stone-400 uppercase tracking-widest font-outfit mt-1">
+                            Showing {products.length} Products
+                        </p>
                     </div>
                 )}
             </div>

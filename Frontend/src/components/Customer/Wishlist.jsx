@@ -24,7 +24,7 @@ const Wishlist = () => {
 
     const fetchWishlist = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (!token) {
                 navigate('/Login');
                 return;
@@ -66,7 +66,7 @@ const Wishlist = () => {
 
     const fetchCart = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (!token) return;
 
             const response = await API.get('/cart');
@@ -234,7 +234,7 @@ const Wishlist = () => {
                                 {/* Out of Stock sophisticated overlay */}
                                 {isOutOfStock && (
                                     <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center z-10">
-                                        <span className="bg-white/95 text-slate-900 font-bold text-[10px] tracking-widest uppercase px-4 py-2 rounded-full shadow-md border border-slate-100">
+                                        <span className="bg-white/95 text-slate-900 font-bold text-xs tracking-wider uppercase px-4 py-2 rounded-full shadow-md border border-slate-100">
                                             Out of Stock
                                         </span>
                                     </div>
@@ -244,12 +244,12 @@ const Wishlist = () => {
                             {/* Details section */}
                             <div className="p-5 flex-1 flex flex-col justify-between">
                                 <div className="flex flex-col gap-1 mb-2.5">
-                                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                                         {item.productId.category?.main || (typeof item.productId.category === 'string' ? item.productId.category : 'General')}
                                     </span>
                                     <h3 
                                         onClick={() => navigate(`/product/${item.productId._id}`)}
-                                        className="text-sm font-semibold text-slate-800 leading-snug line-clamp-2 min-h-[2.5rem] tracking-tight group-hover:text-slate-950 transition-colors cursor-pointer capitalize"
+                                        className="text-base font-semibold text-slate-800 leading-relaxed line-clamp-2 min-h-[3rem] tracking-tight group-hover:text-slate-950 transition-colors cursor-pointer capitalize"
                                     >
                                         {item.productId.name.toLowerCase()}
                                     </h3>
@@ -261,7 +261,7 @@ const Wishlist = () => {
                                         <FaStar className="w-2.5 h-2.5 text-amber-500" />
                                         <span className="text-xs font-bold text-slate-600">4.2</span>
                                     </div>
-                                    <span className="text-[10px] font-bold text-[#45C3D3] uppercase tracking-wider">
+                                    <span className="text-xs font-bold text-[#45C3D3] uppercase tracking-wider">
                                         {item.productId.brand || 'Official'}
                                     </span>
                                 </div>
@@ -270,11 +270,11 @@ const Wishlist = () => {
                                 <div className="flex items-center justify-between pt-3.5 border-t border-slate-50 mt-auto">
                                     <div className="flex flex-col">
                                         {(item.productId.pricing?.mrp || item.productId.originalPrice) && (
-                                            <span className="text-[11px] text-slate-400 font-medium line-through">
+                                            <span className="text-[13px] text-slate-400 font-medium line-through">
                                                 ₹{(item.productId.pricing?.mrp || item.productId.originalPrice || 0).toFixed(0)}
                                             </span>
                                         )}
-                                        <span className="text-lg font-bold text-slate-900 tracking-tight font-outfit">
+                                        <span className="text-xl font-bold text-slate-900 tracking-tight font-outfit">
                                             ₹{(item.productId.pricing?.selling_price || item.productId.price || 0).toFixed(0)}
                                         </span>
                                     </div>

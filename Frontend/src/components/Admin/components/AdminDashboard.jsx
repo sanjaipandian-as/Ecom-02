@@ -205,17 +205,17 @@ const AdminDashboard = ({ onOpenUploadModal, refreshId }) => {
                                         dataKey="date"
                                         axisLine={false}
                                         tickLine={false}
-                                        tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600, fontFamily: 'Inter' }}
+                                        tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600, fontFamily: "'Boston Angel', serif" }}
                                         dy={10}
                                     />
                                     <YAxis
                                         axisLine={false}
                                         tickLine={false}
-                                        tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600, fontFamily: 'Inter' }}
+                                        tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600, fontFamily: "'Boston Angel', serif" }}
                                         dx={-10}
                                     />
                                     <Tooltip
-                                        contentStyle={{ borderRadius: '0px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', fontFamily: 'Inter', padding: '12px 16px' }}
+                                        contentStyle={{ borderRadius: '0px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', fontFamily: "'Boston Angel', serif", padding: '12px 16px' }}
                                         itemStyle={{ color: '#1e293b', fontWeight: 600, fontSize: '13px' }}
                                         labelStyle={{ color: '#94a3b8', marginBottom: '4px', fontSize: '11px', textTransform: 'uppercase', fontWeight: 700 }}
                                         cursor={{ stroke: '#4f46e5', strokeWidth: 1, strokeDasharray: '4 4' }}
@@ -259,7 +259,7 @@ const AdminDashboard = ({ onOpenUploadModal, refreshId }) => {
                                         ))}
                                     </Pie>
                                     <Tooltip
-                                        contentStyle={{ borderRadius: '0px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', fontFamily: 'Inter' }}
+                                        contentStyle={{ borderRadius: '0px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', fontFamily: "'Boston Angel', serif" }}
                                         itemStyle={{ color: '#1e293b', fontWeight: 600 }}
                                     />
                                 </PieChart>

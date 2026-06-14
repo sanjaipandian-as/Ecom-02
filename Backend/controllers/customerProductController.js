@@ -77,7 +77,7 @@ export const filterByCategory = async (req, res) => {
 export const getPaginatedProducts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = 10;
+    const limit = 12;
     const skip = (page - 1) * limit;
 
     const products = await Product.find({ is_deleted: { $ne: true } })
@@ -106,6 +106,14 @@ export const filterProducts = async (req, res) => {
 
     // Build query object
     const query = { is_deleted: { $ne: true } };
+
+    // Bestseller / Viral status filters
+    if (req.query.showInTopSelling === 'true') {
+      query.showInTopSelling = true;
+    }
+    if (req.query.showInViral === 'true') {
+      query.showInViral = true;
+    }
 
     // Category Filter (Multiple categories support)
     if (req.query.categories) {

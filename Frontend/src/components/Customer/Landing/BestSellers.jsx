@@ -28,12 +28,12 @@ const ProductCard = ({ product }) => {
                 {/* Status Badges */}
                 <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
                     {isViral && (
-                        <div className="bg-amber-400 text-white text-[8px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest shadow-sm">
+                        <div className="bg-amber-400 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
                             Viral 🔥
                         </div>
                     )}
                     {discount > 0 && (
-                        <div className="bg-rose-500 text-white text-[8px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest shadow-sm">
+                        <div className="bg-rose-500 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
                             {discount}% OFF
                         </div>
                     )}
@@ -57,7 +57,7 @@ const ProductCard = ({ product }) => {
                             e.stopPropagation();
                             // Add to cart logic here
                         }}
-                        className="w-full py-3 bg-white text-black text-[10px] font-black uppercase tracking-[0.2em] rounded-xl shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 hover:bg-black hover:text-white"
+                        className="w-full py-3 bg-white text-black text-[12px] font-black uppercase tracking-wider rounded-xl shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 hover:bg-black hover:text-white"
                     >
                         Add to Bag
                     </button>
@@ -69,28 +69,28 @@ const ProductCard = ({ product }) => {
                 <div className="flex items-center gap-1.5 mb-2">
                     <div className="flex gap-0.5">
                         {[...Array(5)].map((_, i) => (
-                            <Star key={i} className={`w-2.5 h-2.5 ${i < Math.floor(rating) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}`} />
+                            <Star key={i} className={`w-3 h-3 ${i < Math.floor(rating) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}`} />
                         ))}
                     </div>
-                    <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">{reviews} reviews</span>
+                    <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">{reviews} reviews</span>
                 </div>
                 
                 <h3 
                     onClick={() => navigate(`/product/${product._id}`)}
-                    className="text-[15px] font-bold text-gray-900 mb-1.5 line-clamp-1 cursor-pointer hover:text-amber-600 transition-colors"
+                    className="text-[17px] font-bold text-gray-900 mb-1.5 line-clamp-2 min-h-[2.5rem] leading-snug cursor-pointer hover:text-amber-600 transition-colors"
                 >
                     {product.name}
                 </h3>
                 
-                <p className="text-[11px] text-gray-500 mb-4 line-clamp-2 leading-relaxed">
+                <p className="text-[13px] text-gray-500 mb-4 line-clamp-2 leading-relaxed">
                     {product.description || 'Premium quality care for your unique beauty needs.'}
                 </p>
 
                 <div className="mt-auto flex items-center justify-between">
                     <div className="flex items-baseline gap-2">
-                        <span className="text-lg font-black text-gray-900 font-outfit">₹{sellingPrice}</span>
+                        <span className="text-[20px] font-black text-gray-900 font-outfit">₹{sellingPrice}</span>
                         {mrp > sellingPrice && (
-                            <span className="text-xs text-gray-300 font-medium line-through font-outfit">₹{mrp}</span>
+                            <span className="text-sm text-gray-350 font-medium line-through font-outfit">₹{mrp}</span>
                         )}
                     </div>
                     
@@ -128,23 +128,48 @@ const BestSellers = () => {
         fetchBestSellers();
     }, []);
 
-    const filteredProducts = activeTab === 'All' 
-        ? products 
-        : products.filter(p => p.category?.main === activeTab);
+    const filteredProducts = products.filter(p => {
+        if (activeTab === 'All') return true;
+        const cat = (p.category?.main || '').toLowerCase().trim();
+        const tab = activeTab.toLowerCase().trim();
+        
+        if (tab === 'face care') {
+            return cat.includes('face') || 
+                   cat.includes('serum') || 
+                   cat.includes('sunscreen') || 
+                   cat.includes('moisture') || 
+                   cat.includes('eye');
+        }
+        if (tab === 'hair care') {
+            return cat.includes('hair') || 
+                   cat.includes('shampoo') || 
+                   cat.includes('conditioner');
+        }
+        if (tab === 'body care') {
+            return cat.includes('body') || 
+                   cat.includes('soap') || 
+                   cat.includes('scrub') || 
+                   cat.includes('lotion');
+        }
+        if (tab === 'lip care') {
+            return cat.includes('lip');
+        }
+        return cat === tab;
+    });
 
     return (
-        <section className="w-full py-20 bg-[#fafafa]">
+        <section className="w-full pt-4 pb-2 bg-white">
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-8">
                     <div className="space-y-4 text-center md:text-left">
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-50 border border-amber-100 rounded-full">
+                        {/* <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-50 border border-amber-100 rounded-full">
                             <span className="relative flex h-2 w-2">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
                             </span>
                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-700">Top Trending</span>
-                        </div>
+                        </div> */}
                         <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">Best Sellers</h2>
                         <p className="text-gray-500 text-sm md:text-base max-w-md font-medium">
                             Explore our community favorites and award-winning essentials that everyone is talking about.
@@ -158,7 +183,7 @@ const BestSellers = () => {
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
-                                    className={`px-6 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 whitespace-nowrap ${
+                                    className={`px-6 py-2.5 rounded-xl text-[13px] font-black uppercase tracking-wider transition-all duration-300 whitespace-nowrap ${
                                         activeTab === tab 
                                         ? 'bg-black text-white shadow-lg' 
                                         : 'text-gray-400 hover:text-black'
@@ -171,7 +196,7 @@ const BestSellers = () => {
                         
                         <button 
                             onClick={() => navigate('/category/bestsellers')}
-                            className="hidden md:flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-gray-900 hover:text-amber-600 transition-colors group"
+                            className="hidden md:flex items-center gap-2 text-sm font-black uppercase tracking-wider text-gray-900 hover:text-amber-600 transition-colors group"
                         >
                             Explore All Products
                             <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

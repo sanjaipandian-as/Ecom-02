@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route, Navigate, useSearchParams } from "react-router-dom"
 import React, { Suspense, lazy } from 'react';
 import AppSkeleton from './components/Common/AppSkeleton';
 import { ToastContainer } from 'react-toastify'
@@ -10,7 +10,6 @@ import Settings from './pages/Settings'
 import Adminlogin from './components/Admin/components/Adminlogin'
 import Adminhome from './components/Admin/Adminpages/Adminhome'
 import Productview from './components/Customer/Prouductview'
-import Payment from './components/Customer/Payment'
 import Checkout from './components/Customer/Checkout'
 import Login from './components/Customer/Login'
 import Register from './components/Customer/Register'
@@ -45,6 +44,20 @@ const DocumentTitleUpdater = () => {
   return null;
 };
 
+const LoginRedirect = () => {
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get('redirect');
+  const to = redirect ? `/?auth=login&redirect=${encodeURIComponent(redirect)}` : '/?auth=login';
+  return <Navigate to={to} replace />;
+};
+
+const RegisterRedirect = () => {
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get('redirect');
+  const to = redirect ? `/?auth=register&redirect=${encodeURIComponent(redirect)}` : '/?auth=register';
+  return <Navigate to={to} replace />;
+};
+
 function App() {
   return (
     <Router>
@@ -62,13 +75,13 @@ function App() {
           <Route
             path="/Login"
             element={
-              <Navigate to="/?auth=login" replace />
+              <LoginRedirect />
             }
           />
           <Route
             path="/Register"
             element={
-              <Navigate to="/?auth=register" replace />
+              <RegisterRedirect />
             }
           />
           <Route
@@ -125,15 +138,7 @@ function App() {
             path="/checkout"
             element={
               <ProtectedCustomerRoute>
-                <Payment />
-              </ProtectedCustomerRoute>
-            }
-          />
-          <Route
-            path="/Payment"
-            element={
-              <ProtectedCustomerRoute>
-                <Payment />
+                <Checkout />
               </ProtectedCustomerRoute>
             }
           />

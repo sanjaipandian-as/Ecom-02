@@ -20,8 +20,8 @@ const BeautyBenefit = ({ icon: Icon, title, text }) => (
             <Icon className="w-5 h-5" />
         </div>
         <div>
-            <h4 className="text-[11px] font-black text-gray-900 uppercase tracking-[0.2em] mb-0.5">{title}</h4>
-            <p className="text-[11px] text-gray-500 font-medium leading-tight">{text}</p>
+            <h4 className="text-[12px] font-black text-gray-900 uppercase tracking-wider mb-0.5">{title}</h4>
+            <p className="text-[12px] text-gray-500 font-medium leading-relaxed">{text}</p>
         </div>
     </div>
 );
@@ -47,7 +47,7 @@ const Productview = () => {
     const [canReview, setCanReview] = useState(false);
     const [reviewPage, setReviewPage] = useState(1);
     const imageContainerRef = useRef(null);
-    const isLoggedIn = !!localStorage.getItem('token');
+    const isLoggedIn = !!(localStorage.getItem('token') || sessionStorage.getItem('token'));
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -128,6 +128,7 @@ const Productview = () => {
         try {
             await API.post('/cart/add', { productId: product._id, quantity });
             setIsInCart(true);
+            window.dispatchEvent(new Event('cartUpdated'));
         } catch (e) {
             console.error(e);
             alert('Failed to add to cart.');
@@ -301,17 +302,17 @@ const Productview = () => {
                         
                         <div className="space-y-4 mb-6">
                             <div className="flex items-center gap-3">
-                                <span className="text-[9px] font-black text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded-full uppercase tracking-widest border border-amber-100">
+                                <span className="text-[12px] font-black text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-amber-100">
                                     {product.category?.main || 'Organic Collection'}
                                 </span>
                                 <div className="h-px flex-1 bg-gray-100" />
                                 <div className="flex items-center gap-2">
-                                    <div className="flex text-amber-400 text-[9px]">
+                                    <div className="flex text-amber-400 text-[11px]">
                                         {[...Array(5)].map((_, i) => (
                                             <FaStar key={i} className={i < Math.floor(averageRating) ? 'fill-current' : 'text-gray-200'} />
                                         ))}
                                     </div>
-                                    <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{reviews.length} Reviews</span>
+                                    <span className="text-[12px] font-black text-gray-400 uppercase tracking-wider">{reviews.length} Reviews</span>
                                 </div>
                             </div>
 
@@ -319,19 +320,19 @@ const Productview = () => {
                                 <h1 className="text-3xl lg:text-4xl font-black text-gray-900 leading-tight tracking-tight">
                                     {product.name}
                                 </h1>
-                                <p className="text-gray-500 text-[14px] leading-relaxed font-medium max-w-xl line-clamp-2">
+                                <p className="text-gray-500 text-[16px] leading-relaxed font-medium max-w-xl">
                                     {product.description}
                                 </p>
                             </div>
 
                             <div className="flex flex-wrap items-center gap-4 pt-1">
                                 <div className="flex items-baseline gap-2">
-                                    <span className="text-3xl font-black text-gray-900">₹{sellingPrice.toLocaleString()}</span>
+                                    <span className="text-3.5xl font-black text-gray-900">₹{sellingPrice.toLocaleString()}</span>
                                     {mrp > sellingPrice && (
-                                        <span className="text-lg text-gray-300 font-bold line-through">₹{mrp.toLocaleString()}</span>
+                                        <span className="text-xl text-gray-300 font-bold line-through">₹{mrp.toLocaleString()}</span>
                                     )}
                                 </div>
-                                <div className="px-2 py-0.5 bg-rose-50 text-rose-500 text-[9px] font-black uppercase tracking-widest border border-rose-100 rounded">
+                                <div className="px-2.5 py-1 bg-rose-50 text-rose-500 text-[11px] font-black uppercase tracking-wider border border-rose-100 rounded">
                                     Inclusive of all taxes
                                 </div>
                             </div>
@@ -345,7 +346,7 @@ const Productview = () => {
                             <div className="relative space-y-6">
                                 <div className="flex flex-wrap items-end justify-between gap-6">
                                     <div className="space-y-3">
-                                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] block">Quantity</label>
+                                        <label className="text-[12px] font-black text-gray-400 uppercase tracking-wider block">Quantity</label>
                                         <div className="flex items-center bg-gray-50 rounded-xl p-1 border border-gray-100 w-fit">
                                             <button 
                                                 onClick={() => handleQuantityChange('decrease')}
@@ -364,8 +365,8 @@ const Productview = () => {
                                     </div>
 
                                     <div className="space-y-3 flex-1 text-right">
-                                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] block">Status</label>
-                                        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
+                                        <label className="text-[12px] font-black text-gray-400 uppercase tracking-wider block">Status</label>
+                                        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[12px] font-black uppercase tracking-wider transition-all ${
                                             inStock ? 'bg-emerald-50/50 text-emerald-600 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100'
                                         }`}>
                                             <span className="relative flex h-1.5 w-1.5">
@@ -381,7 +382,7 @@ const Productview = () => {
                                     <button
                                         onClick={() => addToCartAction(false)}
                                         disabled={!inStock}
-                                        className={`flex-1 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl active:scale-95 ${
+                                        className={`flex-1 py-4 rounded-xl font-black text-[13px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl active:scale-95 ${
                                             isInCart 
                                             ? 'bg-amber-100 text-amber-700 border border-amber-200' 
                                             : 'bg-black text-white hover:bg-gray-800'
@@ -393,7 +394,7 @@ const Productview = () => {
                                     <button
                                         onClick={() => addToCartAction(true)}
                                         disabled={!inStock}
-                                        className="flex-1 py-4 bg-[#8c6d45] hover:bg-[#725a3a] text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl active:scale-95 disabled:bg-gray-200 disabled:shadow-none"
+                                        className="flex-1 py-4 bg-[#8c6d45] hover:bg-[#725a3a] text-white rounded-xl font-black text-[13px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl active:scale-95 disabled:bg-gray-200 disabled:shadow-none"
                                     >
                                         <MdOutlineFlashOn className="text-lg" />
                                         Buy It Now
@@ -414,8 +415,8 @@ const Productview = () => {
                                 <MdLocalShipping className="text-xl" />
                             </div>
                             <div>
-                                <h4 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em] mb-0.5">Free Express Delivery</h4>
-                                <p className="text-[11px] text-gray-500 font-medium">Arrives by <span className="text-gray-900 font-bold">Tomorrow, 10th June</span></p>
+                                <h4 className="text-[12px] font-black text-gray-900 uppercase tracking-wider mb-0.5">Free Express Delivery</h4>
+                                <p className="text-[12px] text-gray-500 font-medium">Arrives by <span className="text-gray-900 font-bold">Tomorrow, 10th June</span></p>
                             </div>
                         </div>
 
@@ -429,7 +430,7 @@ const Productview = () => {
                             <button
                                 key={tab}
                                 onClick={() => setExpandedSection(tab)}
-                                className={`relative pb-3 text-[10px] font-black uppercase tracking-[0.2em] transition-all ${
+                                className={`relative pb-3 text-[13px] font-black uppercase tracking-wider transition-all ${
                                     expandedSection === tab ? 'text-black' : 'text-gray-400 hover:text-gray-600'
                                 }`}
                             >
