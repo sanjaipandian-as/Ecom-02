@@ -25,6 +25,8 @@ const Searchbar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userName, setUserName] = useState('');
     const [userRole, setUserRole] = useState('');
+    const [cartCount, setCartCount] = useState(0);
+    const [showUserDropdown, setShowUserDropdown] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [loadingSuggestions, setLoadingSuggestions] = useState(false);
@@ -32,6 +34,7 @@ const Searchbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showSearchBar, setShowSearchBar] = useState(false);
     const [categories, setCategories] = useState([]);
+    const userDropdownRef = useRef(null);
     const [isCategoriesExpanded, setIsCategoriesExpanded] = useState(() => {
         const saved = localStorage.getItem('isTopbarExpanded');
         return saved !== null ? JSON.parse(saved) : true;
@@ -245,6 +248,35 @@ const Searchbar = () => {
         return () => clearInterval(checkSessionInterval);
     }, []);
 
+    const fetchCartCount = async () => {
+        try {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (!token) {
+                setCartCount(0);
+                return;
+            }
+            const response = await API.get('/cart');
+            const items = response.data?.items || [];
+            const count = items.reduce((acc, item) => acc + (item.quantity || 1), 0);
+            setCartCount(count);
+        } catch (error) {
+            console.error('Error fetching cart count:', error);
+            setCartCount(0);
+        }
+    };
+
+    useEffect(() => {
+        fetchCartCount();
+        
+        window.addEventListener('cartUpdated', fetchCartCount);
+        window.addEventListener('storage', fetchCartCount);
+        
+        return () => {
+            window.removeEventListener('cartUpdated', fetchCartCount);
+            window.removeEventListener('storage', fetchCartCount);
+        };
+    }, [isLoggedIn, location.pathname]);
+
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -356,10 +388,15 @@ const Searchbar = () => {
         const handleClickOutside = (event) => {
             const clickedDesktopSearch = desktopSearchRef.current?.contains(event.target);
             const clickedMobileSearch = mobileSearchRef.current?.contains(event.target);
+            const clickedUserDropdown = userDropdownRef.current?.contains(event.target);
 
             if (!clickedDesktopSearch && !clickedMobileSearch) {
                 setShowSuggestions(false);
                 setSelectedSuggestionIndex(-1);
+            }
+
+            if (!clickedUserDropdown) {
+                setShowUserDropdown(false);
             }
         };
 
@@ -372,6 +409,7 @@ const Searchbar = () => {
         setShowSearchBar(false);
         setShowSuggestions(false);
         setShowNotifications(false);
+        setShowUserDropdown(false);
         setSelectedSuggestionIndex(-1);
     }, [location.pathname]);
 
@@ -452,7 +490,7 @@ const Searchbar = () => {
 
     const fetchNotifications = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (!token) return;
 
             setLoadingNotifications(true);
@@ -615,33 +653,103 @@ const Searchbar = () => {
                 </div>
 
                 {/* Right Actions */}
-                <div className="flex items-center justify-end flex-1 gap-2 sm:gap-4 lg:gap-6">
+                <div className="flex items-center justify-end flex-1 gap-3 sm:gap-4 lg:gap-6">
                     
                     {/* User Account */}
-                    <div className="relative group flex items-center gap-2">
-                        <button
-                            onClick={() => {
-                                if (!isLoggedIn) {
-                                    navigate(getAuthPath('login'));
-                                } else {
-                                    handleNavigation(userRole === 'admin' ? '/admin-Dashboard' : userRole === 'seller' ? '/seller-home' : '/Settings');
-                                }
-                            }}
-                            className="flex items-center gap-1.5 py-2 px-1 text-gray-700 hover:text-black transition-colors"
-                        >
-                            <span className="text-sm font-medium hidden md:block">
-                                {isLoggedIn ? userName.split(' ')[0] : 'Hello'}
-                            </span>
-                            <User className="w-5 h-5" />
-                        </button>
+                    <div className="relative" ref={userDropdownRef}>
+                        {isLoggedIn ? (
+                            <div className="relative">
+                                <button
+                                    onClick={() => setShowUserDropdown(!showUserDropdown)}
+                                    className="flex items-center gap-2.5 bg-stone-50 hover:bg-stone-100/80 border border-stone-200/60 hover:border-stone-300 pl-2 pr-3 py-1.5 rounded-full transition-all duration-200 active:scale-95 shadow-xs cursor-pointer group"
+                                >
+                                    <div className="w-8 h-8 rounded-full bg-gold-champagne/15 border border-gold-champagne/35 text-gold-deep font-bold flex items-center justify-center text-xs shadow-inner uppercase transition-colors group-hover:bg-gold-champagne/25">
+                                        {userName.charAt(0)}
+                                    </div>
+                                    <span className="text-xs font-bold text-stone-700 tracking-wider hidden md:block max-w-[90px] truncate uppercase">
+                                        {userName.split(' ')[0]}
+                                    </span>
+                                    <ChevronDown className={`w-3.5 h-3.5 text-stone-400 group-hover:text-stone-700 transition-transform duration-300 ${showUserDropdown ? 'rotate-180' : ''}`} />
+                                </button>
 
-                        {isLoggedIn && (
+                                {/* Dropdown Menu */}
+                                {showUserDropdown && (
+                                    <div className="absolute top-full right-0 mt-2.5 w-56 bg-white border border-stone-200/80 rounded-2xl shadow-2xl py-3 z-50 flex flex-col gap-1 animate-scale-up">
+                                        {/* User Details Header */}
+                                        <div className="px-4 py-2 border-b border-stone-100 mb-1 flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-gold-champagne/20 border border-gold-champagne/40 text-gold-deep font-bold flex items-center justify-center text-base uppercase shadow-sm">
+                                                {userName.charAt(0)}
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-xs font-bold text-stone-900 truncate leading-snug uppercase tracking-wider">{userName}</p>
+                                                <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest mt-0.5">{userRole}</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Dropdown Items */}
+                                        {userRole === 'admin' ? (
+                                            <button
+                                                onClick={() => handleNavigation('/admin-Dashboard')}
+                                                className="w-[calc(100%-16px)] mx-2 py-2.5 px-3 hover:bg-stone-50 text-stone-700 hover:text-stone-950 rounded-xl text-xs font-bold flex items-center gap-2.5 transition-all text-left cursor-pointer"
+                                            >
+                                                <Settings className="w-4 h-4 text-stone-400" />
+                                                Admin Dashboard
+                                            </button>
+                                        ) : userRole === 'seller' ? (
+                                            <button
+                                                onClick={() => handleNavigation('/seller-home')}
+                                                className="w-[calc(100%-16px)] mx-2 py-2.5 px-3 hover:bg-stone-50 text-stone-700 hover:text-stone-950 rounded-xl text-xs font-bold flex items-center gap-2.5 transition-all text-left cursor-pointer"
+                                            >
+                                                <Settings className="w-4 h-4 text-stone-400" />
+                                                Seller Home
+                                            </button>
+                                        ) : (
+                                            <>
+                                                <button
+                                                    onClick={() => handleNavigation('/Settings')}
+                                                    className="w-[calc(100%-16px)] mx-2 py-2.5 px-3 hover:bg-stone-50 text-stone-700 hover:text-stone-950 rounded-xl text-xs font-bold flex items-center gap-2.5 transition-all text-left cursor-pointer"
+                                                >
+                                                    <User className="w-4 h-4 text-stone-400" />
+                                                    My Account
+                                                </button>
+                                                <button
+                                                    onClick={() => handleNavigation('/Settings/orders')}
+                                                    className="w-[calc(100%-16px)] mx-2 py-2.5 px-3 hover:bg-stone-50 text-stone-700 hover:text-stone-950 rounded-xl text-xs font-bold flex items-center gap-2.5 transition-all text-left cursor-pointer"
+                                                >
+                                                    <ShoppingBag className="w-4 h-4 text-stone-400" />
+                                                    My Orders
+                                                </button>
+                                                <button
+                                                    onClick={() => handleNavigation('/Wishlist')}
+                                                    className="w-[calc(100%-16px)] mx-2 py-2.5 px-3 hover:bg-stone-50 text-stone-700 hover:text-stone-950 rounded-xl text-xs font-bold flex items-center gap-2.5 transition-all text-left cursor-pointer"
+                                                >
+                                                    <Heart className="w-4 h-4 text-stone-400" />
+                                                    My Wishlist
+                                                </button>
+                                            </>
+                                        )}
+
+                                        {/* Divider */}
+                                        <div className="h-[1px] bg-stone-100 my-1 mx-2" />
+
+                                        {/* Logout Button */}
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-[calc(100%-16px)] mx-2 py-2 px-3 hover:bg-rose-50 text-stone-600 hover:text-rose-600 rounded-xl text-xs font-bold flex items-center gap-2.5 transition-all text-left cursor-pointer group/logout"
+                                        >
+                                            <LogOut className="w-4 h-4 text-stone-400 group-hover/logout:text-rose-500" />
+                                            Logout
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
                             <button
-                                onClick={handleLogout}
-                                className="p-2 text-gray-500 hover:text-red-600 transition-all hover:bg-red-50 rounded-full"
-                                title="Logout"
+                                onClick={() => navigate(getAuthPath('login'))}
+                                className="flex items-center gap-2 border border-gold-champagne/40 text-stone-700 hover:text-black hover:border-gold-lustrous px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all bg-cream-base shadow-xs active:scale-95"
                             >
-                                <LogOut className="w-5 h-5" />
+                                <User className="w-4 h-4 text-gold-lustrous" />
+                                Sign In
                             </button>
                         )}
                     </div>
@@ -649,12 +757,15 @@ const Searchbar = () => {
                     {/* Cart */}
                     <button
                         onClick={() => navigate('/Cart')}
-                        className="relative p-2 text-gray-700 hover:text-black transition-all hover:scale-110"
+                        className="relative p-2.5 bg-stone-50 hover:bg-stone-100 border border-stone-200/60 hover:border-stone-300 rounded-full text-stone-700 hover:text-stone-950 transition-all duration-200 shadow-xs active:scale-95 group"
+                        title="Shopping Cart"
                     >
-                        <ShoppingCart className="w-6 h-6" />
-                        <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-[#FF9800] text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white">
-                            0
-                        </span>
+                        <ShoppingCart className="w-5 h-5 transition-transform group-hover:scale-105" />
+                        {cartCount > 0 && (
+                            <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 bg-luxury-crimson text-white text-[9px] font-black rounded-full flex items-center justify-center px-1.5 border-2 border-white shadow-md animate-scale-up">
+                                {cartCount}
+                            </span>
+                        )}
                     </button>
                 </div>
             </div>
@@ -673,7 +784,7 @@ const Searchbar = () => {
                                 <button
                                     onClick={() => handleNavigation(item.path)}
                                     className={`text-[11px] font-bold uppercase tracking-[0.05em] transition-colors relative h-full flex items-center text-center px-1 leading-tight max-w-[120px] ${location.pathname === item.path ? 'text-gray-900' : 'text-gray-700 hover:text-black'}`}
-                                    style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+                                    style={{ fontFamily: "'Boston Angel', serif" }}
                                 >
                                     <span className="relative py-2">
                                         {item.label}

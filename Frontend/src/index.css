@@ -1,16 +1,69 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
+@font-face {
+  font-family: 'Boston Angel';
+  src: url('/Fonts/Boston Angel Regular.ttf') format('truetype'),
+       url('/Fonts/Boston Angel Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Boston Angel';
+  src: url('/Fonts/Boston Angel Medium.ttf') format('truetype'),
+       url('/Fonts/Boston Angel Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Boston Angel';
+  src: url('/Fonts/Boston Angel Bold.ttf') format('truetype'),
+       url('/Fonts/Boston Angel Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Boston Angel';
+  src: url('/Fonts/Boston Angel Bold.ttf') format('truetype'),
+       url('/Fonts/Boston Angel Bold.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Boston Angel';
+  src: url('/Fonts/Boston Angel Light.ttf') format('truetype'),
+       url('/Fonts/Boston Angel Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Boston Angel';
+  src: url('/Fonts/Boston Angel Thin.ttf') format('truetype'),
+       url('/Fonts/Boston Angel Thin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
 @import "tailwindcss";
 
 @theme {
-  /* High-Authority Branding - Plus Jakarta Sans */
-  --font-sans: 'Plus Jakarta Sans', sans-serif;
-  --font-plus: 'Plus Jakarta Sans', sans-serif;
+  /* High-Authority Branding */
+  --font-sans: 'Boston Angel', serif;
+  --font-plus: 'Boston Angel', serif;
 
-  /* Financial & Premium Numerical - Outfit */
-  --font-outfit: 'Outfit', sans-serif;
+  /* Financial & Premium Numerical */
+  --font-outfit: 'Boston Angel', serif;
 
-  /* Precision UI - Inter */
-  --font-inter: 'Inter', sans-serif;
+  /* Precision UI */
+  --font-inter: 'Boston Angel', serif;
 
   /* Premium Luxury Brand Colors */
   --color-emerald-deep: #0b1410;
@@ -40,7 +93,7 @@
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Boston Angel', serif;
   background-color: #faf9f6;
   color: #1c1c1c;
   -webkit-font-smoothing: antialiased;
@@ -53,9 +106,9 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Boston Angel', serif;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 /* Hide scrollbars globally but keep functionality */

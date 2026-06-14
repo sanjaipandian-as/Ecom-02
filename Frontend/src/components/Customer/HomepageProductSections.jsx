@@ -19,7 +19,7 @@ const SectionCard = ({ product, accent = 'from-amber-100 via-white to-rose-100' 
         >
             <div className="relative aspect-square bg-cream-base overflow-hidden border-b border-gold-champagne/10 flex-shrink-0">
                 {discount > 0 && (
-                    <div className="absolute top-4 left-4 z-10 rounded-xs bg-luxury-crimson px-2.5 py-1 text-[9px] font-bold tracking-[0.1em] text-white shadow-sm uppercase">
+                    <div className="absolute top-4 left-4 z-10 rounded-xs bg-luxury-crimson px-2.5 py-1 text-[11px] font-bold tracking-wider text-white shadow-sm uppercase">
                         {discount}% OFF
                     </div>
                 )}
@@ -36,21 +36,21 @@ const SectionCard = ({ product, accent = 'from-amber-100 via-white to-rose-100' 
 
             <div className="p-4 flex-1 flex flex-col justify-between">
                 <div>
-                    <p className="mb-1 text-[9.5px] font-bold uppercase tracking-[0.25em] text-gold-lustrous">
+                    <p className="mb-1.5 text-[11.5px] font-bold uppercase tracking-wider text-gold-lustrous">
                         {product.category?.main || 'Collection'}
                     </p>
-                    <h3 className="mb-2 line-clamp-2 text-[15px] font-medium leading-snug text-stone-850 font-serif">
+                    <h3 className="mb-3 line-clamp-2 text-[17px] font-medium leading-relaxed text-stone-850 font-serif">
                         {product.name}
                     </h3>
                 </div>
                 <div className="flex items-end justify-between gap-3 mt-3">
                     <div>
                         {mrp > sellingPrice && (
-                            <p className="text-[11px] text-stone-400 font-medium line-through font-outfit">₹{mrp.toFixed(0)}</p>
+                            <p className="text-[13px] text-stone-400 font-medium line-through font-outfit">₹{mrp.toFixed(0)}</p>
                         )}
-                        <p className="text-lg font-bold tracking-tight text-stone-900 font-outfit">₹{sellingPrice.toFixed(0)}</p>
+                        <p className="text-[20px] font-bold tracking-tight text-stone-900 font-outfit">₹{sellingPrice.toFixed(0)}</p>
                     </div>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-gold-lustrous">
+                    <span className="inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-wider text-gold-lustrous">
                         View
                         <FaArrowRight className="w-3 h-3 transition-transform duration-350 group-hover:translate-x-1" />
                     </span>
@@ -71,12 +71,19 @@ const EmptyState = ({ title, description }) => (
 );
 
 const HomepageProductSections = ({ hideTopSelling = false }) => {
+    const isCustomerLoggedIn = useMemo(() => {
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        const role = localStorage.getItem('userRole') || sessionStorage.getItem('userRole');
+        return Boolean(token) && role === 'customer';
+    }, []);
+
     const [sections, setSections] = useState({
         topSellingProducts: [],
         viralProducts: [],
         recommendedProducts: [],
     });
     const [loading, setLoading] = useState(true);
+    const [hasOrders, setHasOrders] = useState(false);
 
     useEffect(() => {
         const loadSections = async () => {
@@ -88,6 +95,19 @@ const HomepageProductSections = ({ hideTopSelling = false }) => {
                     viralProducts: response.data?.viralProducts || [],
                     recommendedProducts: response.data?.recommendedProducts || [],
                 });
+
+                if (isCustomerLoggedIn) {
+                    try {
+                        const ordersRes = await API.get('/orders');
+                        const ordersList = ordersRes.data?.orders || [];
+                        setHasOrders(ordersList.length > 0);
+                    } catch (error) {
+                        console.error('Failed to load user orders:', error);
+                        setHasOrders(false);
+                    }
+                } else {
+                    setHasOrders(false);
+                }
             } catch (error) {
                 console.error('Failed to load homepage sections:', error);
                 setSections({
@@ -101,22 +121,16 @@ const HomepageProductSections = ({ hideTopSelling = false }) => {
         };
 
         loadSections();
-    }, []);
-
-    const isCustomerLoggedIn = useMemo(() => {
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        const role = localStorage.getItem('userRole') || sessionStorage.getItem('userRole');
-        return Boolean(token) && role === 'customer';
-    }, []);
+    }, [isCustomerLoggedIn]);
 
     const renderSection = (title, subtitle, products, accent, emptyTitle, emptyDescription) => (
         <section className="mb-12 sm:mb-16">
             <div className="mb-6 flex items-end justify-between gap-4 border-b border-gold-champagne/10 pb-4">
                 <div>
-                    {subtitle && <p className="mb-1.5 text-[9.5px] font-bold uppercase tracking-[0.28em] text-gold-lustrous">{subtitle}</p>}
+                    {subtitle && <p className="mb-1.5 text-[11.5px] font-bold uppercase tracking-wider text-gold-lustrous">{subtitle}</p>}
                     <h2 className="text-2xl font-bold tracking-tight text-emerald-deep sm:text-3xl font-serif">{title}</h2>
                 </div>
-                <div className="hidden rounded-full border border-gold-champagne/20 bg-white px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-lustrous sm:block">
+                <div className="hidden rounded-full border border-gold-champagne/20 bg-white px-4 py-1.5 text-[12px] font-bold uppercase tracking-wider text-gold-lustrous sm:block">
                     {products.length} items
                 </div>
             </div>
@@ -165,7 +179,7 @@ const HomepageProductSections = ({ hideTopSelling = false }) => {
                 'Turn on products from the admin homepage section and they will appear here immediately.'
             )}
 
-            {isCustomerLoggedIn && renderSection(
+            {isCustomerLoggedIn && hasOrders && renderSection(
                 'Recommended For You',
                 'Based On Buying History',
                 sections.recommendedProducts,

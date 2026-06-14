@@ -4,9 +4,10 @@ import { Navigate } from 'react-router-dom';
 export const ProtectedCustomerRoute = ({ children }) => {
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     const userRole = localStorage.getItem('userRole') || sessionStorage.getItem('userRole');
+    const currentPath = window.location.pathname;
 
     if (!token || userRole !== 'customer') {
-        return <Navigate to="/Login" replace />;
+        return <Navigate to={`/Login?redirect=${encodeURIComponent(currentPath)}`} replace />;
     }
 
     return children;

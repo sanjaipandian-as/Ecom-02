@@ -114,7 +114,7 @@ const SearchResult = () => {
 
     const fetchWishlist = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (!token) return;
 
             const response = await API.get('/wishlist');
@@ -127,7 +127,7 @@ const SearchResult = () => {
 
     const fetchCart = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (!token) return;
 
             const response = await API.get('/cart');
@@ -140,7 +140,7 @@ const SearchResult = () => {
     const toggleWishlist = async (e, productId) => {
         e.stopPropagation();
 
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (!token) {
             showNotification('Please login to add items to wishlist', 'error');
             setTimeout(() => navigate('/Login'), 1500);
@@ -177,7 +177,7 @@ const SearchResult = () => {
     const handleAddToCart = async (e, productId) => {
         e.stopPropagation();
 
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (!token) {
             showNotification('Please login to add items to cart', 'error');
             setTimeout(() => navigate('/Login'), 1500);
@@ -378,7 +378,7 @@ const SearchResult = () => {
                             />
                             {discount > 0 && (
                                 <div className="absolute top-4 left-4">
-                                    <span className="backdrop-blur-md bg-rose-500/90 text-[10px] font-black uppercase tracking-widest text-white px-3 py-1.5 rounded-full shadow-lg shadow-rose-500/20">
+                                    <span className="backdrop-blur-md bg-rose-500/90 text-[12px] font-black uppercase tracking-wider text-white px-3 py-1.5 rounded-full shadow-lg shadow-rose-500/20">
                                         -{discount}%
                                     </span>
                                 </div>
@@ -390,33 +390,33 @@ const SearchResult = () => {
                     <div className="flex-1 p-8 md:p-10 flex flex-col justify-between">
                         <div>
                             <div className="flex items-center gap-3 mb-6">
-                                <span className="bg-blue-50 text-[#2563EB] text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-xl">
+                                <span className="bg-blue-50 text-[#2563EB] text-[12px] font-black uppercase tracking-wider px-4 py-2 rounded-xl">
                                     {product.category?.main || product.category || 'Special Edition'}
                                 </span>
                                 <div className="flex items-center gap-1 bg-slate-50 px-3 py-1.5 rounded-xl">
-                                    <FaStar className="w-2.5 h-2.5 text-amber-400" />
-                                    <span className="text-[11px] font-bold text-slate-600">4.2 (Verified)</span>
+                                    <FaStar className="w-3.5 h-3.5 text-amber-400" />
+                                    <span className="text-[13px] font-bold text-slate-600">4.2 (Verified)</span>
                                 </div>
                             </div>
 
-                            <h3 className="text-2xl md:text-3xl font-bold text-[#1E293B] mb-4 group-hover:text-[#2563EB] transition-colors line-clamp-2">
+                            <h3 className="text-2xl md:text-3xl font-bold text-[#1E293B] mb-4 group-hover:text-[#2563EB] transition-colors leading-relaxed line-clamp-2">
                                 {product.name}
                             </h3>
 
-                            <p className="text-slate-500 text-sm md:text-base leading-relaxed line-clamp-3 mb-8 font-medium">
+                            <p className="text-slate-500 text-base leading-relaxed line-clamp-3 mb-8 font-medium">
                                 {product.description || "Premium addition to your daily routine, meticulously crafted with international standards of excellence and sustainable components."}
                             </p>
 
                             <div className="flex flex-wrap gap-x-8 gap-y-4 mb-8 pt-6 border-t border-slate-50">
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-300 mb-1">Availability</span>
-                                    <span className={`text-xs font-bold ${product.stock > 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                    <span className="text-[12px] font-black uppercase tracking-wider text-slate-300 mb-1">Availability</span>
+                                    <span className={`text-sm font-bold ${product.stock > 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
                                         {product.stock > 0 ? `Ready to Dispatch (${product.stock})` : 'Catalog Only'}
                                     </span>
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-300 mb-1">Pricing Model</span>
-                                    <span className="text-xs font-bold text-slate-600">MSRP Inclusive of Taxes</span>
+                                    <span className="text-[12px] font-black uppercase tracking-wider text-slate-300 mb-1">Pricing Model</span>
+                                    <span className="text-sm font-bold text-slate-600">MSRP Inclusive of Taxes</span>
                                 </div>
                             </div>
                         </div>
@@ -428,12 +428,12 @@ const SearchResult = () => {
                                         ₹{(product.pricing?.selling_price || product.price || 0).toLocaleString()}
                                     </span>
                                     {discount > 0 && (
-                                        <span className="text-base text-slate-300 font-bold line-through">
+                                        <span className="text-lg text-slate-300 font-bold line-through">
                                             ₹{(product.pricing?.mrp || product.originalPrice || 0).toLocaleString()}
                                         </span>
                                     )}
                                 </div>
-                                <span className="text-[11px] font-bold text-emerald-500 uppercase tracking-widest mt-1">Free Expedited Shipping</span>
+                                <span className="text-[12px] font-bold text-emerald-500 uppercase tracking-wider mt-1">Free Expedited Shipping</span>
                             </div>
 
                             <div className="flex items-center gap-4 w-full sm:w-auto">
@@ -450,7 +450,7 @@ const SearchResult = () => {
                                             e.stopPropagation();
                                             navigate('/cart');
                                         }}
-                                        className="flex-1 sm:flex-none px-12 py-5 bg-slate-900 text-white rounded-[24px] text-[12px] font-black uppercase tracking-widest shadow-xl shadow-slate-200 hover:bg-slate-800 transition-all active:scale-95 flex items-center justify-center gap-3"
+                                        className="flex-1 sm:flex-none px-12 py-5 bg-slate-900 text-white rounded-[24px] text-[14px] font-black uppercase tracking-wider shadow-xl shadow-slate-200 hover:bg-slate-800 transition-all active:scale-95 flex items-center justify-center gap-3"
                                     >
                                         <FaCheckCircle size={18} />
                                         Cart ({cartItem?.quantity || 1})
@@ -459,7 +459,7 @@ const SearchResult = () => {
                                     <button
                                         onClick={(e) => handleAddToCart(e, product._id)}
                                         disabled={addingToCart === product._id || product.stock <= 0}
-                                        className={`flex-1 sm:flex-none px-12 py-5 rounded-[24px] text-[12px] font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3 ${product.stock <= 0
+                                        className={`flex-1 sm:flex-none px-12 py-5 rounded-[24px] text-[14px] font-black uppercase tracking-wider shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3 ${product.stock <= 0
                                             ? 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
                                             : 'bg-[#2563EB] text-white shadow-blue-100 hover:bg-[#1E40AF]'
                                             }`}
@@ -506,15 +506,14 @@ const SearchResult = () => {
                             }}
                         />
 
-                        {/* Status Badges */}
-                        <div className="absolute top-4 left-4 flex flex-col gap-2">
+                        {/* Status Badg                        <div className="absolute top-4 left-4 flex flex-col gap-2">
                             {discount > 0 && (
-                                <span className="backdrop-blur-md bg-rose-500/90 text-[10px] font-black uppercase tracking-widest text-white px-3 py-1.5 rounded-full shadow-lg shadow-rose-500/20">
+                                <span className="backdrop-blur-md bg-rose-500/90 text-[12px] font-black uppercase tracking-wider text-white px-3 py-1.5 rounded-full shadow-lg shadow-rose-500/20">
                                     -{discount}%
                                 </span>
                             )}
                             {product.stock <= 0 && (
-                                <span className="backdrop-blur-md bg-slate-900/80 text-[10px] font-black uppercase tracking-widest text-white px-3 py-1.5 rounded-full">
+                                <span className="backdrop-blur-md bg-slate-900/80 text-[12px] font-black uppercase tracking-wider text-white px-3 py-1.5 rounded-full">
                                     Sold Out
                                 </span>
                             )}
@@ -527,7 +526,7 @@ const SearchResult = () => {
                             className="absolute top-4 right-4 w-10 h-10 backdrop-blur-md bg-white/80 rounded-2xl flex items-center justify-center shadow-sm border border-white/40 hover:bg-white transition-all transform hover:scale-105 active:scale-95"
                         >
                             {togglingWishlist === product._id ? (
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#2563EB]"></div>
+                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-[#2563EB]"></div>
                             ) : (
                                 <FaHeart
                                     className={`w-4 h-4 transition-colors ${wishlistItems.includes(product._id) ? 'text-rose-500' : 'text-slate-300'}`}
@@ -544,16 +543,16 @@ const SearchResult = () => {
                 <div className="px-7 pb-7 flex flex-col flex-1">
                     <div className="mb-4">
                         <div className="flex items-center gap-2 mb-2">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-[#2563EB]">
+                            <span className="text-[12px] font-black uppercase tracking-wider text-[#2563EB]">
                                 {product.category?.main || product.category || 'Portfolio'}
                             </span>
                             <div className="w-1 h-1 rounded-full bg-slate-200"></div>
                             <div className="flex items-center gap-1">
-                                <FaStar className="w-2.5 h-2.5 text-amber-400" />
-                                <span className="text-[11px] font-bold text-slate-500">4.2</span>
+                                <FaStar className="w-3 h-3 text-amber-400" />
+                                <span className="text-[13px] font-bold text-slate-500">4.2</span>
                             </div>
                         </div>
-                        <h3 className="text-base font-bold text-[#1E293B] line-clamp-2 leading-snug group-hover:text-[#2563EB] transition-colors">
+                        <h3 className="text-[17px] font-bold text-[#1E293B] line-clamp-2 leading-relaxed group-hover:text-[#2563EB] transition-colors">
                             {product.name}
                         </h3>
                     </div>
@@ -565,12 +564,12 @@ const SearchResult = () => {
                                     ₹{(product.pricing?.selling_price || product.price || 0).toLocaleString()}
                                 </span>
                                 {discount > 0 && (
-                                    <span className="text-[13px] text-slate-400 font-bold line-through">
+                                    <span className="text-sm text-slate-400 font-bold line-through">
                                         ₹{(product.pricing?.mrp || product.originalPrice || 0).toLocaleString()}
                                     </span>
-                                )}
+                                ) }
                             </div>
-                            <div className={`px-3 py-1.5 rounded-xl border ${product.stock > 0 ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-rose-50 border-rose-100 text-rose-500'} text-[10px] font-black uppercase tracking-widest`}>
+                            <div className={`px-3 py-1.5 rounded-xl border ${product.stock > 0 ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-rose-50 border-rose-100 text-rose-500'} text-[12px] font-black uppercase tracking-wider`}>
                                 {product.stock > 0 ? 'Verified' : 'Limited'}
                             </div>
                         </div>
@@ -581,7 +580,7 @@ const SearchResult = () => {
                                     e.stopPropagation();
                                     navigate('/cart');
                                 }}
-                                className="w-full flex items-center justify-center gap-2.5 py-4 bg-slate-900 text-white rounded-[20px] shadow-xl shadow-slate-200 transition-all hover:bg-slate-800 active:scale-[0.98] text-[11px] font-bold uppercase tracking-widest"
+                                className="w-full flex items-center justify-center gap-2.5 py-4 bg-slate-900 text-white rounded-[20px] shadow-xl shadow-slate-200 transition-all hover:bg-slate-800 active:scale-[0.98] text-[13px] font-bold uppercase tracking-wider"
                             >
                                 <FaCheckCircle size={16} />
                                 View Cart ({cartItem?.quantity || 1})
@@ -590,11 +589,11 @@ const SearchResult = () => {
                             <button
                                 onClick={(e) => handleAddToCart(e, product._id)}
                                 disabled={addingToCart === product._id || product.stock <= 0}
-                                className={`w-full flex items-center justify-center gap-2.5 py-4 rounded-[20px] transition-all active:scale-[0.98] text-[11px] font-bold uppercase tracking-widest ${product.stock <= 0
+                                className={`w-full flex items-center justify-center gap-2.5 py-4 rounded-[20px] transition-all active:scale-[0.98] text-[13px] font-bold uppercase tracking-wider ${product.stock <= 0
                                     ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
                                     : 'bg-[#2563EB] text-white shadow-xl shadow-blue-100 hover:bg-[#1E40AF]'
                                     }`}
-                            >
+                            >           >
                                 {addingToCart === product._id ? (
                                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/30 border-t-white"></div>
                                 ) : (

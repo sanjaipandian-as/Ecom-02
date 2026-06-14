@@ -35,7 +35,7 @@ const Cart = () => {
 
     const fetchCart = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (!token) {
                 navigate('/Login');
                 return;
@@ -43,6 +43,7 @@ const Cart = () => {
 
             const response = await API.get('/cart');
             setCartItems(response.data.items || []);
+            window.dispatchEvent(new Event('cartUpdated'));
         } catch (err) {
             console.error('Fetch cart error:', err);
             if (err.response?.status === 401) {
@@ -58,7 +59,7 @@ const Cart = () => {
     const fetchWishlist = async () => {
         try {
             setLoadingWishlist(true);
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (!token) return;
 
             const response = await API.get('/wishlist');
@@ -106,6 +107,7 @@ const Cart = () => {
                     item?.productId?._id === productId ? { ...item, quantity: newQuantity } : item
                 )
             );
+            window.dispatchEvent(new Event('cartUpdated'));
         } catch (err) {
             console.error('Update quantity error:', err);
             setError('Failed to update quantity');
@@ -120,6 +122,7 @@ const Cart = () => {
             await API.delete(`/cart/remove/${productId}`);
             setCartItems(prevItems => prevItems.filter(item => item?.productId?._id !== productId));
             setSelectedItems(prev => prev.filter(id => id !== productId));
+            window.dispatchEvent(new Event('cartUpdated'));
         } catch (err) {
             console.error('Remove item error:', err);
             setError('Failed to remove item');
@@ -310,12 +313,12 @@ const Cart = () => {
                                             className="w-5 h-5 text-gray-900 border-gray-300 rounded focus:ring-0 focus:ring-offset-0 cursor-pointer accent-black"
                                         />
                                     </div>
-                                    <span className="text-sm font-bold text-gray-900 uppercase tracking-widest">
+                                    <span className="text-base font-bold text-gray-900 uppercase tracking-wider">
                                         Select All ({validCartItems.length})
                                     </span>
                                 </label>
                                 {selectedItems.length > 0 && (
-                                    <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded">
+                                    <span className="text-sm font-bold text-primary bg-primary/10 px-2.5 py-1 rounded">
                                         {selectedItems.length} SELECTED
                                     </span>
                                 )}
@@ -363,7 +366,7 @@ const Cart = () => {
                                                     <div className="space-y-1">
                                                         <div className="flex justify-between items-start gap-2">
                                                             <h3
-                                                                className="text-base sm:text-lg font-semibold text-gray-900 leading-tight cursor-pointer hover:text-primary transition-colors truncate sm:whitespace-normal"
+                                                                className="text-lg sm:text-xl font-semibold text-gray-900 leading-relaxed cursor-pointer hover:text-primary transition-colors truncate sm:whitespace-normal"
                                                                 onClick={() => navigate(`/product/${product._id}`)}
                                                             >
                                                                 {product.name}
@@ -376,16 +379,16 @@ const Cart = () => {
                                                             </button>
                                                         </div>
                                                         <div className="flex items-baseline gap-2 flex-wrap">
-                                                            <span className="text-lg font-bold text-gray-900">₹{currentPrice.toFixed(2)}</span>
+                                                            <span className="text-[20px] font-bold text-gray-900">₹{currentPrice.toFixed(2)}</span>
                                                             {originalPrice > currentPrice && (
-                                                                <span className="text-sm text-gray-400 line-through">₹{originalPrice.toFixed(2)}</span>
+                                                                <span className="text-base text-gray-400 line-through">₹{originalPrice.toFixed(2)}</span>
                                                             )}
                                                         </div>
                                                         <div className="flex items-center gap-2 mt-1">
                                                             {product.stock > 0 ? (
-                                                                <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded uppercase">{product.stock} in stock</span>
+                                                                <span className="text-xs font-bold text-green-600 bg-green-50 px-2.5 py-1 rounded uppercase">{product.stock} in stock</span>
                                                             ) : (
-                                                                <span className="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded uppercase">Out of Stock</span>
+                                                                <span className="text-xs font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded uppercase">Out of Stock</span>
                                                             )}
                                                         </div>
                                                     </div>

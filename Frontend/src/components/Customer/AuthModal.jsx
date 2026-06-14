@@ -184,9 +184,11 @@ export default function AuthModal() {
 
                 setTimeout(() => {
                     const searchParams = new URLSearchParams(window.location.search);
+                    const redirect = searchParams.get('redirect');
                     searchParams.delete('auth');
+                    searchParams.delete('redirect');
                     const searchStr = searchParams.toString();
-                    const nextUrl = window.location.pathname + (searchStr ? '?' + searchStr : '');
+                    const nextUrl = redirect || (window.location.pathname + (searchStr ? '?' + searchStr : ''));
                     window.location.href = nextUrl;
                 }, 800);
             }
@@ -253,9 +255,11 @@ export default function AuthModal() {
 
                 setTimeout(() => {
                     const searchParams = new URLSearchParams(window.location.search);
+                    const redirect = searchParams.get('redirect');
                     searchParams.delete('auth');
+                    searchParams.delete('redirect');
                     const searchStr = searchParams.toString();
-                    const nextUrl = window.location.pathname + (searchStr ? '?' + searchStr : '');
+                    const nextUrl = redirect || (window.location.pathname + (searchStr ? '?' + searchStr : ''));
                     window.location.href = nextUrl;
                 }, 800);
             }

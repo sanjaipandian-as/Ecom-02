@@ -135,7 +135,11 @@ const Footer = () => {
                         <div className="mb-6">
                             <div className="mb-4 flex items-center gap-3">
                                 <img src="/plenorabg.jpeg" alt="Plenora Logo" className="w-10 h-10 rounded-full object-cover" />
-                                <Logo className="h-10 w-auto" />
+                                <Logo 
+                                    className="h-10 w-auto" 
+                                    primaryColor="#c5a880" 
+                                    secondaryColor="#f7f5f0" 
+                                />
                             </div>
                             <p className="text-[#a3b3ac] text-sm leading-relaxed max-w-sm">
                                 Elevating your natural beauty with Plenora's scientific skincare. Our meticulously crafted formulas combine botanical purity with clinical precision for radiant, healthy skin.

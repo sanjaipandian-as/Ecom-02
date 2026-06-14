@@ -37,7 +37,7 @@ const ProductCard = React.memo(({
                     }}
                 />
                 {product.discount_percentage > 0 && (
-                    <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold">
+                    <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm font-bold">
                         {product.discount_percentage}% OFF
                     </div>
                 )}
@@ -66,7 +66,7 @@ const ProductCard = React.memo(({
             <div className="p-4">
                 {/* Product Name */}
                 <h3
-                    className="font-semibold text-gray-900 mb-2 line-clamp-2 text-sm md:text-base cursor-pointer hover:text-primary transition-colors"
+                    className="font-semibold text-gray-900 mb-2 line-clamp-2 text-base md:text-lg cursor-pointer hover:text-primary transition-colors leading-relaxed"
                     onClick={() => onProductClick(product._id)}
                 >
                     {product.name}
@@ -75,29 +75,29 @@ const ProductCard = React.memo(({
                 {/* Category and Brand */}
                 <div className="flex items-center justify-between mb-3 text-xs text-gray-600">
                     <div>
-                        <p className="text-[10px] text-gray-400 uppercase">Category</p>
-                        <p className="font-semibold text-gray-700">{product.category?.main || product.category || 'Uncategorized'}</p>
+                        <p className="text-xs text-gray-400 uppercase tracking-wider">Category</p>
+                        <p className="font-semibold text-gray-700 text-sm">{product.category?.main || product.category || 'Uncategorized'}</p>
                     </div>
                     <div className="text-right">
-                        <p className="text-[10px] text-gray-400 uppercase">Brand</p>
-                        <p className="font-semibold text-primary">{product.brand}</p>
+                        <p className="text-xs text-gray-400 uppercase tracking-wider">Brand</p>
+                        <p className="font-semibold text-primary text-sm">{product.brand}</p>
                     </div>
                 </div>
 
                 {/* Rating */}
                 <div className="flex items-center gap-1 mb-3">
-                    <FaStar className="w-3 h-3 text-secondary" />
-                    <span className="text-sm font-semibold text-gray-700">4.2</span>
+                    <FaStar className="w-4 h-4 text-secondary" />
+                    <span className="text-base font-semibold text-gray-700">4.2</span>
                 </div>
 
                 {/* Price and Add to Cart */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <span className="text-xl md:text-2xl font-bold text-gray-900">
+                        <span className="text-2xl md:text-3xl font-bold text-gray-900 leading-none">
                             ₹{product.pricing?.selling_price?.toLocaleString('en-IN') || '0'}
                         </span>
                         {product.pricing?.mrp && product.pricing?.mrp > product.pricing?.selling_price && (
-                            <div className="text-xs text-gray-500 line-through">
+                            <div className="text-sm text-gray-500 line-through mt-0.5">
                                 ₹{product.pricing?.mrp?.toLocaleString('en-IN') || '0'}
                             </div>
                         )}
@@ -118,14 +118,14 @@ const ProductCard = React.memo(({
                             }`}
                     >
                         {addingToCart === product._id ? (
-                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/30 border-t-white"></div>
                         ) : (product.stock || 0) <= 0 ? (
                             <span className="text-xs">Out of Stock</span>
                         ) : inCart ? (
                             <>
                                 <FaShoppingCart className="w-4 h-4" />
                                 <span className="hidden sm:inline">View Cart</span>
-                                <span className="sm:hidden text-[10px]">Cart</span>
+                                <span className="sm:hidden text-xs">Cart</span>
                             </>
                         ) : (
                             <>
@@ -207,11 +207,12 @@ const CategoriesSpecificpage = () => {
 
     const fetchCart = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (!token) return;
 
             const response = await API.get('/cart');
             setCartItems(response.data.items || []);
+            window.dispatchEvent(new Event('cartUpdated'));
         } catch (error) {
             console.error('Error fetching cart:', error);
         }
@@ -219,7 +220,7 @@ const CategoriesSpecificpage = () => {
 
     const fetchWishlist = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (!token) return;
 
             const response = await API.get('/wishlist');
@@ -232,17 +233,6 @@ const CategoriesSpecificpage = () => {
     const fetchProducts = async () => {
         setLoading(true);
         try {
-            if (categorySlug === 'bestsellers') {
-                const response = await API.get('/products/customer/homepage-sections');
-                const bestSellerProducts = response.data.topSellingProducts || [];
-
-                setProducts(bestSellerProducts);
-                setTotalProducts(bestSellerProducts.length);
-                setTotalPages(1);
-                setCategoryName('Bestsellers');
-                return;
-            }
-
             const params = {
                 page: currentPage,
                 limit: 50, // Show 50 products per page for better performance
@@ -253,8 +243,13 @@ const CategoriesSpecificpage = () => {
             // Add category filter
             if (filters.categories && filters.categories.length > 0) {
                 params.categories = filters.categories.join(',');
-            } else if (categorySlug) {
+            } else if (categorySlug && categorySlug !== 'bestsellers') {
                 params.mainCategory = categorySlug;
+            }
+
+            // Bestsellers category filter integration
+            if (categorySlug === 'bestsellers') {
+                params.showInTopSelling = 'true';
             }
 
             // Add brand filters
@@ -293,7 +288,9 @@ const CategoriesSpecificpage = () => {
             setTotalPages(response.data.totalPages || 1);
 
             // Get category name from first product or format from slug
-            if (response.data.products && response.data.products.length > 0) {
+            if (categorySlug === 'bestsellers') {
+                setCategoryName('Bestsellers');
+            } else if (response.data.products && response.data.products.length > 0) {
                 setCategoryName(response.data.products[0].category?.main || response.data.products[0].category || 'Category');
             } else {
                 // Format category name from slug
@@ -336,7 +333,7 @@ const CategoriesSpecificpage = () => {
     }, []);
 
     const addToCart = useCallback(async (product) => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (!token) {
             navigate('/Login');
             return;
@@ -367,7 +364,7 @@ const CategoriesSpecificpage = () => {
     }, [cartItems, navigate]);
 
     const addToWishlist = useCallback(async (product) => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (!token) {
             navigate('/Login');
             return;
@@ -433,7 +430,7 @@ const CategoriesSpecificpage = () => {
 
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                             <div>
-                                <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                                <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl" style={{ fontFamily: "'Boston Angel', serif" }}>
                                     {filters.categories && filters.categories.length > 0 
                                         ? filters.categories.join(', ') 
                                         : categoryName}

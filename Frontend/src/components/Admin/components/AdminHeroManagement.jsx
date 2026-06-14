@@ -13,13 +13,6 @@ const AdminHeroManagement = ({ refreshId }) => {
     const [formData, setFormData] = useState({
         order: 0,
         image: null,
-        title: '',
-        subtitle: '',
-        desc: '',
-        price: '',
-        badge: '',
-        ctaText: '',
-        ctaLink: '',
         product: ''
     });
     const [previewImage, setPreviewImage] = useState(null);
@@ -57,13 +50,6 @@ const AdminHeroManagement = ({ refreshId }) => {
             setFormData({
                 order: slide.order,
                 image: null,
-                title: slide.title || '',
-                subtitle: slide.subtitle || '',
-                desc: slide.desc || '',
-                price: slide.price || '',
-                badge: slide.badge || '',
-                ctaText: slide.ctaText || '',
-                ctaLink: slide.ctaLink || '',
                 product: slide.product?._id || slide.product || ''
             });
             setPreviewImage(slide.image);
@@ -72,13 +58,6 @@ const AdminHeroManagement = ({ refreshId }) => {
             setFormData({
                 order: slides.length + 1,
                 image: null,
-                title: '',
-                subtitle: '',
-                desc: '',
-                price: '',
-                badge: '',
-                ctaText: 'Shop Now',
-                ctaLink: '/products',
                 product: ''
             });
             setPreviewImage(null);
@@ -92,13 +71,6 @@ const AdminHeroManagement = ({ refreshId }) => {
         setFormData({
             order: 0,
             image: null,
-            title: '',
-            subtitle: '',
-            desc: '',
-            price: '',
-            badge: '',
-            ctaText: '',
-            ctaLink: '',
             product: ''
         });
         setPreviewImage(null);
@@ -121,13 +93,6 @@ const AdminHeroManagement = ({ refreshId }) => {
         e.preventDefault();
         const data = new FormData();
         data.append('order', formData.order);
-        data.append('title', formData.title);
-        data.append('subtitle', formData.subtitle);
-        data.append('desc', formData.desc);
-        data.append('price', formData.price);
-        data.append('badge', formData.badge);
-        data.append('ctaText', formData.ctaText);
-        data.append('ctaLink', formData.ctaLink);
         data.append('product', formData.product);
         
         if (formData.image) {
@@ -199,11 +164,11 @@ const AdminHeroManagement = ({ refreshId }) => {
                     <p className="text-slate-400 font-bold text-xs uppercase tracking-wider max-w-xs font-hero">Add your first banner image to get started.</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 animate-slideUp" style={{ animationDelay: '0.1s' }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 animate-slideUp" style={{ animationDelay: '0.1s' }}>
                     {slides.map((slide) => (
                         <div key={slide._id} className="group bg-white rounded-none border border-slate-200 overflow-hidden shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300 relative flex flex-col cursor-pointer">
                             {/* Image Section */}
-                            <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
+                            <div className="relative aspect-[21/9] bg-slate-100 overflow-hidden">
                                 <img
                                     src={slide.image}
                                     alt="Hero Slide"
@@ -259,13 +224,13 @@ const AdminHeroManagement = ({ refreshId }) => {
             {/* Modal */}
             {showModal && (
                 <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-                    <div className="bg-white rounded-none w-[95%] md:w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-lg border border-slate-250 mx-auto">
-                        <div className="px-5 py-4 md:px-8 md:py-6 border-b border-slate-200 flex justify-between items-center sticky top-0 bg-white z-10">
+                    <div className="bg-white rounded-none w-[95%] md:w-full max-w-lg shadow-lg border border-slate-250 mx-auto">
+                        <div className="px-5 py-4 md:px-8 md:py-6 border-b border-slate-200 flex justify-between items-center bg-white z-10">
                             <div>
                                 <h2 className="text-lg md:text-xl font-bold text-slate-900 tracking-tight font-hero">
-                                    {editingSlide ? 'Edit Slide' : 'New Slide'}
+                                    {editingSlide ? 'Edit Banner' : 'New Banner'}
                                 </h2>
-                                <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest mt-1 font-hero">Hero Management</p>
+                                <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest mt-1 font-hero">Banner Settings</p>
                             </div>
                             <button onClick={handleCloseModal} className="w-8 h-8 md:w-10 md:h-10 rounded-none bg-slate-100 border border-slate-200 text-slate-400 hover:bg-slate-200 hover:text-slate-650 flex items-center justify-center transition-all">
                                 <MdCancel size={18} />
@@ -273,27 +238,10 @@ const AdminHeroManagement = ({ refreshId }) => {
                         </div>
 
                         <form onSubmit={handleSubmit} className="p-5 md:p-8 space-y-6 md:space-y-8">
-                            {/* Product Selection (Crucial for ratings/pricing) */}
-                            <div className="space-y-4">
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">Link to Product (Optional)</label>
-                                <select
-                                    name="product"
-                                    value={formData.product}
-                                    onChange={handleInputChange}
-                                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10 outline-none font-semibold text-slate-900 transition-all appearance-none"
-                                >
-                                    <option value="">No Product Linked</option>
-                                    {products.map(p => (
-                                        <option key={p._id} value={p._id}>{p.name} (₹{p.pricing?.selling_price})</option>
-                                    ))}
-                                </select>
-                                <p className="text-[10px] text-slate-400 font-medium">If a product is linked, its real-time ratings and pricing will be shown in the hero section.</p>
-                            </div>
-
                             {/* Image Upload */}
                             <div className="space-y-4">
                                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">Banner Image</label>
-                                <div className="relative aspect-video bg-slate-50 rounded-none border-2 border-dashed border-slate-350 hover:border-indigo-500 hover:bg-indigo-50/5 transition-all flex flex-col items-center justify-center cursor-pointer overflow-hidden group">
+                                <div className="relative aspect-[21/9] bg-slate-50 rounded-none border-2 border-dashed border-slate-350 hover:border-indigo-500 hover:bg-indigo-50/5 transition-all flex flex-col items-center justify-center cursor-pointer overflow-hidden group">
                                     {previewImage ? (
                                         <img src={previewImage} alt="Preview" className="w-full h-full object-cover" />
                                     ) : (
@@ -302,7 +250,7 @@ const AdminHeroManagement = ({ refreshId }) => {
                                                 <MdImage className="text-3xl text-slate-300 group-hover:text-indigo-600 transition-colors" />
                                             </div>
                                             <p className="text-sm font-bold text-slate-600">Click to upload image</p>
-                                            <p className="text-xs text-slate-400 mt-1">Recommended: 1920x800px</p>
+                                            <p className="text-xs text-slate-400 mt-1">Recommended size for banners</p>
                                         </div>
                                     )}
                                     <input
@@ -314,58 +262,27 @@ const AdminHeroManagement = ({ refreshId }) => {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-4">
-                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">Title</label>
-                                    <input
-                                        type="text"
-                                        name="title"
-                                        value={formData.title}
-                                        onChange={handleInputChange}
-                                        placeholder="Main Heading"
-                                        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10 outline-none font-semibold text-slate-900 transition-all"
-                                    />
-                                </div>
-                                <div className="space-y-4">
-                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">Badge</label>
-                                    <input
-                                        type="text"
-                                        name="badge"
-                                        value={formData.badge}
-                                        onChange={handleInputChange}
-                                        placeholder="e.g. BEST SELLER"
-                                        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10 outline-none font-semibold text-slate-900 transition-all"
-                                    />
-                                </div>
-                            </div>
-
+                            {/* Product Selection */}
                             <div className="space-y-4">
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">Description</label>
-                                <textarea
-                                    name="desc"
-                                    value={formData.desc}
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">Link to Product</label>
+                                <select
+                                    name="product"
+                                    value={formData.product}
                                     onChange={handleInputChange}
-                                    placeholder="Brief description of the product or offer..."
-                                    rows="3"
-                                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10 outline-none font-semibold text-slate-900 transition-all resize-none"
-                                ></textarea>
+                                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10 outline-none font-semibold text-slate-900 transition-all appearance-none"
+                                >
+                                    <option value="">No Product Linked</option>
+                                    {products.map(p => (
+                                        <option key={p._id} value={p._id}>{p.name} (₹{p.pricing?.selling_price})</option>
+                                    ))}
+                                </select>
+                                <p className="text-[10px] text-slate-400 font-medium">When users click the banner, they will be navigated to this product.</p>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-4">
-                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">CTA Text</label>
-                                    <input
-                                        type="text"
-                                        name="ctaText"
-                                        value={formData.ctaText}
-                                        onChange={handleInputChange}
-                                        placeholder="Shop Now"
-                                        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/10 outline-none font-semibold text-slate-900 transition-all"
-                                    />
-                                </div>
-                                <div className="space-y-4">
-                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">Display Order</label>
-                                    <div className="relative">
+                            {/* Display Order */}
+                            <div className="space-y-4">
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest font-hero">Display Order (Index)</label>
+                                <div className="relative">
                                     <input
                                         type="number"
                                         name="order"
@@ -376,13 +293,12 @@ const AdminHeroManagement = ({ refreshId }) => {
                                         placeholder="e.g. 1"
                                     />
                                     <div className="absolute right-5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-1 rounded-none pointer-events-none font-hero">
-                                        Position
+                                        Index
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="pt-2 flex flex-col-reverse md:flex-row gap-3 md:gap-4">
+                            <div className="pt-2 flex flex-col-reverse md:flex-row gap-3 md:gap-4">
                                 <button
                                     type="button"
                                     onClick={handleCloseModal}
@@ -395,7 +311,7 @@ const AdminHeroManagement = ({ refreshId }) => {
                                     className="flex-1 py-4 bg-slate-900 hover:bg-indigo-650 text-white font-bold uppercase tracking-widest text-xs rounded-none border border-slate-900 hover:border-indigo-650 transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-sm"
                                 >
                                     <MdSave className="text-lg" />
-                                    {editingSlide ? 'Update Slide' : 'Save Slide'}
+                                    {editingSlide ? 'Update Banner' : 'Save Banner'}
                                 </button>
                             </div>
                         </form>

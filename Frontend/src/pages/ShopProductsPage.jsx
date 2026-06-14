@@ -70,7 +70,7 @@ const ShopProductsPage = () => {
 
     const fetchCart = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (token) {
                 const response = await API.get('/cart');
                 setCartItems(response.data.items || []);
@@ -82,7 +82,7 @@ const ShopProductsPage = () => {
 
     const fetchWishlist = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (token) {
                 const response = await API.get('/wishlist');
                 const items = Array.isArray(response.data.items) ? response.data.items :
@@ -95,7 +95,7 @@ const ShopProductsPage = () => {
     };
 
     const addToCart = async (product) => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (!token) {
             navigate('/Login');
             return;
@@ -125,7 +125,7 @@ const ShopProductsPage = () => {
     };
 
     const addToWishlist = async (product) => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (!token) {
             navigate('/Login');
             return;

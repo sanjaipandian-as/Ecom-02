@@ -170,7 +170,7 @@ const SearchResults = () => {
 
     const fetchWishlist = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (!token) return;
 
             const response = await API.get('/wishlist');
@@ -183,7 +183,7 @@ const SearchResults = () => {
 
     const fetchCart = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (!token) return;
 
             const response = await API.get('/cart');
@@ -195,7 +195,7 @@ const SearchResults = () => {
 
     const toggleWishlist = async (e, productId) => {
         e.stopPropagation();
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (!token) {
             showNotification('Please login to add items to wishlist', 'error');
             setTimeout(() => navigate('/Login'), 1500);
@@ -224,7 +224,7 @@ const SearchResults = () => {
 
     const addToCart = async (e, product) => {
         e.stopPropagation();
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (!token) {
             showNotification('Please login to add items to cart', 'error');
             setTimeout(() => navigate('/Login'), 1500);

@@ -125,10 +125,10 @@ const Categories = () => {
     const totalSlides = Math.ceil(categories.length / visibleCards) || 1
 
     return (
-        <section className="w-full pt-12 pb-16 bg-white overflow-hidden">
+        <section className="w-full pt-2 pb-4 bg-white overflow-hidden">
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header with Title and Controls */}
-                <div className="flex items-center justify-between mb-12">
+                <div className="flex items-center justify-between mb-6">
                     <div className="flex-1"></div>
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center flex-[2]">
                         What's on your mind?
