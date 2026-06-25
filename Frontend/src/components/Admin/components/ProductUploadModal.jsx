@@ -80,11 +80,16 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
         stock: '',
         images: [],
         brand: '',
+        sku: '',
         tags: [],
         specifications: [],
         colors: [],
         sizes: [],
         weight: '',
+        displayWeight: '',
+        productType: '',
+        howToUse: '',
+        ingredients: '',
         gender: '',
         is_featured: false,
         is_new_arrival: false,
@@ -125,7 +130,12 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
                     specifications: productToEdit.specifications || [],
                     colors: productToEdit.colors || [],
                     sizes: productToEdit.sizes || [],
-                    images: productToEdit.images || []
+                    images: productToEdit.images || [],
+                    sku: productToEdit.sku || '',
+                    displayWeight: productToEdit.displayWeight || '',
+                    productType: productToEdit.productType || '',
+                    howToUse: productToEdit.howToUse || '',
+                    ingredients: productToEdit.ingredients || '',
                 });
                 setPreviewImages(productToEdit.images || []);
             } else {
@@ -149,6 +159,11 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
             colors: [],
             sizes: [],
             weight: '',
+            sku: '',
+            displayWeight: '',
+            productType: '',
+            howToUse: '',
+            ingredients: '',
             gender: '',
             is_featured: false,
             is_new_arrival: false,
@@ -294,7 +309,13 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
             onClose();
         } catch (error) {
             console.error('Error saving product:', error);
-            toast.error(error.response?.data?.message || 'Failed to save product');
+            const errData = error.response?.data;
+            if (errData?.received) {
+                const missing = Object.keys(errData.received).filter(k => !errData.received[k]);
+                toast.error(`Missing fields: ${missing.join(', ')}`);
+            } else {
+                toast.error(errData?.message || 'Failed to save product');
+            }
         } finally {
             setLoading(false);
         }
@@ -392,6 +413,18 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
                                             </div>
                                         </div>
                                         <div>
+                                            <label className={labelClasses}>SKU <span className="text-red-500">*</span></label>
+                                            <input
+                                                type="text"
+                                                name="sku"
+                                                value={formData.sku}
+                                                onChange={handleChange}
+                                                className={inputClasses}
+                                                placeholder="e.g. PROD-001"
+                                                required
+                                            />
+                                        </div>
+                                        <div>
                                             <CustomSelect
                                                 label="Target Audience"
                                                 name="gender"
@@ -465,6 +498,50 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
                                                 className={`${inputClasses} resize-none leading-relaxed`}
                                                 placeholder="Write a compelling description..."
                                                 required
+                                            ></textarea>
+                                        </div>
+                                        <div>
+                                            <label className={labelClasses}>Display Weight</label>
+                                            <input
+                                                type="text"
+                                                name="displayWeight"
+                                                value={formData.displayWeight}
+                                                onChange={handleChange}
+                                                className={inputClasses}
+                                                placeholder="e.g. 50g, 100ml"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className={labelClasses}>Product Type</label>
+                                            <input
+                                                type="text"
+                                                name="productType"
+                                                value={formData.productType}
+                                                onChange={handleChange}
+                                                className={inputClasses}
+                                                placeholder="e.g. Premium, Standard"
+                                            />
+                                        </div>
+                                        <div className="col-span-1 md:col-span-2">
+                                            <label className={labelClasses}>How to Use</label>
+                                            <textarea
+                                                name="howToUse"
+                                                value={formData.howToUse}
+                                                onChange={handleChange}
+                                                rows="3"
+                                                className={`${inputClasses} resize-none leading-relaxed`}
+                                                placeholder="Provide application instructions..."
+                                            ></textarea>
+                                        </div>
+                                        <div className="col-span-1 md:col-span-2">
+                                            <label className={labelClasses}>Ingredients</label>
+                                            <textarea
+                                                name="ingredients"
+                                                value={formData.ingredients}
+                                                onChange={handleChange}
+                                                rows="3"
+                                                className={`${inputClasses} resize-none leading-relaxed`}
+                                                placeholder="List ingredients..."
                                             ></textarea>
                                         </div>
                                     </div>
@@ -599,7 +676,7 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
                                             type="file"
                                             multiple
                                             onChange={handleImageUpload}
-                                            className="absolute inset-0 opacity-0 cursor-pointer"
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-50"
                                             accept="image/*"
                                         />
                                         <div className="w-20 h-20 bg-white rounded-none border border-slate-200 flex items-center justify-center mx-auto mb-5 group-hover:scale-102 transition-transform duration-305">

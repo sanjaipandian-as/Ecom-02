@@ -141,8 +141,13 @@ const ProductSchema = new Schema(
     },
 
     // ==============================
-    // 🧪 SPECIFICATIONS
+    // 🧪 SPECIFICATIONS & DETAILS
     // ==============================
+    howToUse: { type: String, trim: true },
+    ingredients: { type: String, trim: true },
+    productType: { type: String, trim: true },
+    displayWeight: { type: String, trim: true },
+
     specifications: {
       type: [
         {

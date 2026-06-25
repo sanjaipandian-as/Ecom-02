@@ -321,9 +321,9 @@ const ShopProductsPage = () => {
                                                     )}
                                                 </button>
 
-                                                {product.discount_percentage > 0 && (
+                                                {product.pricing?.discount_percentage > 0 && (
                                                     <div className="absolute top-3 left-3 bg-red-500 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider">
-                                                        {product.discount_percentage}% OFF
+                                                        {product.pricing.discount_percentage}% OFF
                                                     </div>
                                                 )}
                                             </div>

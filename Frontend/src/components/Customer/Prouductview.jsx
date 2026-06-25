@@ -206,6 +206,16 @@ const Productview = () => {
         return (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
     }, [reviews]);
 
+    const deliveryDate = useMemo(() => {
+        const date = new Date();
+        date.setDate(date.getDate() + 7);
+        const day = date.getDate();
+        const suffix = ['th', 'st', 'nd', 'rd'][(day % 10 > 3 || Math.floor(day % 100 / 10) === 1) ? 0 : day % 10];
+        const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+        const month = date.toLocaleDateString('en-US', { month: 'long' });
+        return `${weekday}, ${day}${suffix} ${month}`;
+    }, []);
+
     if (loading) return (
         <div className="min-h-screen bg-white">
             <Topbar />
@@ -416,7 +426,7 @@ const Productview = () => {
                             </div>
                             <div>
                                 <h4 className="text-[12px] font-black text-gray-900 uppercase tracking-wider mb-0.5">Free Express Delivery</h4>
-                                <p className="text-[12px] text-gray-500 font-medium">Arrives by <span className="text-gray-900 font-bold">Tomorrow, 10th June</span></p>
+                                <p className="text-[12px] text-gray-500 font-medium">Arrives by <span className="text-gray-900 font-bold">{deliveryDate}</span></p>
                             </div>
                         </div>
 
@@ -449,9 +459,21 @@ const Productview = () => {
                                 <p className="text-gray-600 text-base leading-relaxed font-medium whitespace-pre-line text-center px-4">
                                     {product.description}
                                 </p>
-                                {product.specifications?.length > 0 && (
+                                {(product.specifications?.length > 0 || product.displayWeight || product.productType) && (
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-                                        {product.specifications.map((spec, i) => (
+                                        {product.displayWeight && (
+                                            <div className="flex justify-between p-3 bg-[#fdfaf7] rounded-lg border border-[#f3ece4]">
+                                                <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Weight</span>
+                                                <span className="text-xs font-bold text-gray-900">{product.displayWeight}</span>
+                                            </div>
+                                        )}
+                                        {product.productType && (
+                                            <div className="flex justify-between p-3 bg-[#fdfaf7] rounded-lg border border-[#f3ece4]">
+                                                <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Type</span>
+                                                <span className="text-xs font-bold text-gray-900">{product.productType}</span>
+                                            </div>
+                                        )}
+                                        {product.specifications?.map((spec, i) => (
                                             <div key={i} className="flex justify-between p-3 bg-[#fdfaf7] rounded-lg border border-[#f3ece4]">
                                                 <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{spec.key}</span>
                                                 <span className="text-xs font-bold text-gray-900">{spec.value} {spec.unit}</span>
@@ -465,19 +487,25 @@ const Productview = () => {
                         {expandedSection === 'how-to-use' && (
                             <div className="animate-fade-up text-center space-y-4">
                                 <h3 className="text-xl font-black text-gray-900">Application Guide</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
-                                    {[
-                                        { step: "01", title: "Cleanse", text: "Wash your face with a mild cleanser and pat dry." },
-                                        { step: "02", title: "Apply", text: "Take a small amount and apply evenly across the area." },
-                                        { step: "03", title: "Massage", text: "Gently massage in circular motions until absorbed." }
-                                    ].map((item, i) => (
-                                        <div key={i} className="space-y-1">
-                                            <div className="text-3xl font-black text-gray-100">{item.step}</div>
-                                            <h4 className="text-[10px] font-bold text-gray-900 uppercase tracking-widest">{item.title}</h4>
-                                            <p className="text-[12px] text-gray-500 leading-relaxed">{item.text}</p>
-                                        </div>
-                                    ))}
-                                </div>
+                                {product.howToUse ? (
+                                    <p className="text-gray-600 text-base leading-relaxed font-medium whitespace-pre-line text-center px-4 max-w-3xl mx-auto">
+                                        {product.howToUse}
+                                    </p>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
+                                        {[
+                                            { step: "01", title: "Cleanse", text: "Wash your face with a mild cleanser and pat dry." },
+                                            { step: "02", title: "Apply", text: "Take a small amount and apply evenly across the area." },
+                                            { step: "03", title: "Massage", text: "Gently massage in circular motions until absorbed." }
+                                        ].map((item, i) => (
+                                            <div key={i} className="space-y-1">
+                                                <div className="text-3xl font-black text-gray-100">{item.step}</div>
+                                                <h4 className="text-[10px] font-bold text-gray-900 uppercase tracking-widest">{item.title}</h4>
+                                                <p className="text-[12px] text-gray-500 leading-relaxed">{item.text}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
 
@@ -488,11 +516,19 @@ const Productview = () => {
                                     <p className="text-gray-500 max-w-lg mx-auto text-[11px] leading-relaxed px-4">We believe in transparency. Here's exactly what goes into your product.</p>
                                 </div>
                                 <div className="flex flex-wrap justify-center gap-2 px-4">
-                                    {['Aloe Vera', 'Vitamin E', 'Organic Jojoba', 'Rosehip Oil', 'Hyaluronic Acid', 'Glycerin'].map((ing, i) => (
-                                        <div key={i} className="px-4 py-2 bg-white border border-gray-100 rounded-full text-[10px] font-bold text-gray-600 shadow-xs hover:shadow-sm hover:border-[#8c6d45] transition-all cursor-default">
-                                            {ing}
-                                        </div>
-                                    ))}
+                                    {product.ingredients ? (
+                                        product.ingredients.split(',').map((ing, i) => (
+                                            <div key={i} className="px-4 py-2 bg-white border border-gray-100 rounded-full text-[10px] font-bold text-gray-600 shadow-xs hover:shadow-sm hover:border-[#8c6d45] transition-all cursor-default">
+                                                {ing.trim()}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        ['Aloe Vera', 'Vitamin E', 'Organic Jojoba', 'Rosehip Oil', 'Hyaluronic Acid', 'Glycerin'].map((ing, i) => (
+                                            <div key={i} className="px-4 py-2 bg-white border border-gray-100 rounded-full text-[10px] font-bold text-gray-600 shadow-xs hover:shadow-sm hover:border-[#8c6d45] transition-all cursor-default">
+                                                {ing}
+                                            </div>
+                                        ))
+                                    )}
                                 </div>
                             </div>
                         )}
