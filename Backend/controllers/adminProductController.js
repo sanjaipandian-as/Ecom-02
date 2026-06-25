@@ -291,6 +291,19 @@ export const updateProduct = async (req, res) => {
       updates['category.sub_slug'] = "";
     }
 
+    // Recalculate discount_percentage if pricing is updated
+    if (updates['pricing.mrp'] || updates['pricing.selling_price']) {
+      const currentProduct = await Product.findById(productId);
+      const newMrp = Number(updates['pricing.mrp']) || currentProduct.pricing.mrp;
+      const newSellingPrice = Number(updates['pricing.selling_price']) || currentProduct.pricing.selling_price;
+      
+      if (newMrp && newSellingPrice && newMrp > newSellingPrice) {
+        updates['pricing.discount_percentage'] = Math.round(((newMrp - newSellingPrice) / newMrp) * 100);
+      } else {
+        updates['pricing.discount_percentage'] = 0;
+      }
+    }
+
     // Update the product
     const product = await Product.findByIdAndUpdate(
       productId,

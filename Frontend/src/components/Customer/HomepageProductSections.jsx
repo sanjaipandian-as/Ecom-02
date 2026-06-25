@@ -9,7 +9,9 @@ const SectionCard = ({ product, accent = 'from-amber-100 via-white to-rose-100' 
     const image = product.images?.find((img) => img && img.trim() !== '') || placeholderImg;
     const sellingPrice = product.pricing?.selling_price || 0;
     const mrp = product.pricing?.mrp || sellingPrice;
-    const discount = mrp > sellingPrice ? Math.round(((mrp - sellingPrice) / mrp) * 100) : 0;
+    const discount = product.pricing?.discount_percentage > 0 
+        ? product.pricing.discount_percentage 
+        : (mrp > sellingPrice ? Math.round(((mrp - sellingPrice) / mrp) * 100) : 0);
 
     return (
         <button

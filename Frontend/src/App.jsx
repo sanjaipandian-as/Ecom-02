@@ -18,7 +18,7 @@ import AuthModal from './components/Customer/AuthModal'
 import CartPage from './pages/CartPage'
 import WishlistPage from './pages/WishlistPage'
 import SearchResults from './pages/SearchResults'
-import PrivacyPolicy from "./components/Customer/Policys/PrivacyPolicy"
+import SitePrivacy from "./components/Customer/Policys/SitePrivacy"
 import TermsAndConditions from './components/Customer/Policys/TermsAndConditions'
 import Support from './components/Customer/Policys/Support'
 import Affiliate from "./components/Customer/Affiliate"
@@ -102,7 +102,7 @@ function App() {
             }
           />
 
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/privacy-policy" element={<SitePrivacy />} />
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="/shipping" element={<Shipping />} />
           <Route path="/returns" element={<Returns />} />

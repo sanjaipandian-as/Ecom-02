@@ -36,9 +36,9 @@ const ProductCard = React.memo(({
                         e.target.onerror = null;
                     }}
                 />
-                {product.discount_percentage > 0 && (
+                {product.pricing?.discount_percentage > 0 && (
                     <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm font-bold">
-                        {product.discount_percentage}% OFF
+                        {product.pricing.discount_percentage}% OFF
                     </div>
                 )}
 

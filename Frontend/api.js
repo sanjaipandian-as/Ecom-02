@@ -8,7 +8,7 @@ const COLD_START_THRESHOLD_MS = 3000; // show banner after 3s
 const RENDER_TIMEOUT_MS = 70000;       // give Render up to 70s to respond
 
 const API = axios.create({
-    baseURL: 'https://ecom-02-s5g5.onrender.com/api',
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
     timeout: RENDER_TIMEOUT_MS,
 });
 
