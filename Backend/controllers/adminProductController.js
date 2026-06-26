@@ -1,5 +1,5 @@
 import Product from "../models/Product.js";
-import cloudinary from "../config/cloudinary.js";
+import { storage } from "../services/storage/index.js";
 
 // ⭐ CREATE PRODUCT (ADMIN ONLY)
 export const createProduct = async (req, res) => {
@@ -83,31 +83,25 @@ export const createProduct = async (req, res) => {
       return res.status(400).json({ message: `SKU ${sku} already exists.` });
     }
 
-    // Handle image uploads
-    let imageUrls = [];
+    // ─── Handle image uploads via StorageService ───
+    let imageRelativePaths = [];
+
     if (req.files && req.files.length > 0) {
+      // Files uploaded via Multer → process through storage pipeline
       for (const file of req.files) {
-        // If file.path is already a cloudinary URL (from multer-storage-cloudinary) 
-        // we can just use it, or re-upload to a specific folder
-        if (file.path && file.path.startsWith('http')) {
-          imageUrls.push(file.path);
-        } else {
-          const result = await cloudinary.uploader.upload(file.path, {
-            folder: "products",
-            resource_type: "auto",
-          });
-          imageUrls.push(result.secure_url);
-        }
+        const { relativePath } = await storage.store(file.path, 'products');
+        imageRelativePaths.push(relativePath);
       }
     } else if (req.body.images) {
-      imageUrls = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
+      // Image URLs/paths passed directly in body (e.g. seed scripts, legacy Cloudinary URLs)
+      imageRelativePaths = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
     }
 
-    if (imageUrls.length < 2) {
+    if (imageRelativePaths.length < 2) {
       return res.status(400).json({ message: "At least 2 product images are required (Max 5)" });
     }
 
-    // Create product
+    // Create product — MongoDB stores relative paths only
     const product = new Product({
       name,
       description,
@@ -122,7 +116,7 @@ export const createProduct = async (req, res) => {
         cost: pricingData.cost || 0,
         selling_price: pricingData.selling_price,
       },
-      images: imageUrls,
+      images: imageRelativePaths,
       stock: stock || 0,
       low_stock_threshold: low_stock_threshold || 10,
       shipping: {
@@ -181,9 +175,14 @@ export const updateProduct = async (req, res) => {
   try {
     const { productId } = req.params;
 
+    // ─── Fetch current product to identify old images for cleanup ───
+    const currentProduct = await Product.findById(productId);
+    if (!currentProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    const oldImagePaths = [...currentProduct.images]; // Snapshot before update
+
     // Parse FormData fields
-    const categoryData = {};
-    const pricingData = {};
     const updates = {};
 
     // Handle category fields (category[main], category[sub])
@@ -246,33 +245,30 @@ export const updateProduct = async (req, res) => {
       updates.sizes = Array.isArray(req.body['sizes[]']) ? req.body['sizes[]'] : [req.body['sizes[]']];
     }
 
-    // Handle images
-    let imageUrls = [];
+    // ─── Handle images: keep existing + upload new ───
+    let imageRelativePaths = [];
 
-    // Keep existing images
+    // Keep existing images (these are relative paths already in MongoDB)
     if (req.body['existingImages[]']) {
-      imageUrls = Array.isArray(req.body['existingImages[]'])
+      imageRelativePaths = Array.isArray(req.body['existingImages[]'])
         ? req.body['existingImages[]']
         : [req.body['existingImages[]']];
     } else if (req.body.existingImages) {
-      imageUrls = Array.isArray(req.body.existingImages)
+      imageRelativePaths = Array.isArray(req.body.existingImages)
         ? req.body.existingImages
         : [req.body.existingImages];
     }
 
-    // Upload new images if provided
+    // Upload new images via StorageService
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
-        const result = await cloudinary.uploader.upload(file.path, {
-          folder: "products",
-          resource_type: "auto",
-        });
-        imageUrls.push(result.secure_url);
+        const { relativePath } = await storage.store(file.path, 'products');
+        imageRelativePaths.push(relativePath);
       }
     }
 
-    if (imageUrls.length > 0) {
-      updates.images = imageUrls;
+    if (imageRelativePaths.length > 0) {
+      updates.images = imageRelativePaths;
     }
 
     // Manually generate slugs if category is being updated
@@ -293,7 +289,6 @@ export const updateProduct = async (req, res) => {
 
     // Recalculate discount_percentage if pricing is updated
     if (updates['pricing.mrp'] || updates['pricing.selling_price']) {
-      const currentProduct = await Product.findById(productId);
       const newMrp = Number(updates['pricing.mrp']) || currentProduct.pricing.mrp;
       const newSellingPrice = Number(updates['pricing.selling_price']) || currentProduct.pricing.selling_price;
       
@@ -304,7 +299,7 @@ export const updateProduct = async (req, res) => {
       }
     }
 
-    // Update the product
+    // Update the product in MongoDB
     const product = await Product.findByIdAndUpdate(
       productId,
       { $set: updates },
@@ -313,6 +308,20 @@ export const updateProduct = async (req, res) => {
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
+    }
+
+    // ─── Cleanup: delete old image files that were removed ───
+    // Compare old paths with new paths to find which ones were dropped
+    if (updates.images) {
+      const newPathSet = new Set(updates.images);
+      const pathsToDelete = oldImagePaths.filter(oldPath => !newPathSet.has(oldPath));
+
+      if (pathsToDelete.length > 0) {
+        // Fire-and-forget: don't block the response for file cleanup
+        storage.deleteMany(pathsToDelete).catch(err => {
+          console.error('[Product Update] Failed to clean up old images:', err.message);
+        });
+      }
     }
 
     return res.json({ message: "Product updated successfully", product });
@@ -336,6 +345,11 @@ export const deleteProduct = async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
+
+    // Note: Images are NOT deleted on soft-delete.
+    // They are preserved for potential undo/restore operations.
+    // A scheduled cleanup cron can purge images for products that have
+    // been soft-deleted for longer than the retention period (e.g. 30 days).
 
     return res.json({ message: "Product deleted successfully", product });
   } catch (err) {

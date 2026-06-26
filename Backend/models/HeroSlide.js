@@ -41,6 +41,19 @@ const heroSlideSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product'
     }
-}, { timestamps: true });
+}, {
+    timestamps: true,
+    toJSON: {
+        transform: (doc, ret) => {
+            const baseUrl = (process.env.UPLOADS_BASE_URL || '').replace(/\/+$/, '');
+
+            if (ret.image && !ret.image.startsWith('http://') && !ret.image.startsWith('https://')) {
+                ret.image = `${baseUrl}/${ret.image}`;
+            }
+
+            return ret;
+        },
+    },
+});
 
 export default mongoose.model('HeroSlide', heroSlideSchema);

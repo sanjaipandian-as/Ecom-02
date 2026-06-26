@@ -3,7 +3,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-
+import path from "path";
+import { existsSync, mkdirSync } from "fs";
 
 import connectDB from "./config/db.js";
 
@@ -14,6 +15,26 @@ dotenv.config({ override: true });
 connectDB();
 
 const app = express();
+
+// =========================
+// ⭐ Uploads Directory Verification
+// =========================
+const UPLOADS_ROOT = process.env.UPLOADS_ROOT || './uploads';
+const requiredDirs = ['products', 'categories', 'hero', 'tmp'].map(d => path.join(UPLOADS_ROOT, d));
+
+for (const dir of [UPLOADS_ROOT, ...requiredDirs]) {
+  if (!existsSync(dir)) {
+    try {
+      mkdirSync(dir, { recursive: true });
+      console.log(`📁 Created uploads directory: ${dir}`);
+    } catch (err) {
+      console.error(`❌ Failed to create uploads directory: ${dir}`, err.message);
+      console.error('   Check UPLOADS_ROOT in .env and filesystem permissions.');
+      process.exit(1);
+    }
+  }
+}
+console.log(`✅ Uploads root verified: ${path.resolve(UPLOADS_ROOT)}`);
 
 // =========================
 // ⭐ Middlewares
@@ -46,7 +67,13 @@ app.use((req, res, next) => {
     if (!obj || typeof obj !== 'object') return;
 
     Object.keys(obj).forEach(key => {
-      // 1. NoSQL Injection Protection: Prevent keys starting with $ or containing .
+      // 1. Prototype Pollution Protection
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        delete obj[key];
+        return;
+      }
+
+      // 2. NoSQL Injection Protection: Prevent keys starting with $ or containing .
       if (key.startsWith('$') || key.includes('.')) {
         delete obj[key];
         return;
@@ -54,17 +81,21 @@ app.use((req, res, next) => {
 
       let value = obj[key];
 
-      // 2. Recursive Sanitization for Nested Objects
+      // 3. Recursive Sanitization for Nested Objects
       if (value && typeof value === 'object') {
         sanitize(value);
       }
-      // 3. XSS Protection for Strings (Basic)
+      // 4. XSS Protection for Strings (Advanced)
       else if (typeof value === 'string') {
-        // Simple XSS strip (removes common script tags and handlers)
         obj[key] = value
-          .replace(/<script.*?>.*?<\/script>/gi, '')
-          .replace(/on\w+=".*?"/gi, '')
-          .replace(/javascript:.*?;/gi, '');
+          // Remove scripts and anything inside (handles whitespace/newlines in tags)
+          .replace(/<script[^>]*>[\s\S]*?<\/script\s*>/gi, '')
+          // Remove dangerous HTML execution vectors
+          .replace(/<\/?(?:iframe|object|embed|link)[^>]*>/gi, '')
+          // Remove inline event handlers (supporting double/single/no quotes)
+          .replace(/on\w+\s*=\s*(?:'[^']*'|"[^"]*"|[^\s>]*)/gi, '')
+          // Remove javascript: and data: URIs
+          .replace(/(?:javascript|data)\s*:\s*[^\s"'>]*/gi, '');
       }
     });
   };
@@ -172,6 +203,16 @@ app.use("/api/search", searchRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/support", supportRoutes);
 
+
+// =========================
+// ⭐ Static File Serving (Development Only)
+// =========================
+// In production, Nginx serves /uploads/ directly from disk — Express never sees image requests.
+// In development, we need Express to serve them since there's no Nginx.
+if (process.env.NODE_ENV !== 'production') {
+  app.use('/uploads', express.static(UPLOADS_ROOT));
+  console.log(`📂 Dev mode: serving uploads at /uploads from ${path.resolve(UPLOADS_ROOT)}`);
+}
 
 // =========================
 // ⭐ DEFAULT ROUTE

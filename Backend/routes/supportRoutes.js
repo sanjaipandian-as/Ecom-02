@@ -10,11 +10,12 @@ import {
     deleteSupportTicket,
     getSupportStatistics
 } from "../controllers/supportController.js";
+import { supportTicketLimiter } from "../middleware/rateLimiters.js";
 
 const router = express.Router();
 
 // ⭐ Public Routes - Anyone can create a support ticket
-router.post("/create", createSupportTicket);
+router.post("/create", supportTicketLimiter, createSupportTicket);
 
 // ⭐ Customer Routes - Authenticated users can view their tickets
 router.get("/my-tickets", authenticate, getUserSupportTickets);

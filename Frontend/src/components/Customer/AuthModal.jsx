@@ -11,7 +11,8 @@ import {
     FaEnvelope,
     FaPhone,
     FaMapMarkerAlt,
-    FaUser
+    FaUser,
+    FaKey
 } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import API from '../../../api';
@@ -21,6 +22,16 @@ export default function AuthModal() {
     const authMode = searchParams.get('auth'); // 'login' or 'register'
 
     const isOpen = authMode === 'login' || authMode === 'register';
+
+    // Current sub-view: 'login' | 'register' | 'verify' | 'forgot' | 'reset'
+    const [viewState, setViewState] = useState('login');
+
+    // Email to verify / reset
+    const [targetEmail, setTargetEmail] = useState('');
+
+    // Shared / Verification state
+    const [otpCode, setOtpCode] = useState('');
+    const [resendTimer, setResendTimer] = useState(0);
 
     // Login State
     const [showPassword, setShowPassword] = useState(false);
@@ -52,6 +63,31 @@ export default function AuthModal() {
         agreeToTerms: false
     });
 
+    // Reset Password State
+    const [resetLoading, setResetLoading] = useState(false);
+    const [resetError, setResetError] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+
+    // Sync viewState with authMode when modal opens
+    useEffect(() => {
+        if (isOpen) {
+            setViewState(authMode);
+        }
+    }, [authMode, isOpen]);
+
+    // Resend OTP countdown timer
+    useEffect(() => {
+        if (resendTimer > 0) {
+            const interval = setInterval(() => {
+                setResendTimer(prev => prev - 1);
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    }, [resendTimer]);
+
     // Reset forms when modal closes or opens
     useEffect(() => {
         if (!isOpen) {
@@ -61,6 +97,12 @@ export default function AuthModal() {
             setLoginLoading(false);
             setRegError('');
             setRegLoading(false);
+            setViewState('login');
+            setTargetEmail('');
+            setOtpCode('');
+            setNewPassword('');
+            setConfirmNewPassword('');
+            setResetError('');
             setRegFormData({
                 firstName: '',
                 lastName: '',
@@ -124,11 +166,14 @@ export default function AuthModal() {
     };
 
     const switchMode = (mode) => {
-        setSearchParams(prev => {
-            const nextParams = new URLSearchParams(prev);
-            nextParams.set('auth', mode);
-            return nextParams;
-        });
+        setViewState(mode);
+        if (mode === 'login' || mode === 'register') {
+            setSearchParams(prev => {
+                const nextParams = new URLSearchParams(prev);
+                nextParams.set('auth', mode);
+                return nextParams;
+            });
+        }
     };
 
     const handleLoginSubmit = async (e) => {
@@ -194,9 +239,20 @@ export default function AuthModal() {
             }
         } catch (err) {
             console.error('Login error:', err);
+            const status = err.response?.status;
+            const isVerified = err.response?.data?.isVerified;
             const errorMessage = err.response?.data?.message || 'Login failed. Please check your credentials.';
-            setLoginError(errorMessage);
-            toast.error(errorMessage);
+
+            // If account is unverified, transition to verify OTP screen
+            if (status === 403 && isVerified === false) {
+                toast.warning('Verification needed. OTP sent to your inbox.');
+                setTargetEmail(email);
+                setViewState('verify');
+                setResendTimer(60); // Set 60s cooldown
+            } else {
+                setLoginError(errorMessage);
+                toast.error(errorMessage);
+            }
         } finally {
             setLoginLoading(false);
         }
@@ -244,13 +300,47 @@ export default function AuthModal() {
 
             const response = await API.post('/customer/auth/register', registrationData);
 
+            if (response.data.user) {
+                toast.success('Verification OTP sent. Please check your inbox.');
+                setTargetEmail(regFormData.email);
+                setViewState('verify');
+                setResendTimer(60);
+            }
+        } catch (err) {
+            console.error('Registration error:', err);
+            const message = err.response?.data?.message || 'Registration failed. Please try again.';
+            setRegError(message);
+            toast.error(message);
+        } finally {
+            setRegLoading(false);
+        }
+    };
+
+    // Verify OTP logic
+    const handleVerifySubmit = async (e) => {
+        e.preventDefault();
+        setRegError('');
+
+        if (otpCode.trim().length !== 6) {
+            setRegError('OTP must be exactly 6 digits.');
+            return;
+        }
+
+        setRegLoading(true);
+
+        try {
+            const response = await API.post('/customer/auth/verify-email', {
+                email: targetEmail,
+                otp: otpCode.trim()
+            });
+
             if (response.data.token) {
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 localStorage.setItem('userRole', 'customer');
                 localStorage.setItem('loginTime', new Date().getTime().toString());
 
-                toast.success('Welcome! Your account is ready.');
+                toast.success('Email verified successfully! Logging you in...');
                 closeModal();
 
                 setTimeout(() => {
@@ -264,8 +354,8 @@ export default function AuthModal() {
                 }, 800);
             }
         } catch (err) {
-            console.error('Registration error:', err);
-            const message = err.response?.data?.message || 'Registration failed. Please try again.';
+            console.error('OTP Verification error:', err);
+            const message = err.response?.data?.message || 'Verification failed. Please check the code.';
             setRegError(message);
             toast.error(message);
         } finally {
@@ -273,7 +363,86 @@ export default function AuthModal() {
         }
     };
 
+    // Resend OTP logic
+    const handleResendOtp = async () => {
+        if (resendTimer > 0) return;
+
+        try {
+            await API.post('/customer/auth/resend-verification', { email: targetEmail });
+            toast.success('A new verification OTP has been sent.');
+            setResendTimer(60); // restart 60s cooldown
+        } catch (err) {
+            console.error('Resend OTP error:', err);
+            const message = err.response?.data?.message || 'Failed to resend code. Please try again later.';
+            toast.error(message);
+        }
+    };
+
+    // Forgot Password Email Submit
+    const handleForgotSubmit = async (e) => {
+        e.preventDefault();
+        setResetError('');
+        setResetLoading(true);
+
+        try {
+            await API.post('/customer/auth/forgot-password', { email: targetEmail });
+            toast.success('A reset OTP code has been sent if the email is registered.');
+            setViewState('reset');
+            setResendTimer(60);
+        } catch (err) {
+            console.error('Forgot password error:', err);
+            const message = err.response?.data?.message || 'Failed to request password reset.';
+            setResetError(message);
+            toast.error(message);
+        } finally {
+            setResetLoading(false);
+        }
+    };
+
+    // Reset Password Submit
+    const handleResetSubmit = async (e) => {
+        e.preventDefault();
+        setResetError('');
+
+        if (otpCode.trim().length !== 6) {
+            setResetError('OTP must be exactly 6 digits.');
+            return;
+        }
+
+        if (newPassword !== confirmNewPassword) {
+            setResetError('Passwords do not match.');
+            return;
+        }
+
+        if (newPassword.length < 8) {
+            setResetError('Password must be at least 8 characters.');
+            return;
+        }
+
+        setResetLoading(true);
+
+        try {
+            const response = await API.post('/customer/auth/reset-password', {
+                email: targetEmail,
+                otp: otpCode.trim(),
+                newPassword
+            });
+
+            toast.success(response.data.message || 'Password reset successfully!');
+            switchMode('login');
+        } catch (err) {
+            console.error('Reset password error:', err);
+            const message = err.response?.data?.message || 'Failed to reset password.';
+            setResetError(message);
+            toast.error(message);
+        } finally {
+            setResetLoading(false);
+        }
+    };
+
     if (!isOpen) return null;
+
+    const inputClasses = "w-full rounded-xl border border-stone-200 bg-cream-base/20 pl-10 pr-4 py-3 text-xs text-stone-900 outline-none transition-all placeholder:text-stone-400 focus:border-gold-lustrous focus:bg-white focus:ring-4 focus:ring-gold-lustrous/10";
 
     return (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
@@ -290,10 +459,18 @@ export default function AuthModal() {
                 <div className="flex items-start justify-between px-8 pt-8 pb-4 shrink-0">
                     <div>
                         <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold-lustrous">
-                            {authMode === 'login' ? 'Welcome Back' : 'Create Account'}
+                            {viewState === 'login' && 'Welcome Back'}
+                            {viewState === 'register' && 'Create Account'}
+                            {viewState === 'verify' && 'Verify Identity'}
+                            {viewState === 'forgot' && 'Account Recovery'}
+                            {viewState === 'reset' && 'Create New Credentials'}
                         </p>
                         <h2 className="text-3xl font-bold text-emerald-deep leading-tight font-serif mt-1">
-                            {authMode === 'login' ? 'Sign In' : 'Register'}
+                            {viewState === 'login' && 'Sign In'}
+                            {viewState === 'register' && 'Register'}
+                            {viewState === 'verify' && 'Verify Email'}
+                            {viewState === 'forgot' && 'Forgot Password'}
+                            {viewState === 'reset' && 'Reset Password'}
                         </h2>
                     </div>
                     <button 
@@ -308,7 +485,7 @@ export default function AuthModal() {
                 {/* Form Container (Scrollable) */}
                 <div className="px-8 pb-8 pt-2 overflow-y-auto flex-1 custom-scrollbar">
                     
-                    {authMode === 'login' ? (
+                    {viewState === 'login' && (
                         /* LOGIN FORM */
                         <form onSubmit={handleLoginSubmit} className="space-y-5">
                             {loginError && (
@@ -327,7 +504,7 @@ export default function AuthModal() {
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="your@email.com or +91 98765 43210"
                                         required
-                                        className="w-full rounded-xl border border-stone-200 bg-cream-base/20 pl-10 pr-4 py-3 text-xs text-stone-900 outline-none transition-all placeholder:text-stone-400 focus:border-gold-lustrous focus:bg-white focus:ring-4 focus:ring-gold-lustrous/10"
+                                        className={inputClasses}
                                     />
                                 </div>
                                 {email && (
@@ -340,9 +517,16 @@ export default function AuthModal() {
                             <div>
                                 <div className="flex items-center justify-between mb-1.5">
                                     <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500">Password</label>
-                                    <a href="#" className="text-[10px] font-bold tracking-widest text-gold-lustrous hover:text-gold-deep uppercase">
+                                    <button 
+                                        type="button"
+                                        onClick={() => {
+                                            setTargetEmail(email);
+                                            switchMode('forgot');
+                                        }}
+                                        className="text-[10px] font-bold tracking-widest text-gold-lustrous hover:text-gold-deep uppercase cursor-pointer"
+                                    >
                                         Forgot?
-                                    </a>
+                                    </button>
                                 </div>
                                 <div className="relative">
                                     <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-lustrous/50 w-3.5 h-3.5" />
@@ -416,7 +600,9 @@ export default function AuthModal() {
                                 </button>
                             </div>
                         </form>
-                    ) : (
+                    )}
+
+                    {viewState === 'register' && (
                         /* REGISTER FORM */
                         <form onSubmit={handleRegisterSubmit} className="space-y-5">
                             {regError && (
@@ -713,6 +899,211 @@ export default function AuthModal() {
                                     className="font-bold text-gold-lustrous hover:text-gold-deep cursor-pointer"
                                 >
                                     Sign in
+                                </button>
+                            </div>
+                        </form>
+                    )}
+
+                    {viewState === 'verify' && (
+                        /* EMAIL OTP VERIFICATION FORM */
+                        <form onSubmit={handleVerifySubmit} className="space-y-6">
+                            {regError && (
+                                <div className="rounded-xl border border-red-200/50 bg-red-50/70 p-3 text-xs font-semibold text-red-700">
+                                    {regError}
+                                </div>
+                            )}
+
+                            <div>
+                                <p className="text-xs text-stone-500 leading-relaxed mb-4 text-center">
+                                    A 6-digit verification code was sent to <strong className="text-emerald-deep font-semibold">{targetEmail}</strong>. Enter it below to verify your account:
+                                </p>
+                                
+                                <div className="relative">
+                                    <FaKey className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-lustrous/50 w-3.5 h-3.5" />
+                                    <input
+                                        type="text"
+                                        maxLength="6"
+                                        value={otpCode}
+                                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                                        placeholder="123456"
+                                        required
+                                        className="w-full text-center text-lg font-bold tracking-[0.4em] rounded-xl border border-stone-200 bg-cream-base/20 pl-10 pr-4 py-3.5 text-stone-900 outline-none transition-all placeholder:text-stone-300 placeholder:tracking-normal focus:border-gold-lustrous focus:bg-white focus:ring-4 focus:ring-gold-lustrous/10"
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={regLoading}
+                                className={`w-full flex items-center justify-center gap-2.5 rounded-xl bg-emerald-dark text-white font-bold text-xs uppercase tracking-[0.2em] py-3.5 px-6 hover:bg-[#2b4c3c] hover:shadow-lg transition-all duration-300 border border-gold-champagne/15 active:scale-98 cursor-pointer ${regLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                            >
+                                {regLoading ? 'Verifying...' : 'Verify Email'}
+                                {!regLoading && <FaArrowRight className="w-2.5 h-2.5" />}
+                            </button>
+
+                            <div className="flex flex-col items-center justify-center gap-3 pt-2 text-xs">
+                                <div className="text-stone-500 font-medium">
+                                    Didn't get the code?{' '}
+                                    <button 
+                                        type="button"
+                                        onClick={handleResendOtp}
+                                        disabled={resendTimer > 0}
+                                        className={`font-bold text-gold-lustrous hover:text-gold-deep cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
+                                    >
+                                        {resendTimer > 0 ? `Resend Code (${resendTimer}s)` : 'Resend Code'}
+                                    </button>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => switchMode('login')}
+                                    className="font-bold text-stone-400 hover:text-emerald-deep cursor-pointer"
+                                >
+                                    Back to Login
+                                </button>
+                            </div>
+                        </form>
+                    )}
+
+                    {viewState === 'forgot' && (
+                        /* FORGOT PASSWORD EMAIL REQUEST */
+                        <form onSubmit={handleForgotSubmit} className="space-y-6">
+                            {resetError && (
+                                <div className="rounded-xl border border-red-200/50 bg-red-50/70 p-3 text-xs font-semibold text-red-700">
+                                    {resetError}
+                                </div>
+                            )}
+
+                            <div>
+                                <p className="text-xs text-stone-500 leading-relaxed mb-4">
+                                    Enter your registered email address below. We'll send you a 6-digit OTP code to verify identity and reset your password.
+                                </p>
+                                
+                                <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1.5">Email Address</label>
+                                <div className="relative">
+                                    <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-lustrous/50 w-3.5 h-3.5" />
+                                    <input
+                                        type="email"
+                                        value={targetEmail}
+                                        onChange={(e) => setTargetEmail(e.target.value)}
+                                        placeholder="your@email.com"
+                                        required
+                                        className={inputClasses}
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={resetLoading}
+                                className={`w-full flex items-center justify-center gap-2.5 rounded-xl bg-emerald-dark text-white font-bold text-xs uppercase tracking-[0.2em] py-3.5 px-6 hover:bg-[#2b4c3c] hover:shadow-lg transition-all duration-300 border border-gold-champagne/15 active:scale-98 cursor-pointer ${resetLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                            >
+                                {resetLoading ? 'Sending...' : 'Send Reset Code'}
+                                {!resetLoading && <FaArrowRight className="w-2.5 h-2.5" />}
+                            </button>
+
+                            <div className="text-center pt-2 text-xs">
+                                <button
+                                    type="button"
+                                    onClick={() => switchMode('login')}
+                                    className="font-bold text-stone-400 hover:text-emerald-deep cursor-pointer"
+                                >
+                                    Back to Login
+                                </button>
+                            </div>
+                        </form>
+                    )}
+
+                    {viewState === 'reset' && (
+                        /* RESET PASSWORD WITH OTP */
+                        <form onSubmit={handleResetSubmit} className="space-y-5">
+                            {resetError && (
+                                <div className="rounded-xl border border-red-200/50 bg-red-50/70 p-3 text-xs font-semibold text-red-700">
+                                    {resetError}
+                                </div>
+                            )}
+
+                            <div>
+                                <p className="text-xs text-stone-500 leading-relaxed mb-4 text-center">
+                                    A password reset code has been sent to <strong className="text-emerald-deep font-semibold">{targetEmail}</strong>. Enter it along with your new password:
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1.5">Reset OTP Code</label>
+                                <div className="relative">
+                                    <FaKey className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-lustrous/50 w-3.5 h-3.5" />
+                                    <input
+                                        type="text"
+                                        maxLength="6"
+                                        value={otpCode}
+                                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                                        placeholder="123456"
+                                        required
+                                        className="w-full text-center text-md font-bold tracking-[0.3em] rounded-xl border border-stone-200 bg-cream-base/20 pl-10 pr-4 py-2.5 text-stone-900 outline-none placeholder:text-stone-300 placeholder:tracking-normal focus:border-gold-lustrous focus:bg-white focus:ring-4 focus:ring-gold-lustrous/10"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1.5">New Password</label>
+                                <div className="relative">
+                                    <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-lustrous/50 w-3.5 h-3.5" />
+                                    <input
+                                        type={showNewPassword ? 'text' : 'password'}
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        placeholder="••••••••"
+                                        required
+                                        className="w-full rounded-xl border border-stone-200 bg-cream-base/20 pl-10 pr-10 py-2.5 text-xs text-stone-900 outline-none focus:border-gold-lustrous focus:bg-white focus:ring-4 focus:ring-gold-lustrous/10"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowNewPassword(!showNewPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 cursor-pointer"
+                                    >
+                                        {showNewPassword ? <FaEyeSlash className="w-3.5 h-3.5" /> : <FaEye className="w-3.5 h-3.5" />}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1.5">Confirm New Password</label>
+                                <div className="relative">
+                                    <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-lustrous/50 w-3.5 h-3.5" />
+                                    <input
+                                        type={showConfirmNewPassword ? 'text' : 'password'}
+                                        value={confirmNewPassword}
+                                        onChange={(e) => setConfirmNewPassword(e.target.value)}
+                                        placeholder="••••••••"
+                                        required
+                                        className="w-full rounded-xl border border-stone-200 bg-cream-base/20 pl-10 pr-10 py-2.5 text-xs text-stone-900 outline-none focus:border-gold-lustrous focus:bg-white focus:ring-4 focus:ring-gold-lustrous/10"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmNewPassword(!showConfirmNewPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 cursor-pointer"
+                                    >
+                                        {showConfirmNewPassword ? <FaEyeSlash className="w-3.5 h-3.5" /> : <FaEye className="w-3.5 h-3.5" />}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={resetLoading}
+                                className={`w-full flex items-center justify-center gap-2.5 rounded-xl bg-emerald-dark text-white font-bold text-xs uppercase tracking-[0.2em] py-3.5 px-6 hover:bg-[#2b4c3c] hover:shadow-lg transition-all duration-300 border border-gold-champagne/15 active:scale-98 cursor-pointer ${resetLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                            >
+                                {resetLoading ? 'Resetting...' : 'Reset Password'}
+                                {!resetLoading && <FaArrowRight className="w-2.5 h-2.5" />}
+                            </button>
+
+                            <div className="text-center pt-2 text-xs">
+                                <button
+                                    type="button"
+                                    onClick={() => switchMode('login')}
+                                    className="font-bold text-stone-400 hover:text-emerald-deep cursor-pointer"
+                                >
+                                    Back to Login
                                 </button>
                             </div>
                         </form>
