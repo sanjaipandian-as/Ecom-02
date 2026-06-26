@@ -215,7 +215,24 @@ const ProductSchema = new Schema(
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        // Resolve relative image paths to full public URLs.
+        // Legacy Cloudinary URLs (starting with http) are passed through as-is.
+        const baseUrl = (process.env.UPLOADS_BASE_URL || '').replace(/\/+$/, '');
+
+        if (ret.images && Array.isArray(ret.images)) {
+          ret.images = ret.images.map(imgPath => {
+            if (!imgPath) return '';
+            if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return imgPath;
+            return `${baseUrl}/${imgPath}`;
+          });
+        }
+
+        return ret;
+      },
+    },
     toObject: { virtuals: true },
   }
 );

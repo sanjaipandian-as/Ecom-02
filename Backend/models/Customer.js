@@ -36,6 +36,21 @@ const customerSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    verificationOtp: {
+      code: String,
+      expiresAt: Date,
+    },
+
+    resetPasswordOtp: {
+      code: String,
+      expiresAt: Date,
+    },
   },
   { timestamps: true }
 );

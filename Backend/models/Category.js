@@ -12,7 +12,7 @@ const categorySchema = new mongoose.Schema(
     },
 
     icon: {
-      type: String, // Cloudinary URL
+      type: String, // Relative path to icon image (resolved to full URL in toJSON)
       default: null,
       trim: true,
     },
@@ -32,7 +32,20 @@ const categorySchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      transform: (doc, ret) => {
+        const baseUrl = (process.env.UPLOADS_BASE_URL || '').replace(/\/+$/, '');
+
+        if (ret.icon && !ret.icon.startsWith('http://') && !ret.icon.startsWith('https://')) {
+          ret.icon = `${baseUrl}/${ret.icon}`;
+        }
+
+        return ret;
+      },
+    },
+  }
 );
 
 export default mongoose.model("Category", categorySchema);

@@ -1,4 +1,5 @@
 import HeroSlide from '../models/HeroSlide.js';
+import { storage } from '../services/storage/index.js';
 
 // ==========================================
 // 1. GET ALL SLIDES (Public - Optimized)
@@ -40,18 +41,20 @@ export const createHeroSlide = async (req, res) => {
             product
         } = req.body;
 
-        // Image Handling
-        let imageUrl = "";
+        // ─── Image Handling via StorageService ───
+        let imageRelativePath = "";
         if (req.file) {
-            imageUrl = req.file.path;
+            const { relativePath } = await storage.store(req.file.path, 'hero');
+            imageRelativePath = relativePath;
         } else if (req.body.image) {
-            imageUrl = req.body.image;
+            // Direct URL/path passed in body (e.g. from seed scripts)
+            imageRelativePath = req.body.image;
         } else {
             return res.status(400).json({ message: "Image is required" });
         }
 
         const newSlide = new HeroSlide({
-            image: imageUrl,
+            image: imageRelativePath,
             order: order ? Number(order) : 0,
             title,
             subtitle,
@@ -85,9 +88,6 @@ export const createHeroSlide = async (req, res) => {
 // ==========================================
 export const updateHeroSlide = async (req, res) => {
     try {
-        console.log("updateHeroSlide hit");
-        console.log("Body:", req.body);
-        console.log("File:", req.file);
         const { id } = req.params;
         const {
             order,
@@ -107,6 +107,9 @@ export const updateHeroSlide = async (req, res) => {
             return res.status(404).json({ message: "Slide not found" });
         }
 
+        // Snapshot old image path for cleanup
+        const oldImagePath = slide.image;
+
         if (order !== undefined) slide.order = Number(order);
         if (title !== undefined) slide.title = title;
         if (subtitle !== undefined) slide.subtitle = subtitle;
@@ -117,14 +120,25 @@ export const updateHeroSlide = async (req, res) => {
         if (ctaLink !== undefined) slide.ctaLink = ctaLink;
         if (product !== undefined) slide.product = product || null;
 
-        // Image update
+        // ─── Image update via StorageService ───
+        let imageChanged = false;
         if (req.file) {
-            slide.image = req.file.path;
+            const { relativePath } = await storage.store(req.file.path, 'hero');
+            slide.image = relativePath;
+            imageChanged = true;
         } else if (image) {
             slide.image = image;
+            imageChanged = (image !== oldImagePath);
         }
 
         await slide.save();
+
+        // ─── Cleanup: delete old image if it was replaced ───
+        if (imageChanged && oldImagePath && oldImagePath !== slide.image) {
+            storage.delete(oldImagePath).catch(err => {
+                console.error('[Hero Update] Failed to clean up old image:', err.message);
+            });
+        }
 
         res.status(200).json({
             success: true,
@@ -151,6 +165,13 @@ export const deleteHeroSlide = async (req, res) => {
 
         if (!slide) {
             return res.status(404).json({ message: "Slide not found" });
+        }
+
+        // ─── Cleanup: delete image file from disk ───
+        if (slide.image) {
+            storage.delete(slide.image).catch(err => {
+                console.error('[Hero Delete] Failed to clean up image:', err.message);
+            });
         }
 
         res.status(200).json({

@@ -2,6 +2,7 @@ import express from "express";
 import upload from "../middleware/upload.js";
 import { isAdmin } from "../middleware/isAdmin.js";
 import { authenticate } from "../middleware/auth.js";
+import { validateImages } from "../middleware/imageValidator.js";
 
 import {
   addCategory,
@@ -16,7 +17,8 @@ router.post(
   "/add",
   authenticate,
   isAdmin,
-  upload.single("icon"),   // category icon upload
+  upload.single("icon"),
+  validateImages,
   addCategory
 );
 
@@ -27,6 +29,7 @@ router.put(
   authenticate,
   isAdmin,
   upload.single("icon"),
+  validateImages,
   updateCategory
 );
 
