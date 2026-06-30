@@ -208,7 +208,7 @@ const BestSellers = () => {
 
                 {/* Products Grid */}
                 {loading ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-8">
                         {[...Array(5)].map((_, i) => (
                             <div key={i} className="bg-white rounded-3xl p-4 h-[450px] shadow-sm animate-pulse">
                                 <div className="aspect-[1/1.1] bg-gray-100 rounded-2xl mb-6"></div>
@@ -219,7 +219,7 @@ const BestSellers = () => {
                         ))}
                     </div>
                 ) : filteredProducts.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-8">
                         {filteredProducts.slice(0, 5).map((product) => (
                             <ProductCard key={product._id} product={product} />
                         ))}

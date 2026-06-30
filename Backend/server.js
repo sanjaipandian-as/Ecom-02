@@ -164,6 +164,7 @@ import searchRoutes from "./routes/searchRoutes.js";
 
 import notificationRoutes from "./routes/notificationRoutes.js";
 import supportRoutes from "./routes/supportRoutes.js";
+import announcementRoutes from "./routes/announcementRoutes.js";
 
 
 // =========================
@@ -202,6 +203,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/support", supportRoutes);
+app.use("/api/announcements", announcementRoutes);
 
 
 // =========================

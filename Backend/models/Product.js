@@ -86,8 +86,8 @@ const ProductSchema = new Schema(
       type: [String],
       required: [true, "At least one product image is required"],
       validate: {
-        validator: (v) => Array.isArray(v) && v.length >= 2 && v.length <= 5,
-        message: "You must upload between 2 and 5 images",
+        validator: (v) => Array.isArray(v) && v.length >= 2 && v.length <= 8,
+        message: "You must upload between 2 and 8 images",
       },
     },
 

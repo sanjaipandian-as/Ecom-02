@@ -12,13 +12,14 @@ import {
   ShoppingCart, 
   ChevronDown,
   HelpCircle,
-  Heart
+  Heart,
+  Zap
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import API from '../../../api';
 import Logo from '../Common/Logo';
-import plenoraBg from '/plenorabg.jpeg';
+import AnnouncementBar from '../Common/AnnouncementBar';
 
 const Searchbar = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -578,21 +579,24 @@ const Searchbar = () => {
         <header
             className={`z-50 transition-all duration-300 sticky top-0 bg-white w-full ${isScrolled ? 'shadow-md' : 'border-b border-gray-100'}`}
         >
+            <AnnouncementBar />
             {/* Top Row: Search, Logo, User Actions */}
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20 sm:h-24">
                 
-                {/* Categories Toggle (Desktop) */}
-                <button
-                    onClick={() => setIsCategoriesExpanded(!isCategoriesExpanded)}
-                    className="hidden lg:flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded-xl transition-all mr-4 border border-gray-100 shadow-sm active:scale-95"
-                    title={isCategoriesExpanded ? "Hide Categories" : "Show Categories"}
-                >
-                    {isCategoriesExpanded ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                    <span className="text-sm font-bold uppercase tracking-wider">Categories</span>
-                </button>
+                {/* LEFT SECTION */}
+                <div className="flex items-center flex-1 gap-2 sm:gap-4">
+                    {/* Categories Toggle (Desktop) */}
+                    <button
+                        onClick={() => setIsCategoriesExpanded(!isCategoriesExpanded)}
+                        className="hidden lg:flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded-xl transition-all mr-2 border border-gray-100 shadow-sm active:scale-95"
+                        title={isCategoriesExpanded ? "Hide Categories" : "Show Categories"}
+                    >
+                        {isCategoriesExpanded ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                        <span className="text-sm font-bold uppercase tracking-wider">Categories</span>
+                    </button>
 
-                {/* Search Bar (Left) */}
-                <div className="hidden lg:flex items-center relative flex-1 max-w-[300px]" ref={desktopSearchRef}>
+                    {/* Search Bar (Desktop) */}
+                    <div className="hidden lg:flex items-center relative flex-1 max-w-[300px]" ref={desktopSearchRef}>
                     <div className="relative w-full group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-gray-600 transition-colors w-4 h-4" />
                         <input
@@ -634,29 +638,38 @@ const Searchbar = () => {
                 {/* Mobile Menu Toggle (Left on mobile) */}
                 <button
                     onClick={() => setIsMobileMenuOpen(true)}
-                    className="lg:hidden p-2 -ml-2 text-gray-600 hover:text-black transition-colors"
+                    className="lg:hidden p-1.5 -ml-1.5 text-gray-800 hover:text-black transition-colors"
                 >
-                    <Menu className="w-6 h-6" />
+                    <Menu className="w-7 h-7 stroke-[1.5]" />
                 </button>
 
-                {/* Logo (Center) */}
+                {/* Mobile User Icon (Left on mobile) */}
+                <button 
+                    onClick={() => isLoggedIn ? handleNavigation('/Settings') : handleNavigation(getAuthPath('login'))}
+                    className="lg:hidden p-1.5 text-gray-800 hover:text-black transition-colors relative"
+                >
+                    <User className="w-6 h-6 stroke-[1.5]" />
+                    <Zap className="w-3.5 h-3.5 absolute -right-0.5 bottom-1 text-[#f59e0b] fill-[#f59e0b]" />
+                </button>
+                </div> {/* END LEFT SECTION */}
+
+                {/* CENTER SECTION: Logo */}
                 <div className="flex-shrink-0 flex items-center justify-center lg:flex-1">
                     <button
                         onClick={() => handleNavigation('/')}
                         className="flex items-center gap-3 group transition-transform duration-300 active:scale-95"
                     >
-                        <img src="/plenorabg.jpeg" alt="Plenora" className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform" />
                         <div className="h-12 sm:h-16 flex items-center justify-center">
                             <Logo className="h-full w-auto" />
                         </div>
                     </button>
                 </div>
 
-                {/* Right Actions */}
-                <div className="flex items-center justify-end flex-1 gap-3 sm:gap-4 lg:gap-6">
+                {/* RIGHT SECTION: Actions */}
+                <div className="flex items-center justify-end flex-1 gap-2 sm:gap-4 lg:gap-6">
                     
-                    {/* User Account */}
-                    <div className="relative" ref={userDropdownRef}>
+                    {/* User Account (Desktop) */}
+                    <div className="hidden lg:block relative" ref={userDropdownRef}>
                         {isLoggedIn ? (
                             <div className="relative">
                                 <button
@@ -757,16 +770,47 @@ const Searchbar = () => {
                     {/* Cart */}
                     <button
                         onClick={() => navigate('/Cart')}
-                        className="relative p-2.5 bg-stone-50 hover:bg-stone-100 border border-stone-200/60 hover:border-stone-300 rounded-full text-stone-700 hover:text-stone-950 transition-all duration-200 shadow-xs active:scale-95 group"
+                        className="relative p-1.5 lg:p-2.5 lg:bg-stone-50 lg:hover:bg-stone-100 lg:border lg:border-stone-200/60 lg:hover:border-stone-300 lg:rounded-full text-gray-800 lg:text-stone-700 hover:text-black lg:hover:text-stone-950 transition-all duration-200 lg:shadow-xs active:scale-95 group"
                         title="Shopping Cart"
                     >
-                        <ShoppingCart className="w-5 h-5 transition-transform group-hover:scale-105" />
+                        <ShoppingBag className="w-6 h-6 lg:w-5 lg:h-5 stroke-[1.5] transition-transform group-hover:scale-105" />
                         {cartCount > 0 && (
-                            <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 bg-luxury-crimson text-white text-[9px] font-black rounded-full flex items-center justify-center px-1.5 border-2 border-white shadow-md animate-scale-up">
+                            <span className="absolute -top-1 -right-1 lg:-top-1.5 lg:-right-1.5 min-w-[18px] lg:min-w-[20px] h-4.5 lg:h-5 bg-[#84A940] lg:bg-luxury-crimson text-white text-[9px] font-black rounded-full flex items-center justify-center px-1 border-2 border-white shadow-md animate-scale-up">
                                 {cartCount}
                             </span>
                         )}
                     </button>
+                </div> {/* END RIGHT SECTION */}
+            </div>
+
+            {/* Mobile Search Bar Area (Always visible on mobile) */}
+            <div className="lg:hidden px-4 pb-3 bg-white border-b border-gray-100">
+                <div className="relative w-full group" ref={mobileSearchRef}>
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-gray-600 transition-colors w-4 h-4" />
+                    <input
+                        type="text"
+                        placeholder='Search For "Baby care"'
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        onFocus={() => setShowSuggestions(searchQuery.trim().length > 1)}
+                        className="w-full pl-11 pr-4 py-2.5 rounded-lg text-sm bg-gray-50 border border-gray-200 focus:bg-white focus:border-gray-300 focus:outline-none transition-all placeholder:text-gray-400 shadow-sm"
+                    />
+                    {/* Suggestions Box Mobile */}
+                    {showSuggestions && suggestions.length > 0 && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl z-[100] max-h-60 overflow-y-auto py-2">
+                            {suggestions.map((suggestion, index) => (
+                                <button
+                                    key={suggestion._id}
+                                    onClick={() => handleSearch(suggestion.name)}
+                                    className="w-full px-4 py-3 text-left transition-colors flex items-center gap-3 text-sm hover:bg-gray-50 border-b border-gray-50 last:border-0"
+                                >
+                                    <Search className="w-3.5 h-3.5 text-gray-400" />
+                                    <span className="line-clamp-1">{suggestion.name}</span>
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 

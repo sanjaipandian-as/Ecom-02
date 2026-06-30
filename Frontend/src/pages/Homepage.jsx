@@ -24,6 +24,16 @@ const Homepage = () => {
             <div className="flex-1 w-full">
                 <LandingPage />
                 <HomepageProductSections hideTopSelling={true} />
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 mt-12 mb-6">
+                    <div className="flex flex-col gap-2">
+                        <p className="text-[11px] font-black uppercase tracking-[0.26em] text-slate-400">
+                            Browse The Catalog
+                        </p>
+                        <h2 className="text-3xl font-bold tracking-tight text-slate-900 font-serif">
+                            All Products
+                        </h2>
+                    </div>
+                </div>
                 <Products filters={filters} />
                 <Footer />
             </div>
