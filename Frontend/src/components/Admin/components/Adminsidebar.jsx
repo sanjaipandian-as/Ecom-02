@@ -14,7 +14,8 @@ import {
     MdAssignmentReturn,
     MdLiveHelp,
     MdAutoAwesome,
-    MdTrendingUp
+    MdTrendingUp,
+    MdCampaign
 } from 'react-icons/md';
 import Logo from '../../Common/Logo';
 
@@ -81,6 +82,7 @@ const Adminsidebar = ({ onNavigate, activePage = 'Dashboard', onOpenUploadModal,
         { name: 'Returns & Cancellations', icon: MdAssignmentReturn },
         { name: 'Support Tickets', icon: MdLiveHelp },
         { name: 'Hero Section', icon: MdViewCarousel },
+        { name: 'Announcement Bar', icon: MdCampaign },
         { name: 'Top Selling Products', icon: MdAutoAwesome },
         { name: 'Viral Products', icon: MdTrendingUp },
         { name: 'Finance', icon: MdAttachMoney },

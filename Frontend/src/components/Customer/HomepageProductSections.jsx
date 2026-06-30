@@ -140,7 +140,7 @@ const HomepageProductSections = ({ hideTopSelling = false }) => {
             {products.length === 0 ? (
                 <EmptyState title={emptyTitle} description={emptyDescription} />
             ) : (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     {products.map((product) => (
                         <SectionCard key={product._id} product={product} accent={accent} />
                     ))}
@@ -152,7 +152,7 @@ const HomepageProductSections = ({ hideTopSelling = false }) => {
     if (loading) {
         return (
             <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-10">
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+                <div className="grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 xl:grid-cols-4">
                     {Array.from({ length: 4 }).map((_, index) => (
                         <div key={index} className="h-[380px] rounded-[16px] border border-gold-champagne/15 bg-cream-base animate-pulse" />
                     ))}

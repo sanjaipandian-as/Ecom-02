@@ -261,8 +261,8 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
             toast.error('At least 2 images are required');
             return;
         }
-        if (totalImages > 5) {
-            toast.error('Maximum 5 images allowed');
+        if (totalImages > 8) {
+            toast.error('Maximum 8 images allowed');
             return;
         }
 
@@ -683,9 +683,9 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
                                             <FaCloudUploadAlt className="text-4xl text-indigo-600" />
                                         </div>
                                         <h4 className="text-xl font-bold text-slate-900 font-hero mb-2 group-hover:text-indigo-650 transition-colors">Upload Photos</h4>
-                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 font-hero">Supports JPG, PNG, WEBP (Min 2, Max 5)</p>
-                                        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-none border text-[10px] font-bold uppercase tracking-widest transition-all font-hero ${previewImages.length >= 2 && previewImages.length <= 5 ? 'bg-emerald-50 text-emerald-600 border-emerald-150' : 'bg-red-50 text-red-700 border-red-150 animate-pulse'}`}>
-                                            {previewImages.length} / 5 Selected
+                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 font-hero">Supports JPG, PNG, WEBP (Min 2, Max 8)</p>
+                                        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-none border text-[10px] font-bold uppercase tracking-widest transition-all font-hero ${previewImages.length >= 2 && previewImages.length <= 8 ? 'bg-emerald-50 text-emerald-600 border-emerald-150' : 'bg-red-50 text-red-700 border-red-150 animate-pulse'}`}>
+                                            {previewImages.length} / 8 Selected
                                         </div>
                                     </div>
 

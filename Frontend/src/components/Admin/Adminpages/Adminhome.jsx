@@ -12,6 +12,7 @@ import AdminSupportTickets from '../components/AdminSupportTickets';
 import ProductUploadModal from '../components/ProductUploadModal';
 import AdminTopSellingProducts from '../components/AdminTopSellingProducts';
 import AdminViralProducts from '../components/AdminViralProducts';
+import AdminAnnouncementManagement from '../components/AdminAnnouncementManagement';
 import Logo from '../../Common/Logo';
 
 const Adminhome = () => {
@@ -49,6 +50,8 @@ const Adminhome = () => {
                 return <AdminSupportTickets refreshId={refreshId} />;
             case 'Hero Section':
                 return <AdminHeroManagement refreshId={refreshId} />;
+            case 'Announcement Bar':
+                return <AdminAnnouncementManagement />;
             case 'Top Selling Products':
                 return <AdminTopSellingProducts refreshId={refreshId} />;
             case 'Viral Products':
