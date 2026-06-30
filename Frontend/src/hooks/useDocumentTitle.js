@@ -60,7 +60,7 @@ const useDocumentTitle = () => {
             '/Affiliate': 'Affiliate Program',
             '/BrandRegistry': 'Brand Registry',
             '/advertise': 'Advertise Your Products',
-            '/sell': 'Sell on Hey Azhagi',
+            '/sell': 'Sell on Plenora',
 
             // Footer Links
             '/careers': 'Careers',
@@ -71,7 +71,7 @@ const useDocumentTitle = () => {
             '/legal': 'Legal Information',
         };
 
-        let pageTitle = 'Hey Azhagi';
+        let pageTitle = 'Plenora';
 
         // Check for exact route match first
         if (routeTitles[path]) {
@@ -107,7 +107,7 @@ const useDocumentTitle = () => {
             pageTitle = settingsTitles[settingsPage] || 'Settings';
         }
 
-        document.title = `${pageTitle} - Hey Azhagi`;
+        document.title = `${pageTitle} - Plenora`;
     }, [location.pathname]);
 };
 

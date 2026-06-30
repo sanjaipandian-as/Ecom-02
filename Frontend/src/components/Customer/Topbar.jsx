@@ -159,7 +159,7 @@ const Searchbar = () => {
             '/Affiliate': 'Affiliate Program',
             '/BrandRegistry': 'Brand Registry',
             '/advertise': 'Advertise Your Products',
-            '/sell': 'Sell on Hey Azhagi',
+            '/sell': 'Sell on Plenora',
             '/careers': 'Careers',
             '/press': 'Press & Media',
             '/stores': 'Our Stores',
@@ -189,7 +189,7 @@ const Searchbar = () => {
             return settingsTitles[settingsPage] || 'Settings';
         }
 
-        return routeTitles[path] || 'Hey Azhagi';
+        return routeTitles[path] || 'Plenora';
     };
 
     useEffect(() => {
@@ -339,7 +339,7 @@ const Searchbar = () => {
             '/Affiliate': 'Affiliate Program',
             '/BrandRegistry': 'Brand Registry',
             '/advertise': 'Advertise Your Products',
-            '/sell': 'Sell on Hey Azhagi',
+            '/sell': 'Sell on Plenora',
             '/careers': 'Careers',
             '/press': 'Press & Media',
             '/stores': 'Our Stores',
@@ -348,7 +348,7 @@ const Searchbar = () => {
             '/legal': 'Legal Information',
         };
 
-        let pageTitle = 'Hey Azhagi';
+        let pageTitle = 'Plenora';
 
         if (routeTitles[path]) {
             pageTitle = routeTitles[path];
