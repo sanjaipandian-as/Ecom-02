@@ -41,7 +41,7 @@ const Settings = () => {
             tickets: 'Support Tickets',
             notifications: 'Notifications'
         };
-        document.title = `${tabTitles[activeTab] || 'Settings'} - Hey Azhagi`;
+        document.title = `${tabTitles[activeTab] || 'Settings'} - Plenora`;
     }, [activeTab]);
 
     const fetchUserData = async () => {

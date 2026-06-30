@@ -260,10 +260,10 @@ const Footer = () => {
                             <li className="flex items-center gap-3">
                                 <FaEnvelope className="w-4 h-4 text-gold-champagne flex-shrink-0" />
                                 <a
-                                    href="mailto:concierge@heyazhagi.com"
+                                    href="mailto:concierge@plenora.com"
                                     className="text-[#a3b3ac] hover:text-gold-lustrous text-xs uppercase tracking-[0.05em] transition-colors focus:outline-none"
                                 >
-                                    concierge@heyazhagi.com
+                                    concierge@plenora.com
                                 </a>
                             </li>
                         </ul>
@@ -276,7 +276,7 @@ const Footer = () => {
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                         <p className="text-xs text-[#a3b3ac] text-center md:text-left">
-                            © {currentYear} <span className="text-gold-lustrous font-semibold">HA</span>. All rights reserved.
+                            © {currentYear} <span className="text-gold-lustrous font-semibold">Plenora</span>. All rights reserved.
                         </p>
                         <p className="text-[10px] text-[#a3b3ac]/50 uppercase tracking-widest text-center md:text-right">
                             Handcrafted Luxury | Made with ❤️ in India

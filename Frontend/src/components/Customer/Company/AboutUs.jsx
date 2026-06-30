@@ -18,7 +18,7 @@ const AboutUs = () => {
                         <p className="text-gold-lustrous text-xs font-bold uppercase tracking-[0.3em] animate-fade-in">Established with Love</p>
                         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight font-serif flex items-center justify-center gap-3 flex-wrap">
                             <span className="bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#AA771C] bg-clip-text text-transparent font-serif uppercase tracking-wider font-extrabold">
-                                Hey Azhagi
+                                Plenora
                             </span>
                             <span className="text-gold-lustrous">— Our Story ✨</span>
                         </h1>
@@ -48,19 +48,19 @@ const AboutUs = () => {
                         {/* Content Paragraphs */}
                         <div className="lg:col-span-7 text-stone-700 space-y-6 text-sm sm:text-base leading-relaxed">
                             <p className="font-semibold text-emerald-deep text-base sm:text-lg">
-                                HA was born from the dream of a woman who believed that every girl deserves to feel beautiful, confident, and special every single day.
+                                Plenora was born from the dream of a woman who believed that every girl deserves to feel beautiful, confident, and special every single day.
                             </p>
                             <p>
                                 Behind this brand is not just a business… It’s a journey of passion, courage, and hard work. ✨
                             </p>
                             <p>
-                                From small beginnings and big dreams, HA was created to bring elegant, premium anti-tarnish jewellery that helps women shine without worrying about fading trends or losing sparkle. 💎
+                                From small beginnings and big dreams, Plenora was created to bring elegant, premium anti-tarnish jewellery that helps women shine without worrying about fading trends or losing sparkle. 💎
                             </p>
                             <p>
                                 We believe jewellery is more than an accessory. It’s confidence. It’s self-love. It’s the little sparkle that reminds a woman of her strength and beauty. 🌸
                             </p>
                             <p>
-                                Every chain, ring, bracelet, and earring is chosen with love for women who dream big, work hard, and glow through every phase of life. At HA, we celebrate every woman — her confidence, her independence, and her story.
+                                Every chain, ring, bracelet, and earring is chosen with love for women who dream big, work hard, and glow through every phase of life. At Plenora, we celebrate every woman — her confidence, her independence, and her story.
                             </p>
                         </div>
                     </div>
@@ -88,7 +88,7 @@ const AboutUs = () => {
                                 Instead of giving up, she turned her passion into purpose. She wanted to create something beautiful… not just jewellery, but confidence for every woman who wears it. 💎
                             </p>
                             <p>
-                                That’s why **HA Anti-Tarnish** was created — a brand for women who work hard, dream fearlessly, and never stop glowing. 🌸
+                                That’s why **Plenora Anti-Tarnish** was created — a brand for women who work hard, dream fearlessly, and never stop glowing. 🌸
                             </p>
                             <p>
                                 Every anti-tarnish piece is designed to remind women that elegance is not about price… it’s about confidence. Whether you’re a student, working woman, business owner, homemaker, or dreamer — you deserve to feel beautiful every single day. 💕
@@ -153,7 +153,7 @@ const AboutUs = () => {
                         <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto pt-4">
                             <div className="bg-white border border-gold-champagne/10 rounded-2xl p-6">
                                 <p className="font-bold text-emerald-deep mb-1 text-sm uppercase tracking-wider">Email Address</p>
-                                <p className="text-stone-600 text-sm">hello@heyyazhagi.com</p>
+                                <p className="text-stone-600 text-sm">hello@plenora.com</p>
                             </div>
                             <div className="bg-white border border-gold-champagne/10 rounded-2xl p-6">
                                 <p className="font-bold text-emerald-deep mb-1 text-sm uppercase tracking-wider">Phone Support</p>
