@@ -72,7 +72,7 @@ const AdminProductManagement = ({ onOpenUploadModal, refreshId }) => {
 
     const filteredProducts = products.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.brand.toLowerCase().includes(searchTerm.toLowerCase())
+        (product.brand || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (

@@ -62,13 +62,12 @@ export const createProduct = async (req, res) => {
     const supplierData = req.body.supplier ? (typeof req.body.supplier === 'string' ? JSON.parse(req.body.supplier) : req.body.supplier) : {};
 
     // Validate required fields
-    if (!name || !description || !brand || !categoryData?.main || !pricingData?.mrp || !pricingData?.selling_price || !sku) {
+    if (!name || !description || !categoryData?.main || !pricingData?.mrp || !pricingData?.selling_price || !sku) {
       return res.status(400).json({
         message: "Missing required fields",
         received: {
           name: !!name,
           description: !!description,
-          brand: !!brand,
           category: !!categoryData?.main,
           mrp: !!pricingData?.mrp,
           selling_price: !!pricingData?.selling_price,

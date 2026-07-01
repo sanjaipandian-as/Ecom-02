@@ -153,7 +153,7 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
             pricing: { mrp: '', cost: '', selling_price: '' },
             stock: '',
             images: [],
-            brand: 'Anti Turnish Jewellery',
+            brand: '',
             tags: [],
             specifications: [],
             colors: [],
@@ -394,24 +394,7 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
                                                 required
                                             />
                                         </div>
-                                        <div>
-                                            <label className={labelClasses}>Brand <span className="text-red-500">*</span></label>
-                                            <div className="relative group">
-                                                <input
-                                                    type="text"
-                                                    name="brand"
-                                                    value="Anti Turnish Jewellery"
-                                                    readOnly
-                                                    className={`${inputClasses} bg-slate-50 border-slate-200 text-slate-700 cursor-not-allowed pl-10`}
-                                                />
-                                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 bg-white border border-slate-200 p-1 rounded-none shadow-sm">
-                                                    <FaTag size={12} />
-                                                </div>
-                                                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold uppercase tracking-wider text-slate-400 opacity-60 font-hero">
-                                                    Locked
-                                                </div>
-                                            </div>
-                                        </div>
+
                                         <div>
                                             <label className={labelClasses}>SKU <span className="text-red-500">*</span></label>
                                             <input
