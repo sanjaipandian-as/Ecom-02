@@ -22,7 +22,7 @@ const router = express.Router();
 router.post("/bulk-inventory", authenticate, isAdmin, bulkInventoryUpdate);
 
 // Create product (with image upload + validation)
-router.post("/", authenticate, isAdmin, upload.array("images", 5), validateImages, createProduct);
+router.post("/", authenticate, isAdmin, upload.array("images", 8), validateImages, createProduct);
 
 // Get all products
 router.get("/", authenticate, isAdmin, getAllProducts);
@@ -40,7 +40,7 @@ router.patch("/:productId/top-selling", authenticate, isAdmin, toggleTopSellingP
 router.patch("/:productId/viral", authenticate, isAdmin, toggleViralProduct);
 
 // Update product (with optional image upload + validation)
-router.put("/:productId", authenticate, isAdmin, upload.array("images", 5), validateImages, updateProduct);
+router.put("/:productId", authenticate, isAdmin, upload.array("images", 8), validateImages, updateProduct);
 
 // Delete product (soft delete)
 router.delete("/:productId", authenticate, isAdmin, deleteProduct);
