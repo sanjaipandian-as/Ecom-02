@@ -70,9 +70,11 @@ const AdminProductManagement = ({ onOpenUploadModal, refreshId }) => {
         }
     };
 
-    const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (product.brand || '').toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredProducts = products.filter(product => 
+        !product.is_deleted && (
+            product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (product.brand || '').toLowerCase().includes(searchTerm.toLowerCase())
+        )
     );
 
     return (

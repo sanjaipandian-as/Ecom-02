@@ -352,19 +352,20 @@ const AdminAllProducts = ({ refreshId }) => {
     };
 
     const calculateStats = (productData) => {
+        const activeProducts = productData.filter(p => !p.is_deleted);
         setStats({
-            total: productData.length,
-            published: productData.filter(p => !p.is_deleted && p.stock > 0).length,
-            drafts: productData.filter(p => p.stock === 0 || p.is_deleted).length
+            total: activeProducts.length,
+            published: activeProducts.filter(p => p.stock > 0).length,
+            drafts: activeProducts.filter(p => p.stock === 0).length
         });
     };
 
     const filterProducts = () => {
-        let filtered = products;
+        let filtered = products.filter(p => !p.is_deleted);
         if (statusTab === 'published') {
-            filtered = filtered.filter(p => !p.is_deleted && p.stock > 0);
+            filtered = filtered.filter(p => p.stock > 0);
         } else if (statusTab === 'draft') {
-            filtered = filtered.filter(p => p.stock === 0 || p.is_deleted);
+            filtered = filtered.filter(p => p.stock === 0);
         }
         if (searchTerm) {
             filtered = filtered.filter(p =>
