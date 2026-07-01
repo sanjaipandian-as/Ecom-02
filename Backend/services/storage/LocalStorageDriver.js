@@ -94,11 +94,6 @@ export class LocalStorageDriver extends StorageService {
     if (isVideo) {
       // Just copy the video file
       await copyFile(fileInput, absolutePath);
-      try {
-        await chmod(absolutePath, 0o644);
-      } catch (chmodErr) {
-        console.warn(`[StorageDriver] Failed to set read permissions on video:`, chmodErr.message);
-      }
       const fileStats = await stat(absolutePath);
       fileSize = fileStats.size;
     } else {
@@ -110,6 +105,13 @@ export class LocalStorageDriver extends StorageService {
         .webp({ quality })
         .toFile(absolutePath);
       fileSize = outputInfo.size;
+    }
+
+    // Ensure all stored files are public-readable (0o644) so Nginx can serve them
+    try {
+      await chmod(absolutePath, 0o644);
+    } catch (chmodErr) {
+      console.warn(`[StorageDriver] Failed to set public read permissions:`, chmodErr.message);
     }
 
     // 5. Clean up the tmp source file (if it was a path, not a buffer)
