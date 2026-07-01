@@ -254,7 +254,7 @@ const Cart = () => {
                                             onClick={() => navigate(`/product/${item.productId._id}`)}
                                         >
                                             <img
-                                                src={item.productId.images?.[0] || placeholderImg}
+                                                src={item.productId.images?.find(img => img && img.trim() !== '' && !/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(img)) || item.productId.images?.[0] || placeholderImg}
                                                 alt=""
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                                 onError={(e) => {
@@ -352,7 +352,7 @@ const Cart = () => {
                                                     onClick={() => navigate(`/product/${product._id}`)}
                                                 >
                                                     <img
-                                                        src={product.images?.[0] || placeholderImg}
+                                                        src={product.images?.find(img => img && img.trim() !== '' && !/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(img)) || product.images?.[0] || placeholderImg}
                                                         alt={product.name}
                                                         className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                                                         onError={(e) => {

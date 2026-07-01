@@ -206,7 +206,7 @@ const Wishlist = () => {
                                 className="relative aspect-square w-full overflow-hidden bg-gradient-to-b from-slate-50/60 to-slate-100/30 flex items-center justify-center p-6 cursor-pointer"
                             >
                                 <img
-                                    src={item.productId.images?.[0] || placeholderImg}
+                                    src={item.productId.images?.find(img => img && img.trim() !== '' && !/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(img)) || item.productId.images?.[0] || placeholderImg}
                                     alt={item.productId.name}
                                     className="w-4/5 h-4/5 object-contain transition-transform duration-500 group-hover:scale-105"
                                     onError={(e) => {

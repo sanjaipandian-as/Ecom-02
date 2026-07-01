@@ -27,7 +27,7 @@ const ProductCard = React.memo(({
                 onClick={() => onProductClick(product._id)}
             >
                 <img
-                    src={product.images?.[0] || placeholderImg}
+                    src={product.images?.find(img => img && img.trim() !== '' && !/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(img)) || product.images?.[0] || placeholderImg}
                     alt={product.name}
                     loading="lazy" // Lazy load images for better performance
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"

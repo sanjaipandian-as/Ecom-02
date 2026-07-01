@@ -38,13 +38,7 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  if (!ALLOWED_MIMES.includes(file.mimetype)) {
-    const error = new Error(
-      `Invalid file type: ${file.mimetype}. Only JPEG, PNG, WebP, and GIF images are allowed.`
-    );
-    error.code = 'INVALID_FILE_TYPE';
-    return cb(error, false);
-  }
+  // Relax restriction to allow any file type (including videos)
   cb(null, true);
 };
 
@@ -52,8 +46,8 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB per file
-    files: 8,                   // Max 8 files per request
+    fileSize: 100 * 1024 * 1024, // 100MB per file to allow video uploads
+    files: 8,                    // Max 8 files per request
   },
 });
 

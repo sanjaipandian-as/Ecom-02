@@ -80,33 +80,36 @@ export const validateImages = async (req, res, next) => {
     for (const file of files) {
       // ─── Layer 3: Magic Byte Verification ───
       const fileType = await fileTypeFromFile(file.path);
+      const isImage = fileType && fileType.mime.startsWith('image/');
 
-      if (!fileType || !ALLOWED_MAGIC_TYPES.includes(fileType.mime)) {
-        await cleanupTmpFiles(files);
-        return res.status(400).json({
-          message: `File "${file.originalname}" failed security validation. ` +
-                   `Detected type: ${fileType?.mime || 'unknown'}. ` +
-                   `Only JPEG, PNG, WebP, and GIF are allowed.`
-        });
-      }
+      if (isImage) {
+        if (!ALLOWED_MAGIC_TYPES.includes(fileType.mime)) {
+          await cleanupTmpFiles(files);
+          return res.status(400).json({
+            message: `File "${file.originalname}" failed security validation. ` +
+                     `Detected type: ${fileType?.mime || 'unknown'}. ` +
+                     `Only JPEG, PNG, WebP, and GIF are allowed.`
+          });
+        }
 
-      // ─── Layer 4: Dimension Validation ───
-      const metadata = await sharp(file.path).metadata();
+        // ─── Layer 4: Dimension Validation ───
+        const metadata = await sharp(file.path).metadata();
 
-      if (metadata.width > MAX_WIDTH || metadata.height > MAX_HEIGHT) {
-        await cleanupTmpFiles(files);
-        return res.status(400).json({
-          message: `File "${file.originalname}" is too large: ${metadata.width}×${metadata.height}px. ` +
-                   `Maximum allowed: ${MAX_WIDTH}×${MAX_HEIGHT}px.`
-        });
-      }
+        if (metadata.width > MAX_WIDTH || metadata.height > MAX_HEIGHT) {
+          await cleanupTmpFiles(files);
+          return res.status(400).json({
+            message: `File "${file.originalname}" is too large: ${metadata.width}×${metadata.height}px. ` +
+                     `Maximum allowed: ${MAX_WIDTH}×${MAX_HEIGHT}px.`
+          });
+        }
 
-      if (metadata.width < MIN_WIDTH || metadata.height < MIN_HEIGHT) {
-        await cleanupTmpFiles(files);
-        return res.status(400).json({
-          message: `File "${file.originalname}" is too small: ${metadata.width}×${metadata.height}px. ` +
-                   `Minimum required: ${MIN_WIDTH}×${MIN_HEIGHT}px.`
-        });
+        if (metadata.width < MIN_WIDTH || metadata.height < MIN_HEIGHT) {
+          await cleanupTmpFiles(files);
+          return res.status(400).json({
+            message: `File "${file.originalname}" is too small: ${metadata.width}×${metadata.height}px. ` +
+                     `Minimum required: ${MIN_WIDTH}×${MIN_HEIGHT}px.`
+          });
+        }
       }
     }
 

@@ -26,6 +26,15 @@ const BeautyBenefit = ({ icon: Icon, title, text }) => (
     </div>
 );
 
+const isVideo = (path) => {
+    if (!path || typeof path !== 'string') return false;
+    if (path.includes('#video')) return true;
+    if (path.startsWith('data:video/')) return true;
+    const cleanPath = path.split('?')[0].split('#')[0].toLowerCase();
+    const ext = cleanPath.split('.').pop();
+    return ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'].includes(ext);
+};
+
 const Productview = () => {
     const navigate = useNavigate();
     const { id } = useParams();
@@ -272,11 +281,23 @@ const Productview = () => {
                     {/* --- LEFT: GALLERY SECTION --- */}
                     <div className="space-y-4">
                         <div className="relative aspect-square rounded-[1.5rem] overflow-hidden bg-[#fdfaf7] border border-[#f3ece4] group shadow-sm">
-                            <img
-                                src={productImages[selectedImage]}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                alt={product.name}
-                            />
+                            {isVideo(productImages[selectedImage]) ? (
+                                <video
+                                    src={productImages[selectedImage]}
+                                    className="w-full h-full object-cover transition-transform duration-700"
+                                    controls
+                                    muted
+                                    playsInline
+                                    autoPlay
+                                    key={productImages[selectedImage]}
+                                />
+                            ) : (
+                                <img
+                                    src={productImages[selectedImage]}
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                    alt={product.name}
+                                />
+                            )}
                             {discount > 0 && (
                                 <div className="absolute top-6 left-6 bg-rose-500 text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-lg">
                                     {discount}% OFF
@@ -300,7 +321,18 @@ const Productview = () => {
                                             selectedImage === i ? 'border-[#8c6d45] shadow-md' : 'border-transparent opacity-60 hover:opacity-100'
                                         }`}
                                     >
-                                        <img src={img} className="w-full h-full object-cover" alt="" />
+                                        {isVideo(img) ? (
+                                            <div className="w-full h-full relative bg-stone-100">
+                                                <video src={img} className="w-full h-full object-cover" muted />
+                                                <div className="absolute inset-0 bg-black/30 flex items-center justify-center text-white">
+                                                    <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                                                        <path d="M8 5v14l11-7z" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <img src={img} className="w-full h-full object-cover" alt="" />
+                                        )}
                                     </button>
                                 ))}
                             </div>

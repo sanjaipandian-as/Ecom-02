@@ -368,7 +368,7 @@ const SearchResult = () => {
                     <div className="relative w-full md:w-[320px] lg:w-[400px] aspect-[4/3] md:aspect-square overflow-hidden bg-slate-50 p-6 flex-shrink-0">
                         <div className="w-full h-full rounded-[24px] overflow-hidden relative shadow-inner">
                             <img
-                                src={(product.images?.filter(img => img && img.trim() !== '')?.[0]) || placeholderImg}
+                                src={product.images?.find(img => img && img.trim() !== '' && !/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(img)) || product.images?.[0] || placeholderImg}
                                 alt={product.name}
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
                                 onError={(e) => {
@@ -497,7 +497,7 @@ const SearchResult = () => {
                 <div className="relative aspect-[4/5] overflow-hidden p-4">
                     <div className="w-full h-full rounded-[24px] overflow-hidden bg-slate-100/50 relative group-hover:shadow-inner transition-shadow">
                         <img
-                            src={(product.images?.filter(img => img && img.trim() !== '')?.[0]) || placeholderImg}
+                            src={product.images?.find(img => img && img.trim() !== '' && !/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(img)) || product.images?.[0] || placeholderImg}
                             alt={product.name}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
                             onError={(e) => {

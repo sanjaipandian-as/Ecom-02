@@ -6,7 +6,7 @@ import placeholderImg from '../../assets/Placeholder.png';
 
 const SectionCard = ({ product, accent = 'from-amber-100 via-white to-rose-100' }) => {
     const navigate = useNavigate();
-    const image = product.images?.find((img) => img && img.trim() !== '') || placeholderImg;
+    const image = product.images?.find((img) => img && img.trim() !== '' && !/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(img)) || product.images?.[0] || placeholderImg;
     const sellingPrice = product.pricing?.selling_price || 0;
     const mrp = product.pricing?.mrp || sellingPrice;
     const discount = product.pricing?.discount_percentage > 0 
