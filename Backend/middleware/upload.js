@@ -11,8 +11,7 @@ import path from "path";
  * Pipeline:  Client → Nginx (size gate) → Multer (this file) → imageValidator → StorageService.store()
  */
 
-const UPLOADS_ROOT = process.env.UPLOADS_ROOT || './uploads';
-const TMP_DIR = path.join(UPLOADS_ROOT, 'tmp');
+
 
 // Allowed MIME types (first-pass filter based on Content-Type header)
 // Magic byte verification happens later in imageValidator middleware
@@ -25,7 +24,9 @@ const ALLOWED_MIMES = [
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, TMP_DIR);
+    const uploadsRoot = path.resolve(process.env.UPLOADS_ROOT || './uploads');
+    const tmpDir = path.resolve(uploadsRoot, 'tmp');
+    cb(null, tmpDir);
   },
   filename: (req, file, cb) => {
     // Temporary filename — will be replaced by UUID in StorageService.store()
