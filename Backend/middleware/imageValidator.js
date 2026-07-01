@@ -31,6 +31,12 @@ const ALLOWED_MAGIC_TYPES = [
   'video/quicktime',
   'video/x-msvideo',
   'video/x-matroska',
+  'video/x-m4v',
+  'video/mpeg',
+  'video/3gpp',
+  'video/3gpp2',
+  'video/x-flv',
+  'video/x-ms-wmv',
 ];
 
 // Dimension bounds for images
