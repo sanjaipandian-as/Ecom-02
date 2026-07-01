@@ -11,6 +11,15 @@ const CATEGORIES = [
     { value: 'Hair Care', label: 'Hair Care' },
 ];
 
+const isVideo = (path) => {
+    if (!path || typeof path !== 'string') return false;
+    if (path.includes('#video')) return true;
+    if (path.startsWith('data:video/')) return true;
+    const cleanPath = path.split('?')[0].split('#')[0].toLowerCase();
+    const ext = cleanPath.split('.').pop();
+    return ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'].includes(ext);
+};
+
 const AdminProductUpload = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -60,7 +69,7 @@ const AdminProductUpload = () => {
         const files = Array.from(e.target.files);
 
         if (images.length + files.length > 5) {
-            toast.error('Maximum 5 images allowed');
+            toast.error('Maximum 5 files allowed');
             return;
         }
 
@@ -69,7 +78,8 @@ const AdminProductUpload = () => {
         files.forEach(file => {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setImagePreview(prev => [...prev, reader.result]);
+                const isVid = file.type.startsWith('video/');
+                setImagePreview(prev => [...prev, reader.result + (isVid ? '#video' : '#image')]);
             };
             reader.readAsDataURL(file);
         });
@@ -124,12 +134,12 @@ const AdminProductUpload = () => {
         }
 
         if (images.length < 2) {
-            toast.error('Please upload at least 2 product images');
+            toast.error('Please upload at least 2 product media files');
             return;
         }
 
         if (images.length > 5) {
-            toast.error('Maximum 5 images allowed');
+            toast.error('Maximum 5 media files allowed');
             return;
         }
 
@@ -273,7 +283,7 @@ const AdminProductUpload = () => {
                                     Product Media
                                     <span className={`text-[10px] font-bold uppercase tracking-widest ml-auto px-4 py-2 rounded-none border transition-all shadow-sm flex items-center gap-2 ${imagePreview.length >= 2 && imagePreview.length <= 5 ? 'bg-emerald-50 text-emerald-600 border-emerald-150 animate-pulse' : 'bg-red-50 text-red-700 border-red-150 animate-pulse'}`}>
                                         <FaCloudUploadAlt className="text-sm" />
-                                        {imagePreview.length} / 5 Images (Min: 2)
+                                        {imagePreview.length} / 5 Files (Min: 2)
                                     </span>
                                 </h2>
 
@@ -281,11 +291,22 @@ const AdminProductUpload = () => {
                                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                         {imagePreview.map((preview, index) => (
                                             <div key={index} className="relative group aspect-square rounded-none overflow-hidden border border-slate-200 shadow-sm">
-                                                <img
-                                                    src={preview}
-                                                    alt={`Preview ${index + 1}`}
-                                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
-                                                />
+                                                {isVideo(preview) ? (
+                                                    <video
+                                                        src={preview.split('#')[0]}
+                                                        className="w-full h-full object-cover"
+                                                        muted
+                                                        loop
+                                                        playsInline
+                                                        autoPlay
+                                                    />
+                                                ) : (
+                                                    <img
+                                                        src={preview.split('#')[0]}
+                                                        alt={`Preview ${index + 1}`}
+                                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
+                                                    />
+                                                )}
                                                 <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
                                                     <button
                                                         type="button"
@@ -311,7 +332,7 @@ const AdminProductUpload = () => {
                                                 <span className="text-xs font-bold text-slate-400 group-hover:text-indigo-650 text-center px-2 uppercase tracking-widest font-hero">Upload</span>
                                                 <input
                                                     type="file"
-                                                    accept="image/*"
+                                                    accept="image/*,video/*"
                                                     onChange={handleImageChange}
                                                     className="hidden"
                                                     multiple
@@ -320,7 +341,7 @@ const AdminProductUpload = () => {
                                         )}
                                     </div>
                                     <p className="text-[11px] font-bold text-slate-400 bg-slate-50 p-4 rounded-none border border-slate-200 text-center uppercase tracking-wide font-hero">
-                                        ✨ High-quality square images preferred. Max 5.
+                                        ✨ High-quality square images and videos preferred. Max 5.
                                     </p>
                                 </div>
                             </div>

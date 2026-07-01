@@ -4,6 +4,15 @@ import { MdPalette, MdCategory, MdStraighten, MdKeyboardArrowDown, MdCheck } fro
 import API from '../../../../api';
 import { toast } from 'react-toastify';
 
+const isVideo = (path) => {
+    if (!path || typeof path !== 'string') return false;
+    if (path.includes('#video')) return true;
+    if (path.startsWith('data:video/')) return true;
+    const cleanPath = path.split('?')[0].split('#')[0].toLowerCase();
+    const ext = cleanPath.split('.').pop();
+    return ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'].includes(ext);
+};
+
 const CustomSelect = ({ label, name, value, options, onChange, placeholder, required }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = React.useRef(null);
@@ -195,7 +204,10 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
         const files = Array.from(e.target.files);
         setNewImages(prev => [...prev, ...files]);
 
-        const newPreviews = files.map(file => URL.createObjectURL(file));
+        const newPreviews = files.map(file => {
+            const isVid = file.type.startsWith('video/');
+            return URL.createObjectURL(file) + (isVid ? '#video' : '#image');
+        });
         setPreviewImages(prev => [...prev, ...newPreviews]);
     };
 
@@ -268,11 +280,11 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
 
         const totalImages = formData.images.length + newImages.length;
         if (totalImages < 2) {
-            toast.error('At least 2 images are required');
+            toast.error('At least 2 files are required');
             return;
         }
         if (totalImages > 8) {
-            toast.error('Maximum 8 images allowed');
+            toast.error('Maximum 8 files allowed');
             return;
         }
 
@@ -671,13 +683,13 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
                                             multiple
                                             onChange={handleImageUpload}
                                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-50"
-                                            accept="image/*"
+                                            accept="image/*,video/*"
                                         />
                                         <div className="w-20 h-20 bg-white rounded-none border border-slate-200 flex items-center justify-center mx-auto mb-5 group-hover:scale-102 transition-transform duration-305">
                                             <FaCloudUploadAlt className="text-4xl text-indigo-600" />
                                         </div>
-                                        <h4 className="text-xl font-bold text-slate-900 font-hero mb-2 group-hover:text-indigo-650 transition-colors">Upload Photos</h4>
-                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 font-hero">Supports JPG, PNG, WEBP (Min 2, Max 8)</p>
+                                        <h4 className="text-xl font-bold text-slate-900 font-hero mb-2 group-hover:text-indigo-650 transition-colors">Upload Photos & Videos</h4>
+                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 font-hero">Supports Images & Videos (Min 2, Max 8)</p>
                                         <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-none border text-[10px] font-bold uppercase tracking-widest transition-all font-hero ${previewImages.length >= 2 && previewImages.length <= 8 ? 'bg-emerald-50 text-emerald-600 border-emerald-150' : 'bg-red-50 text-red-700 border-red-150 animate-pulse'}`}>
                                             {previewImages.length} / 8 Selected
                                         </div>
@@ -687,7 +699,18 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
                                             {previewImages.map((src, index) => (
                                                 <div key={index} className="relative group rounded-none overflow-hidden aspect-square border border-slate-200 shadow-sm hover:shadow-md transition-all">
-                                                    <img src={src} alt="Preview" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102" />
+                                                    {isVideo(src) ? (
+                                                        <video
+                                                            src={src.split('#')[0]}
+                                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
+                                                            muted
+                                                            loop
+                                                            playsInline
+                                                            autoPlay
+                                                        />
+                                                    ) : (
+                                                        <img src={src.split('#')[0]} alt="Preview" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102" />
+                                                    )}
                                                     <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-all" />
                                                     <button
                                                         type="button"

@@ -73,6 +73,16 @@ const MarginChart = ({ percentage }) => {
     );
 };
 
+// --- Helper: Check if file path is a video ---
+const isVideo = (path) => {
+    if (!path || typeof path !== 'string') return false;
+    if (path.includes('#video')) return true;
+    if (path.startsWith('data:video/')) return true;
+    const cleanPath = path.split('?')[0].split('#')[0].toLowerCase();
+    const ext = cleanPath.split('.').pop();
+    return ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'].includes(ext);
+};
+
 // --- Sub-Component: Product Grid Card ---
 const ProductGridCard = ({ product, onEdit, onDelete, isSelectionMode, isSelected, onToggleSelection }) => {
     const [showMarginView, setShowMarginView] = useState(false);
@@ -161,12 +171,23 @@ const ProductGridCard = ({ product, onEdit, onDelete, isSelectionMode, isSelecte
             <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-none -mr-16 -mt-16 group-hover:bg-[#4F46E5]/5 transition-colors duration-500" />
 
             <div className="relative aspect-[1/1] rounded-none overflow-hidden bg-slate-50 mb-6 border border-slate-200 shadow-inner">
-                <img
-                    src={(product.images?.filter(img => img && img.trim() !== '')?.[0]) || PlaceholderImage}
-                    alt={product.name}
-                    className="w-full h-full object-cover grayscale-[0.1] group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
-                    onError={(e) => { e.target.onerror = null; e.target.src = PlaceholderImage; }}
-                />
+                {isVideo(product.images?.[0]) ? (
+                    <video
+                        src={product.images[0]}
+                        className="w-full h-full object-cover grayscale-[0.1] group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
+                        muted
+                        loop
+                        playsInline
+                        autoPlay
+                    />
+                ) : (
+                    <img
+                        src={(product.images?.filter(img => img && img.trim() !== '')?.[0]) || PlaceholderImage}
+                        alt={product.name}
+                        className="w-full h-full object-cover grayscale-[0.1] group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
+                        onError={(e) => { e.target.onerror = null; e.target.src = PlaceholderImage; }}
+                    />
+                )}
 
                 {discountPercent > 0 && (
                     <div className="absolute top-0 right-0 w-32 h-32 pointer-events-none z-35">
@@ -605,7 +626,18 @@ const AdminAllProducts = ({ refreshId }) => {
                                             <td className="px-10 py-6">
                                                 <div className="flex items-center gap-6">
                                                     <div className="w-16 h-16 rounded-none overflow-hidden border border-slate-200 shadow-sm relative">
-                                                        <img src={product.images?.[0] || PlaceholderImage} className="w-full h-full object-cover" />
+                                                        {isVideo(product.images?.[0]) ? (
+                                                            <video
+                                                                src={product.images[0]}
+                                                                className="w-full h-full object-cover"
+                                                                muted
+                                                                loop
+                                                                playsInline
+                                                                autoPlay
+                                                            />
+                                                        ) : (
+                                                            <img src={product.images?.[0] || PlaceholderImage} className="w-full h-full object-cover" />
+                                                        )}
                                                         {discount > 0 && (
                                                             <div className="absolute inset-0 bg-red-600/10 flex items-center justify-center">
                                                                 <span className="text-[8px] font-bold text-[#EF4444] uppercase">-{discount}%</span>

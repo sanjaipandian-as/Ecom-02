@@ -288,7 +288,7 @@ const Products = ({ filters = defaultFilters }) => {
                     {/* Product Image */}
                     <div className="flex-1 w-full h-full z-10 relative">
                         <img
-                            src={(product.images?.filter(img => img && img.trim() !== '')?.[0]) || placeholderImg}
+                            src={product.images?.find(img => img && img.trim() !== '' && !/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(img)) || product.images?.[0] || placeholderImg}
                             alt={product.name}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             loading="lazy"
