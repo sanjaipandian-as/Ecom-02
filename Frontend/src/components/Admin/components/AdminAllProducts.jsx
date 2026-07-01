@@ -80,7 +80,7 @@ const isVideo = (path) => {
     if (path.startsWith('data:video/')) return true;
     const cleanPath = path.split('?')[0].split('#')[0].toLowerCase();
     const ext = cleanPath.split('.').pop();
-    return ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'].includes(ext);
+    return ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv', 'm4v', '3gp', '3gpp', '3gpp2', 'mpeg', 'flv', 'wmv'].includes(ext);
 };
 
 // --- Sub-Component: Product Grid Card ---
