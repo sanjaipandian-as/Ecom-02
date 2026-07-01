@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Topbar from '../components/Customer/Topbar';
 import {
     FaUser,
@@ -20,8 +20,22 @@ const Tickets = lazy(() => import('./Settingscomponants/Tickets'));
 
 const Settings = () => {
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState('account');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabParam = searchParams.get('tab') || 'account';
+    const [activeTab, setActiveTab] = useState(tabParam);
     const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const tab = searchParams.get('tab');
+        if (tab && ['account', 'orders', 'addresses', 'tickets', 'notifications'].includes(tab) && tab !== activeTab) {
+            setActiveTab(tab);
+        }
+    }, [searchParams]);
+
+    const handleTabChange = (tabId) => {
+        setActiveTab(tabId);
+        setSearchParams({ tab: tabId });
+    };
 
     const [userData, setUserData] = useState({
         name: '',
@@ -133,7 +147,7 @@ const Settings = () => {
                                 return (
                                     <button
                                         key={tab.id}
-                                        onClick={() => setActiveTab(tab.id)}
+                                        onClick={() => handleTabChange(tab.id)}
                                         className={`flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition cursor-pointer ${
                                             isActive
                                                 ? 'bg-slate-950 text-white shadow-lg shadow-slate-950/20'
@@ -160,7 +174,7 @@ const Settings = () => {
                                 return (
                                     <button
                                         key={tab.id}
-                                        onClick={() => setActiveTab(tab.id)}
+                                        onClick={() => handleTabChange(tab.id)}
                                         className={`group flex w-full items-center justify-between rounded-2xl border px-4 py-3.5 text-left transition-all duration-300 cursor-pointer ${
                                             isActive
                                                 ? 'border-[#81C784]/30 bg-[#81C784]/10 shadow-sm'

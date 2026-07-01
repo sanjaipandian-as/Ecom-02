@@ -256,6 +256,16 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!formData.pricing.mrp || !formData.pricing.selling_price) {
+            toast.error('Both MRP and Selling Price are required.');
+            return;
+        }
+
+        if (parseFloat(formData.pricing.selling_price) > parseFloat(formData.pricing.mrp)) {
+            toast.error('Selling price cannot be greater than MRP.');
+            return;
+        }
+
         const totalImages = formData.images.length + newImages.length;
         if (totalImages < 2) {
             toast.error('At least 2 images are required');
@@ -580,7 +590,7 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
                                     </h3>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                         <div>
-                                            <label className={labelClasses}>MRP</label>
+                                            <label className={labelClasses}>MRP <span className="text-red-500">*</span></label>
                                             <div className="relative">
                                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">₹</span>
                                                 <input
@@ -590,6 +600,7 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
                                                     onChange={handleChange}
                                                     className={`${inputClasses} pl-8`}
                                                     placeholder="0.00"
+                                                    required
                                                 />
                                             </div>
                                         </div>
