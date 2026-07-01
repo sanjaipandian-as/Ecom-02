@@ -103,7 +103,7 @@ const AdminProductUpload = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.name || !formData.description || !formData.brand) {
+        if (!formData.name || !formData.description) {
             toast.error('Please fill all required fields');
             return;
         }
@@ -499,18 +499,7 @@ const AdminProductUpload = () => {
                                             placeholder="e.g. Shirts"
                                         />
                                     </div>
-                                    <div>
-                                        <label className={labelClasses}>Brand Name <span className="text-red-500">*</span></label>
-                                        <input
-                                            type="text"
-                                            name="brand"
-                                            value={formData.brand}
-                                            onChange={handleInputChange}
-                                            className={inputClasses}
-                                            placeholder="e.g. Nike"
-                                            required
-                                        />
-                                    </div>
+
                                     <div>
                                         <label className={labelClasses}>Search Tags</label>
                                         <input
