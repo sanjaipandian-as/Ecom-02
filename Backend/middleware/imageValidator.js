@@ -6,24 +6,18 @@ import { unlink } from 'fs/promises';
 sharp.cache(false);
 
 /**
- * Image Validator Middleware
+ * Image & Video Validator Middleware
  *
  * Runs AFTER Multer has written files to tmp/, BEFORE the controller processes them.
- * Performs two critical security checks that Multer's fileFilter cannot do:
+ * Performs critical security and integrity checks.
  *
- *   Layer 3 — Magic Byte Verification:
- *     The Content-Type header can be spoofed. This reads the actual file bytes
- *     to verify the true file type. Catches renamed .exe → .jpg attacks.
+ * Magic Byte Verification:
+ *   Verifies the true file type via magic bytes to prevent spoofing.
  *
- *   Layer 4 — Dimension Validation:
- *     Rejects images that are too large (memory bomb risk) or too small
- *     (likely not a real product image).
+ * Dimension Validation (Images only):
+ *   Rejects images that are too large (memory bomb risk) or too small.
  *
  * On failure: Cleans up ALL tmp files from the request before rejecting.
- *
- * Usage in routes:
- *   router.post('/', upload.array('images', 5), validateImages, createProduct);
- *   router.post('/', upload.single('image'), validateImages, createHeroSlide);
  */
 
 const ALLOWED_MAGIC_TYPES = [
@@ -31,9 +25,15 @@ const ALLOWED_MAGIC_TYPES = [
   'image/png',
   'image/webp',
   'image/gif',
+  'video/mp4',
+  'video/webm',
+  'video/ogg',
+  'video/quicktime',
+  'video/x-msvideo',
+  'video/x-matroska',
 ];
 
-// Dimension bounds
+// Dimension bounds for images
 const MIN_WIDTH = 50;
 const MIN_HEIGHT = 50;
 const MAX_WIDTH = 8192;
@@ -49,7 +49,6 @@ async function cleanupTmpFiles(files) {
     try {
       await unlink(file.path);
     } catch (err) {
-      // File might already be gone — not critical
       if (err.code !== 'ENOENT') {
         console.warn(`[ImageValidator] Failed to clean tmp file: ${file.path}`, err.message);
       }
@@ -68,48 +67,50 @@ function getUploadedFiles(req) {
 }
 
 /**
- * Express middleware: validate image uploads after Multer processing.
+ * Express middleware: validate image/video uploads after Multer processing.
  */
 export const validateImages = async (req, res, next) => {
   const files = getUploadedFiles(req);
 
-  // No files to validate — pass through (image might come from URL in body)
+  // No files to validate — pass through
   if (files.length === 0) return next();
 
   try {
     for (const file of files) {
       // ─── Layer 3: Magic Byte Verification ───
       const fileType = await fileTypeFromFile(file.path);
-      const isImage = fileType && fileType.mime.startsWith('image/');
 
-      if (isImage) {
-        if (!ALLOWED_MAGIC_TYPES.includes(fileType.mime)) {
-          await cleanupTmpFiles(files);
-          return res.status(400).json({
-            message: `File "${file.originalname}" failed security validation. ` +
-                     `Detected type: ${fileType?.mime || 'unknown'}. ` +
-                     `Only JPEG, PNG, WebP, and GIF are allowed.`
-          });
-        }
+      if (!fileType || !ALLOWED_MAGIC_TYPES.includes(fileType.mime)) {
+        await cleanupTmpFiles(files);
+        return res.status(400).json({
+          message: `File "${file.originalname}" failed security validation. ` +
+                   `Detected type: ${fileType?.mime || 'unknown'}. ` +
+                   `Only JPEG, PNG, WebP, GIF, and videos (MP4, WebM, OGG, Quicktime, AVI, MKV) are allowed.`
+        });
+      }
 
-        // ─── Layer 4: Dimension Validation ───
-        const metadata = await sharp(file.path).metadata();
+      // If it's a video file, skip the dimension validation since sharp cannot parse videos
+      if (fileType.mime.startsWith('video/')) {
+        continue;
+      }
 
-        if (metadata.width > MAX_WIDTH || metadata.height > MAX_HEIGHT) {
-          await cleanupTmpFiles(files);
-          return res.status(400).json({
-            message: `File "${file.originalname}" is too large: ${metadata.width}×${metadata.height}px. ` +
-                     `Maximum allowed: ${MAX_WIDTH}×${MAX_HEIGHT}px.`
-          });
-        }
+      // ─── Layer 4: Dimension Validation (Images only) ───
+      const metadata = await sharp(file.path).metadata();
 
-        if (metadata.width < MIN_WIDTH || metadata.height < MIN_HEIGHT) {
-          await cleanupTmpFiles(files);
-          return res.status(400).json({
-            message: `File "${file.originalname}" is too small: ${metadata.width}×${metadata.height}px. ` +
-                     `Minimum required: ${MIN_WIDTH}×${MIN_HEIGHT}px.`
-          });
-        }
+      if (metadata.width > MAX_WIDTH || metadata.height > MAX_HEIGHT) {
+        await cleanupTmpFiles(files);
+        return res.status(400).json({
+          message: `File "${file.originalname}" is too large: ${metadata.width}×${metadata.height}px. ` +
+                   `Maximum allowed: ${MAX_WIDTH}×${MAX_HEIGHT}px.`
+        });
+      }
+
+      if (metadata.width < MIN_WIDTH || metadata.height < MIN_HEIGHT) {
+        await cleanupTmpFiles(files);
+        return res.status(400).json({
+          message: `File "${file.originalname}" is too small: ${metadata.width}×${metadata.height}px. ` +
+                   `Minimum required: ${MIN_WIDTH}×${MIN_HEIGHT}px.`
+        });
       }
     }
 
@@ -120,7 +121,7 @@ export const validateImages = async (req, res, next) => {
     await cleanupTmpFiles(files);
     console.error('[ImageValidator] Validation error:', err);
     return res.status(500).json({
-      message: 'Image validation failed due to a server error.',
+      message: 'Image/video validation failed due to a server error.',
     });
   }
 };
