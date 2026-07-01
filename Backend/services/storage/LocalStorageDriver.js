@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 import path from 'path';
-import { mkdir, unlink, stat, access, copyFile } from 'fs/promises';
+import { mkdir, unlink, stat, access, copyFile, chmod } from 'fs/promises';
 import { constants } from 'fs';
 import sharp from 'sharp';
 import { fileTypeFromFile } from 'file-type';
@@ -94,6 +94,11 @@ export class LocalStorageDriver extends StorageService {
     if (isVideo) {
       // Just copy the video file
       await copyFile(fileInput, absolutePath);
+      try {
+        await chmod(absolutePath, 0o644);
+      } catch (chmodErr) {
+        console.warn(`[StorageDriver] Failed to set read permissions on video:`, chmodErr.message);
+      }
       const fileStats = await stat(absolutePath);
       fileSize = fileStats.size;
     } else {
