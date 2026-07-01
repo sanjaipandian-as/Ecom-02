@@ -726,7 +726,7 @@ const Searchbar = () => {
                                                     My Account
                                                 </button>
                                                 <button
-                                                    onClick={() => handleNavigation('/Settings/orders')}
+                                                    onClick={() => handleNavigation('/Settings?tab=orders')}
                                                     className="w-[calc(100%-16px)] mx-2 py-2.5 px-3 hover:bg-stone-50 text-stone-700 hover:text-stone-950 rounded-xl text-xs font-bold flex items-center gap-2.5 transition-all text-left cursor-pointer"
                                                 >
                                                     <ShoppingBag className="w-4 h-4 text-stone-400" />
