@@ -88,6 +88,17 @@ export class LocalStorageDriver extends StorageService {
 
     // 4. Ensure target directory exists
     await mkdir(absoluteDir, { recursive: true });
+    try {
+      // Ensure the created directories are traversable (0755) by Nginx
+      let dirToChmod = absoluteDir;
+      while (dirToChmod && dirToChmod !== this.uploadsRoot && dirToChmod !== '/') {
+        await chmod(dirToChmod, 0o755);
+        dirToChmod = path.dirname(dirToChmod);
+      }
+      await chmod(this.uploadsRoot, 0o755);
+    } catch (chmodDirErr) {
+      console.warn(`[StorageDriver] Failed to set directory permissions:`, chmodDirErr.message);
+    }
 
     let fileSize = 0;
 
