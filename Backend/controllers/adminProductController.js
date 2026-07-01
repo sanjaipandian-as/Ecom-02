@@ -159,7 +159,13 @@ export const getAllProducts = async (req, res) => {
 
     let query = {};
     if (category) query["category.main"] = category;
-    if (is_deleted !== undefined) query.is_deleted = is_deleted === "true";
+    
+    // Default to only fetching active products unless explicitly requested
+    if (is_deleted !== undefined) {
+      query.is_deleted = is_deleted === "true";
+    } else {
+      query.is_deleted = false;
+    }
 
     const products = await Product.find(query).sort({ createdAt: -1 });
 
