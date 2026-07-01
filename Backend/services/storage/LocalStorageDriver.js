@@ -1,8 +1,9 @@
 import { randomUUID } from 'crypto';
 import path from 'path';
-import { mkdir, unlink, stat, access } from 'fs/promises';
+import { mkdir, unlink, stat, access, copyFile } from 'fs/promises';
 import { constants } from 'fs';
 import sharp from 'sharp';
+import { fileTypeFromFile } from 'file-type';
 import { StorageService } from './StorageService.js';
 
 // Disable sharp caching to prevent file locking issues on Windows
@@ -65,24 +66,46 @@ export class LocalStorageDriver extends StorageService {
     const year = now.getFullYear().toString();
     const month = String(now.getMonth() + 1).padStart(2, '0');
 
-    const relativePath = path.posix.join(category, year, month, `${uuid}.webp`);
-    const absolutePath = path.join(this.uploadsRoot, category, year, month, `${uuid}.webp`);
+    // 3. Detect if the file is a video
+    let isVideo = false;
+    let ext = '.webp';
+
+    if (typeof fileInput === 'string') {
+      try {
+        const fileType = await fileTypeFromFile(fileInput);
+        if (fileType && fileType.mime.startsWith('video/')) {
+          isVideo = true;
+          ext = `.${fileType.ext}`;
+        }
+      } catch (err) {
+        console.warn(`[StorageDriver] Failed to detect file type:`, err.message);
+      }
+    }
+
+    const relativePath = path.posix.join(category, year, month, `${uuid}${ext}`);
+    const absolutePath = path.join(this.uploadsRoot, category, year, month, `${uuid}${ext}`);
     const absoluteDir = path.dirname(absolutePath);
 
-    // 3. Ensure target directory exists
+    // 4. Ensure target directory exists
     await mkdir(absoluteDir, { recursive: true });
 
-    // 4. Process image through sharp pipeline:
-    //    - rotate() auto-rotates based on EXIF orientation BEFORE stripping
-    //    - resize() caps width, preserves aspect ratio, never enlarges
-    //    - webp() converts to WebP with specified quality
-    //    - sharp automatically strips all EXIF/metadata in output
-    const sharpInstance = sharp(fileInput);
-    const outputInfo = await sharpInstance
-      .rotate()
-      .resize({ width: maxWidth, withoutEnlargement: true })
-      .webp({ quality })
-      .toFile(absolutePath);
+    let fileSize = 0;
+
+    if (isVideo) {
+      // Just copy the video file
+      await copyFile(fileInput, absolutePath);
+      const fileStats = await stat(absolutePath);
+      fileSize = fileStats.size;
+    } else {
+      // Process image through sharp pipeline:
+      const sharpInstance = sharp(fileInput);
+      const outputInfo = await sharpInstance
+        .rotate()
+        .resize({ width: maxWidth, withoutEnlargement: true })
+        .webp({ quality })
+        .toFile(absolutePath);
+      fileSize = outputInfo.size;
+    }
 
     // 5. Clean up the tmp source file (if it was a path, not a buffer)
     if (typeof fileInput === 'string') {
@@ -96,7 +119,7 @@ export class LocalStorageDriver extends StorageService {
 
     return {
       relativePath,
-      sizeBytes: outputInfo.size,
+      sizeBytes: fileSize,
     };
   }
 
