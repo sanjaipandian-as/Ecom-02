@@ -78,10 +78,52 @@ function getUploadedFiles(req) {
 export const validateImages = async (req, res, next) => {
   const files = getUploadedFiles(req);
 
-  // No files to validate — pass through
-  if (files.length === 0) return next();
-
   try {
+    // ─── Check: The first file MUST be an image, not a video ───
+    let firstFileIsVideo = false;
+
+    // Parse existingImages from body (if updating product)
+    let existingImages = [];
+    if (req.body['existingImages[]']) {
+      existingImages = Array.isArray(req.body['existingImages[]'])
+        ? req.body['existingImages[]']
+        : [req.body['existingImages[]']];
+    } else if (req.body.existingImages) {
+      if (typeof req.body.existingImages === 'string' && req.body.existingImages.startsWith('[')) {
+        try { existingImages = JSON.parse(req.body.existingImages); } catch (e) {}
+      } else {
+        existingImages = Array.isArray(req.body.existingImages)
+          ? req.body.existingImages
+          : [req.body.existingImages];
+      }
+    }
+
+    if (existingImages.length > 0) {
+      // Check first existing image/video reference
+      const firstExisting = existingImages[0];
+      const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.m4v', '.avi'];
+      if (firstExisting) {
+        const fileExt = firstExisting.substring(firstExisting.lastIndexOf('.')).toLowerCase();
+        if (videoExtensions.includes(fileExt)) {
+          firstFileIsVideo = true;
+        }
+      }
+    } else if (files.length > 0) {
+      // No existing images, so the first newly uploaded file will be the primary image
+      const firstUploadedFile = files[0];
+      const fileType = await fileTypeFromFile(firstUploadedFile.path);
+      if (fileType && fileType.mime.startsWith('video/')) {
+        firstFileIsVideo = true;
+      }
+    }
+
+    if (firstFileIsVideo) {
+      await cleanupTmpFiles(files);
+      return res.status(400).json({
+        message: "The first file must be an image, not a video."
+      });
+    }
+
     for (const file of files) {
       // ─── Layer 3: Magic Byte Verification ───
       const fileType = await fileTypeFromFile(file.path);
