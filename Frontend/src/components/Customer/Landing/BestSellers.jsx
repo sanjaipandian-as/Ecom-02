@@ -10,7 +10,7 @@ const ProductCard = ({ product }) => {
     const image = product.images?.find((img) => img && img.trim() !== '' && !/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(img)) || product.images?.[0] || placeholderImg;
     const sellingPrice = product.pricing?.selling_price || 0;
     const mrp = product.pricing?.mrp || sellingPrice;
-    const discount = product.pricing?.discount_percentage > 0 
+    const discount = mrp > sellingPrice && product.pricing?.discount_percentage > 0 
         ? product.pricing.discount_percentage 
         : (mrp > sellingPrice ? Math.round(((mrp - sellingPrice) / mrp) * 100) : 0);
     

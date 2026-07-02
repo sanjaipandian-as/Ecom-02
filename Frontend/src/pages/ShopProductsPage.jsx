@@ -321,7 +321,7 @@ const ShopProductsPage = () => {
                                                     )}
                                                 </button>
 
-                                                {product.pricing?.discount_percentage > 0 && (
+                                                {product.pricing?.discount_percentage > 0 && product.pricing?.mrp > product.pricing?.selling_price && (
                                                     <div className="absolute top-3 left-3 bg-red-500 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider">
                                                         {product.pricing.discount_percentage}% OFF
                                                     </div>

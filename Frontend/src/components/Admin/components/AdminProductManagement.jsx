@@ -194,11 +194,13 @@ const AdminProductManagement = ({ onOpenUploadModal, refreshId }) => {
                                 </div>
 
                                 {/* Discount Badge - Top Right */}
-                                <div className="absolute top-8 right-8">
-                                    <div className="backdrop-blur-md bg-rose-500/90 text-white text-[11px] font-black px-3 py-1.5 rounded-xl shadow-[0_4px_12px_rgba(244,63,94,0.3)]">
-                                        -{product.pricing?.discount_percentage || 0}%
+                                {product.pricing?.mrp > product.pricing?.selling_price && product.pricing?.discount_percentage > 0 && (
+                                    <div className="absolute top-8 right-8">
+                                        <div className="backdrop-blur-md bg-rose-500/90 text-white text-[11px] font-black px-3 py-1.5 rounded-xl shadow-[0_4px_12px_rgba(244,63,94,0.3)]">
+                                            -{product.pricing?.discount_percentage || 0}%
+                                        </div>
                                     </div>
-                                </div>
+                                )}
 
                                 {/* Quick Toggles - Bottom of Image */}
                                 <div className="absolute bottom-4 left-4 right-4 flex gap-2">
@@ -247,7 +249,7 @@ const AdminProductManagement = ({ onOpenUploadModal, refreshId }) => {
                                             <span className="text-xl font-black text-slate-900 leading-none">
                                                 ₹{product.pricing?.selling_price?.toLocaleString('en-IN')}
                                             </span>
-                                            {product.pricing?.mrp && (
+                                            {product.pricing?.mrp && product.pricing?.mrp > product.pricing?.selling_price && (
                                                 <span className="text-[13px] text-slate-300 font-bold line-through">
                                                     ₹{product.pricing.mrp.toLocaleString('en-IN')}
                                                 </span>

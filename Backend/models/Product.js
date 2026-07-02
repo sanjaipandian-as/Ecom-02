@@ -274,6 +274,15 @@ const ProductSchema = new Schema(
           });
         }
 
+        // Force discount_percentage to 0 if selling price is >= MRP
+        if (ret.pricing) {
+          const mrp = Number(ret.pricing.mrp) || 0;
+          const sellingPrice = Number(ret.pricing.selling_price) || 0;
+          if (sellingPrice >= mrp) {
+            ret.pricing.discount_percentage = 0;
+          }
+        }
+
         return ret;
       },
     },
@@ -312,6 +321,15 @@ const ProductSchema = new Schema(
             if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return imgPath;
             return `${baseUrl}/${imgPath}`;
           });
+        }
+
+        // Force discount_percentage to 0 if selling price is >= MRP
+        if (ret.pricing) {
+          const mrp = Number(ret.pricing.mrp) || 0;
+          const sellingPrice = Number(ret.pricing.selling_price) || 0;
+          if (sellingPrice >= mrp) {
+            ret.pricing.discount_percentage = 0;
+          }
         }
 
         return ret;
@@ -355,9 +373,11 @@ ProductSchema.pre("validate", async function () {
 
 
   // Calculate discount percentage
-  if (this.pricing.mrp && this.pricing.selling_price) {
+  if (this.pricing.mrp && this.pricing.selling_price && this.pricing.selling_price < this.pricing.mrp) {
     const discount = ((this.pricing.mrp - this.pricing.selling_price) / this.pricing.mrp) * 100;
     this.pricing.discount_percentage = Math.round(discount);
+  } else {
+    this.pricing.discount_percentage = 0;
   }
 });
 
