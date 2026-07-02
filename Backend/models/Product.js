@@ -84,10 +84,24 @@ const ProductSchema = new Schema(
     images: {
       type: [String],
       required: [true, "At least one product image is required"],
-      validate: {
-        validator: (v) => Array.isArray(v) && v.length >= 2 && v.length <= 8,
-        message: "You must upload between 2 and 8 images",
-      },
+      validate: [
+        {
+          validator: (v) => Array.isArray(v) && v.length >= 2 && v.length <= 8,
+          message: "You must upload between 2 and 8 images",
+        },
+        {
+          validator: (v) => {
+            if (!Array.isArray(v) || v.length === 0) return false;
+            const firstFile = v[0];
+            if (!firstFile) return false;
+            // Check if the first file is a video
+            const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.m4v', '.avi'];
+            const fileExt = firstFile.substring(firstFile.lastIndexOf('.')).toLowerCase();
+            return !videoExtensions.includes(fileExt);
+          },
+          message: "The first file must be an image, not a video",
+        }
+      ],
     },
 
     // ==============================
