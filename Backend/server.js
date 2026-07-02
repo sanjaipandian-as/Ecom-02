@@ -207,14 +207,12 @@ app.use("/api/announcements", announcementRoutes);
 
 
 // =========================
-// ⭐ Static File Serving (Development Only)
+// ⭐ Static File Serving
 // =========================
-// In production, Nginx serves /uploads/ directly from disk — Express never sees image requests.
-// In development, we need Express to serve them since there's no Nginx.
-if (process.env.NODE_ENV !== 'production') {
-  app.use('/uploads', express.static(UPLOADS_ROOT));
-  console.log(`📂 Dev mode: serving uploads at /uploads from ${path.resolve(UPLOADS_ROOT)}`);
-}
+// Serve uploads in all environments so they are accessible even if Nginx is not configured to serve them directly.
+app.use('/uploads', express.static(UPLOADS_ROOT));
+console.log(`📂 Serving uploads at /uploads from ${path.resolve(UPLOADS_ROOT)}`);
+
 
 // =========================
 // ⭐ DEFAULT ROUTE
