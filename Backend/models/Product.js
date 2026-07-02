@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import fs from "fs";
+import path from "path";
 
 const { Schema } = mongoose;
 
@@ -236,8 +238,37 @@ const ProductSchema = new Schema(
         const baseUrl = (process.env.UPLOADS_BASE_URL || '').replace(/\/+$/, '');
 
         if (ret.images && Array.isArray(ret.images)) {
-          ret.images = ret.images.map(imgPath => {
-            if (!imgPath) return '';
+          // 1. Filter out files that do not exist on disk
+          const existingImages = ret.images.filter(imgPath => {
+            if (!imgPath) return false;
+            // Remote URLs are external, assume they exist
+            if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return true;
+            
+            const uploadsRoot = process.env.UPLOADS_ROOT || './uploads';
+            const absolutePath = path.resolve(uploadsRoot, imgPath);
+            return fs.existsSync(absolutePath);
+          });
+
+          // 2. Separate images and videos
+          const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.m4v', '.avi'];
+          const imagesOnly = [];
+          const videosOnly = [];
+
+          existingImages.forEach(imgPath => {
+            const lastDotIndex = imgPath.lastIndexOf('.');
+            const fileExt = lastDotIndex !== -1 ? imgPath.substring(lastDotIndex).toLowerCase() : '';
+            if (videoExtensions.includes(fileExt)) {
+              videosOnly.push(imgPath);
+            } else {
+              imagesOnly.push(imgPath);
+            }
+          });
+
+          // 3. Reconstruct: first working image is always first, then rest of images, then videos
+          const sortedImages = [...imagesOnly, ...videosOnly];
+
+          // 4. Map to public URLs
+          ret.images = sortedImages.map(imgPath => {
             if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return imgPath;
             return `${baseUrl}/${imgPath}`;
           });
@@ -246,7 +277,46 @@ const ProductSchema = new Schema(
         return ret;
       },
     },
-    toObject: { virtuals: true },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        const baseUrl = (process.env.UPLOADS_BASE_URL || '').replace(/\/+$/, '');
+
+        if (ret.images && Array.isArray(ret.images)) {
+          const existingImages = ret.images.filter(imgPath => {
+            if (!imgPath) return false;
+            if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return true;
+            
+            const uploadsRoot = process.env.UPLOADS_ROOT || './uploads';
+            const absolutePath = path.resolve(uploadsRoot, imgPath);
+            return fs.existsSync(absolutePath);
+          });
+
+          const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.m4v', '.avi'];
+          const imagesOnly = [];
+          const videosOnly = [];
+
+          existingImages.forEach(imgPath => {
+            const lastDotIndex = imgPath.lastIndexOf('.');
+            const fileExt = lastDotIndex !== -1 ? imgPath.substring(lastDotIndex).toLowerCase() : '';
+            if (videoExtensions.includes(fileExt)) {
+              videosOnly.push(imgPath);
+            } else {
+              imagesOnly.push(imgPath);
+            }
+          });
+
+          const sortedImages = [...imagesOnly, ...videosOnly];
+
+          ret.images = sortedImages.map(imgPath => {
+            if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return imgPath;
+            return `${baseUrl}/${imgPath}`;
+          });
+        }
+
+        return ret;
+      },
+    },
   }
 );
 
