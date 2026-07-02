@@ -345,7 +345,7 @@ const SearchResults = () => {
                                 {searchResults.map((product) => {
                                     const isInCart = cartItems.some(item => (item.productId?._id || item.productId) === product._id);
                                     const cartItem = cartItems.find(item => (item.productId?._id || item.productId) === product._id);
-                                    const discount = product.pricing?.mrp && product.pricing?.selling_price
+                                    const discount = product.pricing?.mrp && product.pricing?.selling_price && product.pricing.mrp > product.pricing.selling_price
                                         ? Math.round(((product.pricing.mrp - product.pricing.selling_price) / product.pricing.mrp) * 100)
                                         : 0;
 
@@ -436,9 +436,11 @@ const SearchResults = () => {
                                                 {/* Pricing and Cart block */}
                                                 <div className="flex items-center justify-between pt-3.5 border-t border-slate-50 mt-auto">
                                                     <div className="flex flex-col">
-                                                        <span className="text-[11px] text-slate-400 font-medium line-through">
-                                                            ₹{(product.pricing?.mrp || product.price * 1.2 || 0).toFixed(0)}
-                                                        </span>
+                                                        {product.pricing?.mrp > (product.pricing?.selling_price || product.price) && (
+                                                            <span className="text-[11px] text-slate-400 font-medium line-through">
+                                                                ₹{(product.pricing?.mrp || product.price * 1.2 || 0).toFixed(0)}
+                                                            </span>
+                                                        )}
                                                         <span className="text-lg font-bold text-slate-900 tracking-tight font-outfit">
                                                             ₹{(product.pricing?.selling_price || product.price || 0).toFixed(0)}
                                                         </span>

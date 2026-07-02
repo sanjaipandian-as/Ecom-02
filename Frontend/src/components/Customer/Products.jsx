@@ -254,8 +254,8 @@ const Products = ({ filters = defaultFilters }) => {
         const inCart = isInCart(product._id);
         const availablePieces = product.stock || 0;
         const sellingPrice = product.pricing?.selling_price || 0;
-        const mrp = product.pricing?.mrp;
-        const discount = product.pricing?.discount_percentage || 0;
+        const mrp = product.pricing?.mrp || 0;
+        const discount = mrp > sellingPrice ? (product.pricing?.discount_percentage || 0) : 0;
 
         // Mock colors for finishes
         const finishes = [

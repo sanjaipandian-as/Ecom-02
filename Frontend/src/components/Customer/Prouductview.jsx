@@ -4,9 +4,9 @@ import { Helmet } from 'react-helmet-async';
 import { 
     FaStar, FaShoppingCart, FaMinus, FaPlus, FaShareAlt, FaChevronDown, 
     FaRegHeart, FaHeart, FaArrowRight, FaCheck, FaTruck, FaShoppingBag, 
-    FaThumbsUp, FaThumbsDown, FaChevronRight, FaChevronLeft, FaShieldAlt, FaLeaf
+    FaThumbsUp, FaThumbsDown, FaChevronRight, FaChevronLeft
 } from 'react-icons/fa';
-import { MdLocalShipping, MdSecurity, MdVerified, MdOutlineFlashOn, MdInfoOutline, MdClose } from 'react-icons/md';
+import { MdSecurity, MdVerified, MdOutlineFlashOn, MdInfoOutline, MdClose } from 'react-icons/md';
 import { IoMdTime } from 'react-icons/io';
 import API from '../../../api';
 import Skeleton from '../Common/Skeleton';
@@ -14,17 +14,7 @@ import placeholderImg from '../../assets/Placeholder.png';
 import Topbar from './Topbar';
 import Footer from './Footer';
 
-const BeautyBenefit = ({ icon: Icon, title, text }) => (
-    <div className="flex items-center gap-4 py-3 group">
-        <div className="w-11 h-11 rounded-full bg-white border border-[#f3ece4] flex items-center justify-center text-[#8c6d45] shadow-sm transition-all duration-300 group-hover:border-[#8c6d45] group-hover:bg-[#fdfaf7]">
-            <Icon className="w-5 h-5" />
-        </div>
-        <div>
-            <h4 className="text-[12px] font-black text-gray-900 uppercase tracking-wider mb-0.5">{title}</h4>
-            <p className="text-[12px] text-gray-500 font-medium leading-relaxed">{text}</p>
-        </div>
-    </div>
-);
+
 
 const isVideo = (path) => {
     if (!path || typeof path !== 'string') return false;
@@ -215,15 +205,7 @@ const Productview = () => {
         return (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
     }, [reviews]);
 
-    const deliveryDate = useMemo(() => {
-        const date = new Date();
-        date.setDate(date.getDate() + 7);
-        const day = date.getDate();
-        const suffix = ['th', 'st', 'nd', 'rd'][(day % 10 > 3 || Math.floor(day % 100 / 10) === 1) ? 0 : day % 10];
-        const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
-        const month = date.toLocaleDateString('en-US', { month: 'long' });
-        return `${weekday}, ${day}${suffix} ${month}`;
-    }, []);
+
 
     if (loading) return (
         <div className="min-h-screen bg-white">
@@ -445,22 +427,7 @@ const Productview = () => {
                             </div>
                         </div>
 
-                        {/* Trust Badges */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 mb-6 border-t border-gray-100 pt-6">
-                            <BeautyBenefit icon={FaLeaf} title="100% Organic" text="Pure botanical extracts" />
-                            <BeautyBenefit icon={FaShieldAlt} title="Cruelty Free" text="Not tested on animals" />
-                        </div>
 
-                        {/* Shipping Timeline */}
-                        <div className="group flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-100 hover:border-[#8c6d45]/30 transition-all duration-300 shadow-sm hover:shadow-md">
-                            <div className="w-12 h-12 bg-[#fdfaf7] rounded-xl flex items-center justify-center text-[#8c6d45] transition-colors group-hover:bg-[#8c6d45] group-hover:text-white">
-                                <MdLocalShipping className="text-xl" />
-                            </div>
-                            <div>
-                                <h4 className="text-[12px] font-black text-gray-900 uppercase tracking-wider mb-0.5">Free Express Delivery</h4>
-                                <p className="text-[12px] text-gray-500 font-medium">Arrives by <span className="text-gray-900 font-bold">{deliveryDate}</span></p>
-                            </div>
-                        </div>
 
                     </div>
                 </div>
