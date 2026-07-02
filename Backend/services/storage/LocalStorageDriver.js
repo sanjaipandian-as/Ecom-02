@@ -70,15 +70,30 @@ export class LocalStorageDriver extends StorageService {
     let isVideo = false;
     let ext = '.webp';
 
+    const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.ogg', '.mov', '.m4v', '.avi'];
+
     if (typeof fileInput === 'string') {
       try {
         const fileType = await fileTypeFromFile(fileInput);
         if (fileType && fileType.mime.startsWith('video/')) {
           isVideo = true;
           ext = `.${fileType.ext}`;
+        } else {
+          // Fallback: Check file extension from temp filename
+          const fileExt = path.extname(fileInput).toLowerCase();
+          if (VIDEO_EXTENSIONS.includes(fileExt)) {
+            isVideo = true;
+            ext = fileExt;
+          }
         }
       } catch (err) {
         console.warn(`[StorageDriver] Failed to detect file type:`, err.message);
+        // Fallback on error
+        const fileExt = path.extname(fileInput).toLowerCase();
+        if (VIDEO_EXTENSIONS.includes(fileExt)) {
+          isVideo = true;
+          ext = fileExt;
+        }
       }
     }
 
