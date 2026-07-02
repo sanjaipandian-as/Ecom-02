@@ -6,7 +6,7 @@ import {
     FaRegHeart, FaHeart, FaArrowRight, FaCheck, FaTruck, FaShoppingBag, 
     FaThumbsUp, FaThumbsDown, FaChevronRight, FaChevronLeft
 } from 'react-icons/fa';
-import { MdSecurity, MdVerified, MdOutlineFlashOn, MdInfoOutline, MdClose } from 'react-icons/md';
+import { MdLocalShipping, MdSecurity, MdVerified, MdOutlineFlashOn, MdInfoOutline, MdClose } from 'react-icons/md';
 import { IoMdTime } from 'react-icons/io';
 import API from '../../../api';
 import Skeleton from '../Common/Skeleton';
@@ -204,6 +204,16 @@ const Productview = () => {
         if (!reviews.length) return '0.0';
         return (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
     }, [reviews]);
+
+    const deliveryDate = useMemo(() => {
+        const date = new Date();
+        date.setDate(date.getDate() + 7);
+        const day = date.getDate();
+        const suffix = ['th', 'st', 'nd', 'rd'][(day % 10 > 3 || Math.floor(day % 100 / 10) === 1) ? 0 : day % 10];
+        const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+        const month = date.toLocaleDateString('en-US', { month: 'long' });
+        return `${weekday}, ${day}${suffix} ${month}`;
+    }, []);
 
 
 
@@ -427,7 +437,16 @@ const Productview = () => {
                             </div>
                         </div>
 
-
+                        {/* Shipping Timeline */}
+                        <div className="group flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-100 hover:border-[#8c6d45]/30 transition-all duration-300 shadow-sm hover:shadow-md mt-6">
+                            <div className="w-12 h-12 bg-[#fdfaf7] rounded-xl flex items-center justify-center text-[#8c6d45] transition-colors group-hover:bg-[#8c6d45] group-hover:text-white">
+                                <MdLocalShipping className="text-xl" />
+                            </div>
+                            <div>
+                                <h4 className="text-[12px] font-black text-gray-900 uppercase tracking-wider mb-0.5">Free Express Delivery</h4>
+                                <p className="text-[12px] text-gray-500 font-medium">Arrives by <span className="text-gray-900 font-bold">{deliveryDate}</span></p>
+                            </div>
+                        </div>
 
                     </div>
                 </div>
