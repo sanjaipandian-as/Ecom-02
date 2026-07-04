@@ -51,7 +51,9 @@ const Products = ({ filters = defaultFilters }) => {
                 // Check if any filters are active
                 const hasActiveFilters =
                     (filters.categories && filters.categories.length > 0) ||
+                    (filters.subCategories && filters.subCategories.length > 0) ||
                     filters.category ||
+                    filters.subCategory ||
                     (filters.sortBy && filters.sortBy !== 'relevance') ||
                     (filters.priceRange && (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000000)) ||
                     (filters.selectedBrands && filters.selectedBrands.length > 0) ||
@@ -69,6 +71,12 @@ const Products = ({ filters = defaultFilters }) => {
                         queryParams.append('categories', filters.categories.join(','));
                     } else if (filters.category) {
                         queryParams.append('category', filters.category);
+                    }
+
+                    if (filters.subCategories && filters.subCategories.length > 0) {
+                        queryParams.append('subCategories', filters.subCategories.join(','));
+                    } else if (filters.subCategory) {
+                        queryParams.append('subCategory', filters.subCategory);
                     }
 
                     if (filters.sortBy && filters.sortBy !== 'relevance') {
@@ -323,7 +331,7 @@ const Products = ({ filters = defaultFilters }) => {
                     
                     {/* Subtitle */}
                     <p className="text-[12px] sm:text-[13px] text-[#666] line-clamp-1 mb-3 font-sans">
-                        {product.shortDescription || product.category?.name || product.category?.main || (typeof product.category === 'string' ? product.category : "Best Seller")}
+                        {product.shortDescription || (product.category?.main ? `${product.category.main}${product.category.sub ? ` - ${product.category.sub}` : ''}` : (typeof product.category === 'string' ? product.category : "Best Seller"))}
                     </p>
 
                     {/* Price and Cart Button */}

@@ -348,8 +348,8 @@ const ShopProductsPage = () => {
                                                 <div className="flex justify-between items-center text-[11px] mb-4">
                                                     <div className="flex flex-col">
                                                         <span className="text-gray-400 uppercase font-medium mb-0.5">Category</span>
-                                                        <span className="text-gray-800 font-bold truncate max-w-[80px]">
-                                                            {product.category?.main || product.category || 'Uncategorized'}
+                                                        <span className="text-gray-800 font-bold truncate max-w-[120px]" title={product.category?.sub ? `${product.category.main} - ${product.category.sub}` : (product.category?.main || product.category || 'Uncategorized')}>
+                                                            {product.category?.sub ? `${product.category.main} - ${product.category.sub}` : (product.category?.main || product.category || 'Uncategorized')}
                                                         </span>
                                                     </div>
                                                     <div className="flex flex-col items-end">
