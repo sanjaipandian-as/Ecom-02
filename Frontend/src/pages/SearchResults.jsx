@@ -71,6 +71,7 @@ const SearchResults = () => {
     const [filters, setFilters] = useState({
         sortBy: 'relevance',
         categories: [],
+        subCategories: [],
         priceRange: [0, 10000000]
     });
     const [categories, setCategories] = useState([]);
@@ -89,11 +90,32 @@ const SearchResults = () => {
     const searchResults = useMemo(() => {
         let filtered = [...allResults];
 
-        // Filter by categories
-        if (filters.categories.length > 0) {
+        // Filter by categories & subcategories
+        if (filters.categories && filters.categories.length > 0) {
+            const hasSelectedSubs = filters.subCategories && filters.subCategories.length > 0;
+            
             filtered = filtered.filter(product => {
                 const productCategory = product.category?.main || product.category || 'Other';
-                return filters.categories.includes(productCategory);
+                const productSubCategory = product.category?.sub;
+                
+                // If the product's main category is not selected, exclude it
+                if (!filters.categories.includes(productCategory)) {
+                    return false;
+                }
+                
+                // If there are selected subcategories, check if this category has any selected subcategories
+                if (hasSelectedSubs) {
+                    const catObj = categories.find(c => c.name === productCategory);
+                    const catSubs = catObj?.subcategories || [];
+                    
+                    const selectedSubsForCat = filters.subCategories.filter(sub => catSubs.includes(sub));
+                    
+                    if (selectedSubsForCat.length > 0) {
+                        return productSubCategory && selectedSubsForCat.includes(productSubCategory);
+                    }
+                }
+                
+                return true;
             });
         }
 
@@ -125,7 +147,7 @@ const SearchResults = () => {
         }
 
         return filtered;
-    }, [filters, allResults]);
+    }, [filters, allResults, categories]);
 
     const fetchSearchResults = async () => {
         try {
@@ -134,14 +156,19 @@ const SearchResults = () => {
             const products = response.data.products || [];
             setAllResults(products);
 
-            // Extract unique categories and their counts
+            // Extract unique categories, counts and subcategories
             const categoryMap = {};
             products.forEach(product => {
                 const categoryName = product.category?.main || product.category || 'Other';
                 if (!categoryMap[categoryName]) {
-                    categoryMap[categoryName] = { name: categoryName, count: 0 };
+                    categoryMap[categoryName] = { name: categoryName, count: 0, subcategories: [] };
                 }
                 categoryMap[categoryName].count++;
+                if (product.category?.sub) {
+                    if (!categoryMap[categoryName].subcategories.includes(product.category.sub)) {
+                        categoryMap[categoryName].subcategories.push(product.category.sub);
+                    }
+                }
             });
             setCategories(Object.values(categoryMap));
 
