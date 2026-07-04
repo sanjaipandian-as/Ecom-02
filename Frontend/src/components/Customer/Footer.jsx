@@ -47,6 +47,27 @@ const Footer = () => {
         services: false,
         showroom: false
     });
+    const [showCookieBanner, setShowCookieBanner] = useState(false);
+
+    useEffect(() => {
+        const consent = localStorage.getItem('cookieConsent');
+        if (!consent) {
+            const timer = setTimeout(() => {
+                setShowCookieBanner(true);
+            }, 1500);
+            return () => clearTimeout(timer);
+        }
+    }, []);
+
+    const acceptCookies = () => {
+        localStorage.setItem('cookieConsent', 'accepted');
+        setShowCookieBanner(false);
+    };
+
+    const rejectCookies = () => {
+        localStorage.setItem('cookieConsent', 'rejected');
+        setShowCookieBanner(false);
+    };
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -86,6 +107,8 @@ const Footer = () => {
             { name: 'Customer Support', path: '/support' },
             { name: 'Shipping & Delivery', path: '/shipping' },
             { name: 'Returns & Exchanges', path: '/returns' },
+            { name: 'Privacy Policy', path: '/privacy-policy' },
+            { name: 'Terms & Conditions', path: '/terms-and-conditions' },
             { name: 'Lifetime Warranty Info', path: '/warranty' },
             { name: 'Track Order', path: '/track-order' }
         ],
@@ -275,15 +298,56 @@ const Footer = () => {
             <div className="border-t border-gold-champagne/5 bg-emerald-dark">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                        <p className="text-xs text-[#a3b3ac] text-center md:text-left">
-                            © {currentYear} <span className="text-gold-lustrous font-semibold">Plenora</span>. All rights reserved.
-                        </p>
+                        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6">
+                            <p className="text-xs text-[#a3b3ac] text-center sm:text-left">
+                                © {currentYear} <span className="text-gold-lustrous font-semibold">Plenora</span>. All rights reserved.
+                            </p>
+                            <div className="flex gap-4">
+                                <button onClick={() => navigate('/privacy-policy')} className="text-[10px] text-[#a3b3ac] hover:text-gold-lustrous uppercase tracking-wider transition-colors cursor-pointer">Privacy Policy</button>
+                                <button onClick={() => navigate('/terms-and-conditions')} className="text-[10px] text-[#a3b3ac] hover:text-gold-lustrous uppercase tracking-wider transition-colors cursor-pointer">Terms & Conditions</button>
+                            </div>
+                        </div>
                         <p className="text-[10px] text-[#a3b3ac]/50 uppercase tracking-widest text-center md:text-right">
                             Handcrafted Luxury | Made with ❤️ in India
                         </p>
                     </div>
                 </div>
             </div>
+
+            {/* Premium Cookie Consent Banner */}
+            {showCookieBanner && (
+                <div className="fixed bottom-20 md:bottom-6 left-4 right-4 md:left-auto md:right-6 md:max-w-md bg-[#0e1612]/95 backdrop-blur-md border border-gold-champagne/20 p-5 rounded-xl shadow-2xl z-50 animate-slideUp font-sans">
+                    <div className="flex flex-col gap-4">
+                        <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gold-champagne/10 flex items-center justify-center text-gold-champagne shrink-0">
+                                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6c-.41 0-.75.34-.75.75v3.5c0 .41.34.75.75.75s.75-.34.75-.75v-3.5c0-.41-.34-.75-.75-.75zM12 5.5c-3.58 0-6.5 2.92-6.5 6.5s2.92 6.5 6.5 6.5 6.5-2.92 6.5-6.5-2.92-6.5-6.5-6.5z" />
+                                </svg>
+                            </div>
+                            <div className="flex-1 col-span-4">
+                                <h4 className="text-sm font-bold text-white uppercase tracking-wider">Cookie Consent</h4>
+                                <p className="text-[11px] text-[#a3b3ac] mt-1 leading-relaxed">
+                                    We use cookies to enhance your experience, serve personalized content, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies in accordance with our <button onClick={() => { navigate('/privacy-policy'); setShowCookieBanner(false); }} className="text-gold-lustrous underline hover:text-white transition-colors cursor-pointer">Privacy Policy</button> and <button onClick={() => { navigate('/terms-and-conditions'); setShowCookieBanner(false); }} className="text-gold-lustrous underline hover:text-white transition-colors cursor-pointer">Terms & Conditions</button>.
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex gap-2 justify-end">
+                            <button 
+                                onClick={rejectCookies}
+                                className="px-4 py-2 border border-gold-champagne/20 text-[#a3b3ac] hover:text-white text-[10px] font-bold uppercase tracking-widest transition-all rounded-md cursor-pointer"
+                            >
+                                Reject
+                            </button>
+                            <button 
+                                onClick={acceptCookies}
+                                className="px-4 py-2 bg-gold-champagne hover:bg-gold-lustrous text-[#0e1612] text-[10px] font-bold uppercase tracking-widest transition-all rounded-md shadow-md cursor-pointer"
+                            >
+                                Accept All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Tiny spacer to avoid blocking of bottom menu on mobile view */}
             <div className="h-16 md:hidden bg-[#070b09]"></div>
