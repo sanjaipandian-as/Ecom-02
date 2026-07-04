@@ -74,10 +74,10 @@ const TermsAndConditions = () => {
             ],
             grievance: {
                 title: "Grievance Officer",
-                text: "In accordance with Information Technology Act 2000 and rules made there under and the Consumer Protection (E-Commerce) Rules, 2020, the name and contact details of the Grievance Officer are provided below:",
+                text: "In accordance with Information Technology Act 2000 and rules made there under and the Consumer Protection (E-Commerce) Rules, 2020, the contact details of the Grievance Officer are provided below:",
                 details: {
-                    name: "Mr. Selvadhanush S",
-                    role: "Designation: Grievance Officer",
+                    name: "Grievance Officer",
+                    role: "",
                     company: "Plenora Organic Skincare Private Limited",
                     address: "45 Grand Avenue, Luxury District, Chennai, Tamil Nadu, India - 600002",
                     email: "privacy@plenora.com",
@@ -150,8 +150,8 @@ const TermsAndConditions = () => {
                 title: "குறைதீர்க்கும் அதிகாரி",
                 text: "தகவல் தொழில்நுட்பச் சட்டம் 2000 மற்றும் நுகர்வோர் பாதுகாப்பு (மின் வணிகம்) விதிகள், 2020 இன் படி, குறைதீர்க்கும் அதிகாரியின் விவரங்கள் கீழே உள்ளன:",
                 details: {
-                    name: "திரு. செல்வதனுஷ் எஸ்",
-                    role: "பதவி: குறைதீர்க்கும் அதிகாரி",
+                    name: "குறைதீர்க்கும் அதிகாரி",
+                    role: "",
                     company: "Plenora Organic Skincare Private Limited",
                     address: "45 கிராண்ட் அவென்யூ, சொகுசு மாவட்டம், சென்னை, தமிழ்நாடு, இந்தியா - 600002",
                     email: "privacy@plenora.com",
@@ -224,8 +224,8 @@ const TermsAndConditions = () => {
                 title: "शिकायत अधिकारी",
                 text: "सूचना प्रौद्योगिकी अधिनियम 2000 और उपभोक्ता संरक्षण (ई-कॉमर्स) नियम, 2020 के अनुसार, शिकायत अधिकारी का विवरण नीचे दिया गया है:",
                 details: {
-                    name: "श्री सेलवधनुष एस",
-                    role: "पद: शिकायत अधिकारी",
+                    name: "शिकायत अधिकारी",
+                    role: "",
                     company: "Plenora Organic Skincare Private Limited",
                     address: "45 ग्रैंड एवेन्यू, लग्जरी डिस्ट्रिक्ट, चेन्नई, तमिलनाडु, भारत - 600002",
                     email: "privacy@plenora.com",
@@ -325,7 +325,7 @@ const TermsAndConditions = () => {
                         
                         <div className="bg-[#fcfdfd] border border-gray-150 p-6 rounded-lg space-y-2 text-sm text-gray-800">
                             <p className="font-semibold text-gray-900 text-base">{currentData.grievance.details.name}</p>
-                            <p className="text-gray-500">{currentData.grievance.details.role}</p>
+                            {currentData.grievance.details.role && <p className="text-gray-500">{currentData.grievance.details.role}</p>}
                             <p className="font-medium text-gray-700">{currentData.grievance.details.company}</p>
                             <p className="text-gray-600 leading-relaxed uppercase tracking-wider text-xs">{currentData.grievance.details.address}</p>
                             <p className="pt-2">

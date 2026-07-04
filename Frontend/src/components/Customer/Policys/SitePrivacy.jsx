@@ -208,11 +208,10 @@ const PrivacyPolicy = () => {
                         <h2 className="text-base font-bold text-gray-900">Grievance Officer</h2>
                         <div className="text-sm text-gray-700 space-y-2">
                             <p className="leading-relaxed">
-                                In accordance with Information Technology Act 2000 and rules made thereunder, the name and contact details of the Grievance Officer are provided below:
+                                In accordance with Information Technology Act 2000 and rules made thereunder, the contact details of the Grievance Officer are provided below:
                             </p>
                             <div className="bg-gray-50 p-4 rounded-lg space-y-1">
-                                <p><strong>Mr. Selvadhanush S</strong></p>
-                                <p>Designation: Grievance Officer</p>
+                                <p><strong>Grievance Officer</strong></p>
                                 <p>Plenora Organic Skincare Private Limited</p>
                                 <p>45 Grand Avenue, Luxury District, Chennai</p>
                                 <p>Tamil Nadu, India - 600002</p>
