@@ -202,7 +202,7 @@ const ProductGridCard = ({ product, onEdit, onDelete, isSelectionMode, isSelecte
                 <div className="absolute top-4 left-4 z-10">
                     <span className="px-4 py-2 bg-white/95 backdrop-blur-md rounded-none text-[10px] font-bold uppercase tracking-[0.1em] text-slate-800 shadow-sm border border-slate-200 flex items-center gap-2">
                         <MdLayers className="text-[#4F46E5] text-sm" />
-                        {product.category?.main || 'Uncategorized'}
+                        {product.category?.main || 'Uncategorized'}{product.category?.sub ? ` - ${product.category.sub}` : ''}
                     </span>
                 </div>
 
@@ -652,7 +652,7 @@ const AdminAllProducts = ({ refreshId }) => {
                                                 </div>
                                             </td>
                                             <td className="px-10 py-6">
-                                                <span className="bg-white px-4 py-2 rounded-none text-[10px] font-bold text-[#4F46E5] uppercase border border-slate-200 shadow-sm tracking-widest">{product.category?.main || 'Uncategorized'}</span>
+                                                <span className="bg-white px-4 py-2 rounded-none text-[10px] font-bold text-[#4F46E5] uppercase border border-slate-200 shadow-sm tracking-widest">{product.category?.main || 'Uncategorized'}{product.category?.sub ? ` - ${product.category.sub}` : ''}</span>
                                             </td>
                                             <td className="px-10 py-6">
                                                 <div className="flex flex-col">

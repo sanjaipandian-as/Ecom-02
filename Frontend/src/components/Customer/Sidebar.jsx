@@ -11,12 +11,13 @@ import {
 } from 'react-icons/fa';
 import { BsFillBagHeartFill } from 'react-icons/bs';
 
-const Sidebar = ({ showFilters = false, onFiltersChange, categories = [], minPrice = 0, maxPrice = 10000000 }) => {
+const Sidebar = ({ showFilters = false, onFiltersChange, categories = [], minPrice = 0, maxPrice = 10000000, initialCategory = '' }) => {
     const navigate = useNavigate();
 
     // Filter states
     const [sortBy, setSortBy] = useState('relevance');
     const [selectedCategories, setSelectedCategories] = useState([]);
+    const [selectedSubCategories, setSelectedSubCategories] = useState([]);
     const [priceRange, setPriceRange] = useState([minPrice, maxPrice]);
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const [expandedSections, setExpandedSections] = useState({
@@ -24,11 +25,26 @@ const Sidebar = ({ showFilters = false, onFiltersChange, categories = [], minPri
         categories: true,
         priceRange: true
     });
+    const [hasInitializedCategory, setHasInitializedCategory] = useState(false);
 
     // Update price range when maxPrice changes
     useEffect(() => {
         setPriceRange([0, maxPrice]);
     }, [maxPrice]);
+
+    // Set initial category from prop when categories load
+    useEffect(() => {
+        if (initialCategory && categories.length > 0 && !hasInitializedCategory) {
+            const matchedCat = categories.find(c => 
+                c.name.toLowerCase() === initialCategory.toLowerCase() ||
+                c.slug.toLowerCase() === initialCategory.toLowerCase()
+            );
+            if (matchedCat) {
+                setSelectedCategories([matchedCat.name]);
+                setHasInitializedCategory(true);
+            }
+        }
+    }, [initialCategory, categories, hasInitializedCategory]);
 
     // Notify parent of filter changes
     useEffect(() => {
@@ -36,10 +52,11 @@ const Sidebar = ({ showFilters = false, onFiltersChange, categories = [], minPri
             onFiltersChange({
                 sortBy,
                 categories: selectedCategories,
+                subCategories: selectedSubCategories,
                 priceRange
             });
         }
-    }, [sortBy, selectedCategories, priceRange, showFilters, onFiltersChange]);
+    }, [sortBy, selectedCategories, selectedSubCategories, priceRange, showFilters, onFiltersChange]);
 
 
     const toggleSection = (section) => {
@@ -49,17 +66,31 @@ const Sidebar = ({ showFilters = false, onFiltersChange, categories = [], minPri
         }));
     };
 
-    const handleCategoryToggle = (category) => {
-        setSelectedCategories(prev =>
-            prev.includes(category)
-                ? prev.filter(c => c !== category)
-                : [...prev, category]
+    const handleCategoryToggle = (categoryName) => {
+        const isSelected = selectedCategories.includes(categoryName);
+        if (isSelected) {
+            const catObj = categories.find(c => c.name === categoryName);
+            const subsToRemove = catObj?.subcategories || [];
+            
+            setSelectedCategories(prev => prev.filter(c => c !== categoryName));
+            setSelectedSubCategories(prev => prev.filter(s => !subsToRemove.includes(s)));
+        } else {
+            setSelectedCategories(prev => [...prev, categoryName]);
+        }
+    };
+
+    const handleSubCategoryToggle = (subCategory) => {
+        setSelectedSubCategories(prev =>
+            prev.includes(subCategory)
+                ? prev.filter(s => s !== subCategory)
+                : [...prev, subCategory]
         );
     };
 
     const clearAllFilters = () => {
         setSortBy('relevance');
         setSelectedCategories([]);
+        setSelectedSubCategories([]);
         setPriceRange([0, maxPrice]);
     };
 
@@ -150,24 +181,55 @@ const Sidebar = ({ showFilters = false, onFiltersChange, categories = [], minPri
                             </button>
                             {expandedSections.categories && (
                                 <div className="mt-4 space-y-3">
-                                    {categories.map((category) => (
-                                        <label key={category.name} className="flex items-center justify-between cursor-pointer group">
-                                            <div className="flex items-center gap-3">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={selectedCategories.includes(category.name)}
-                                                    onChange={() => handleCategoryToggle(category.name)}
-                                                    className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
-                                                />
-                                                <span className="text-sm text-gray-700 group-hover:text-gray-900">
-                                                    {category.name}
-                                                </span>
-                                            </div>
-                                            <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">
-                                                {category.count || 0}
-                                            </span>
-                                        </label>
-                                    ))}
+                                     {categories.map((category) => {
+                                         const isSelected = selectedCategories.includes(category.name);
+                                         // Filter out subcategories that are identical to the main category name (case-insensitive)
+                                         const filteredSubCategories = (category.subcategories || []).filter(
+                                             sub => sub && sub.toLowerCase() !== category.name.toLowerCase()
+                                         );
+                                         const hasSubs = filteredSubCategories.length > 0;
+                                         return (
+                                             <div key={category.name} className="space-y-2">
+                                                 <label className="flex items-center justify-between cursor-pointer group">
+                                                     <div className="flex items-center gap-3">
+                                                         <input
+                                                             type="checkbox"
+                                                             checked={isSelected}
+                                                             onChange={() => handleCategoryToggle(category.name)}
+                                                             className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                                                         />
+                                                         <span className={`text-sm text-gray-700 group-hover:text-gray-900 ${isSelected ? 'font-bold' : ''}`}>
+                                                             {category.name}
+                                                         </span>
+                                                     </div>
+                                                     <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">
+                                                         {category.count || 0}
+                                                     </span>
+                                                 </label>
+                                                 
+                                                 {isSelected && hasSubs && (
+                                                     <div className="pl-6 space-y-2 border-l-2 border-gray-100 ml-2 py-1 animate-fadeIn">
+                                                         {filteredSubCategories.map((sub) => {
+                                                             const isSubSelected = selectedSubCategories.includes(sub);
+                                                             return (
+                                                                 <label key={sub} className="flex items-center gap-3 cursor-pointer group">
+                                                                     <input
+                                                                         type="checkbox"
+                                                                         checked={isSubSelected}
+                                                                         onChange={() => handleSubCategoryToggle(sub)}
+                                                                         className="w-3.5 h-3.5 text-primary border-gray-300 rounded focus:ring-primary"
+                                                                     />
+                                                                     <span className={`text-xs text-gray-600 group-hover:text-gray-900 ${isSubSelected ? 'font-semibold text-primary' : ''}`}>
+                                                                         {sub}
+                                                                     </span>
+                                                                 </label>
+                                                             );
+                                                         })}
+                                                     </div>
+                                                 )}
+                                             </div>
+                                         );
+                                     })}
                                 </div>
                             )}
                         </div>

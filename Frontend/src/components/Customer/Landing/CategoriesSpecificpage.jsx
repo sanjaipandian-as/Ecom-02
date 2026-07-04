@@ -76,7 +76,7 @@ const ProductCard = React.memo(({
                 <div className="flex items-center justify-between mb-3 text-xs text-gray-600">
                     <div>
                         <p className="text-xs text-gray-400 uppercase tracking-wider">Category</p>
-                        <p className="font-semibold text-gray-700 text-sm">{product.category?.main || product.category || 'Uncategorized'}</p>
+                        <p className="font-semibold text-gray-700 text-sm">{product.category?.sub ? `${product.category.main} - ${product.category.sub}` : (product.category?.main || product.category || 'Uncategorized')}</p>
                     </div>
                     <div className="text-right">
                         <p className="text-xs text-gray-400 uppercase tracking-wider">Brand</p>
@@ -245,6 +245,11 @@ const CategoriesSpecificpage = () => {
                 params.categories = filters.categories.join(',');
             } else if (categorySlug && categorySlug !== 'bestsellers') {
                 params.mainCategory = categorySlug;
+            }
+
+            // Add subcategory filter
+            if (filters.subCategories && filters.subCategories.length > 0) {
+                params.subCategories = filters.subCategories.join(',');
             }
 
             // Bestsellers category filter integration

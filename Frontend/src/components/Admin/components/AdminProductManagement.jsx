@@ -184,7 +184,7 @@ const AdminProductManagement = ({ onOpenUploadModal, refreshId }) => {
                                 {/* Category Badge - Top Left inside image */}
                                 <div className="absolute top-8 left-8 flex flex-col gap-2">
                                     <span className="backdrop-blur-md bg-white/80 text-[#2563EB] text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm border border-white/20">
-                                        {product.category?.main}
+                                        {product.category?.main}{product.category?.sub ? ` - ${product.category.sub}` : ''}
                                     </span>
                                     {product.is_featured && (
                                         <span className="backdrop-blur-md bg-blue-600/90 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm">

@@ -6,7 +6,7 @@ import {
     FaRegHeart, FaHeart, FaArrowRight, FaCheck, FaTruck, FaShoppingBag, 
     FaThumbsUp, FaThumbsDown, FaChevronRight, FaChevronLeft
 } from 'react-icons/fa';
-import { MdLocalShipping, MdSecurity, MdVerified, MdOutlineFlashOn, MdInfoOutline, MdClose } from 'react-icons/md';
+import { MdSecurity, MdVerified, MdOutlineFlashOn, MdInfoOutline, MdClose } from 'react-icons/md';
 import { IoMdTime } from 'react-icons/io';
 import API from '../../../api';
 import Skeleton from '../Common/Skeleton';
@@ -205,15 +205,7 @@ const Productview = () => {
         return (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
     }, [reviews]);
 
-    const deliveryDate = useMemo(() => {
-        const date = new Date();
-        date.setDate(date.getDate() + 7);
-        const day = date.getDate();
-        const suffix = ['th', 'st', 'nd', 'rd'][(day % 10 > 3 || Math.floor(day % 100 / 10) === 1) ? 0 : day % 10];
-        const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
-        const month = date.toLocaleDateString('en-US', { month: 'long' });
-        return `${weekday}, ${day}${suffix} ${month}`;
-    }, []);
+
 
 
 
@@ -260,10 +252,30 @@ const Productview = () => {
             <main className="flex-1 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10 w-full">
                 
                 {/* --- BREADCRUMBS --- */}
-                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 mb-6">
+                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 mb-6 flex-wrap">
                     <button onClick={() => navigate('/')} className="hover:text-black transition-colors">Home</button>
                     <FaChevronRight className="text-[8px]" />
                     <button onClick={() => navigate('/products')} className="hover:text-black transition-colors">Collection</button>
+                    {product.category?.main && (
+                        <>
+                            <FaChevronRight className="text-[8px]" />
+                            <button 
+                                onClick={() => {
+                                    const slug = product.category.main.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+                                    navigate(`/category/${slug}`);
+                                }} 
+                                className="hover:text-black transition-colors"
+                            >
+                                {product.category.main}
+                            </button>
+                        </>
+                    )}
+                    {product.category?.sub && (
+                        <>
+                            <FaChevronRight className="text-[8px]" />
+                            <span className="text-gray-450">{product.category.sub}</span>
+                        </>
+                    )}
                     <FaChevronRight className="text-[8px]" />
                     <span className="text-black truncate max-w-[150px]">{product.name}</span>
                 </nav>
@@ -337,7 +349,7 @@ const Productview = () => {
                         <div className="space-y-4 mb-6">
                             <div className="flex items-center gap-3">
                                 <span className="text-[12px] font-black text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-amber-100">
-                                    {product.category?.main || 'Organic Collection'}
+                                    {product.category?.main ? `${product.category.main}${product.category.sub ? ` > ${product.category.sub}` : ''}` : 'Organic Collection'}
                                 </span>
                                 <div className="h-px flex-1 bg-gray-100" />
                                 <div className="flex items-center gap-2">
@@ -437,15 +449,25 @@ const Productview = () => {
                             </div>
                         </div>
 
-                        {/* Shipping Timeline */}
-                        <div className="group flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-100 hover:border-[#8c6d45]/30 transition-all duration-300 shadow-sm hover:shadow-md mt-6">
-                            <div className="w-12 h-12 bg-[#fdfaf7] rounded-xl flex items-center justify-center text-[#8c6d45] transition-colors group-hover:bg-[#8c6d45] group-hover:text-white">
-                                <MdLocalShipping className="text-xl" />
-                            </div>
-                            <div>
-                                <h4 className="text-[12px] font-black text-gray-900 uppercase tracking-wider mb-0.5">Free Express Delivery</h4>
-                                <p className="text-[12px] text-gray-500 font-medium">Arrives by <span className="text-gray-900 font-bold">{deliveryDate}</span></p>
-                            </div>
+                        {/* Product Highlights */}
+                        <div className="grid grid-cols-2 gap-3 mt-6">
+                            {[
+                                "Made for Indian Skintone",
+                                "No Harsh Chemicals",
+                                "Gentle and Effective",
+                                "Skin-Friendly Ingredients",
+                                "No Harsh Preservatives",
+                                "Parabens & Sulphate Free"
+                            ].map((badge, idx) => (
+                                <div key={idx} className="flex items-center gap-2.5 p-3.5 bg-[#fdfaf7] rounded-xl border border-[#f3ece4] hover:border-[#8c6d45]/40 transition-all duration-300 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.02)]">
+                                    <div className="w-5 h-5 rounded-full bg-[#8c6d45]/10 flex items-center justify-center text-[#8c6d45] shrink-0">
+                                        <FaCheck className="text-[8px]" />
+                                    </div>
+                                    <span className="text-[11px] font-black text-gray-800 uppercase tracking-wider leading-snug">
+                                        {badge}
+                                    </span>
+                                </div>
+                            ))}
                         </div>
 
                     </div>

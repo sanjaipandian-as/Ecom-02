@@ -115,11 +115,54 @@ export const filterProducts = async (req, res) => {
       query.showInViral = true;
     }
 
-    // Category Filter (Multiple categories support)
+    // Category & Subcategory Filter (Multiple categories and subcategories support)
     if (req.query.categories) {
       const categories = req.query.categories.split(',');
+      const subCategories = req.query.subCategories ? req.query.subCategories.split(',') : [];
+      
       if (categories.length > 0) {
-        query['category.main'] = { $in: categories.map(c => new RegExp(`^${c}$`, 'i')) };
+        if (subCategories.length > 0) {
+          // Map each selected subcategory to its main category
+          const subToMainMap = {};
+          const productsWithSubs = await Product.find({
+            'category.sub': { $in: subCategories.map(s => new RegExp(`^${s}$`, 'i')) },
+            is_deleted: { $ne: true }
+          }, 'category.main category.sub');
+          
+          productsWithSubs.forEach(p => {
+            if (p.category?.main && p.category?.sub) {
+              const foundSub = subCategories.find(s => s.toLowerCase() === p.category.sub.toLowerCase());
+              if (foundSub) {
+                subToMainMap[foundSub] = p.category.main;
+              }
+            }
+          });
+          
+          const mainCategoriesWithSubs = new Set(Object.values(subToMainMap));
+          const orConditions = [];
+          
+          categories.forEach(cat => {
+            if (mainCategoriesWithSubs.has(cat)) {
+              const catSubs = subCategories.filter(sub => subToMainMap[sub] === cat);
+              if (catSubs.length > 0) {
+                orConditions.push({
+                  'category.main': new RegExp(`^${cat}$`, 'i'),
+                  'category.sub': { $in: catSubs.map(s => new RegExp(`^${s}$`, 'i')) }
+                });
+              }
+            } else {
+              orConditions.push({
+                'category.main': new RegExp(`^${cat}$`, 'i')
+              });
+            }
+          });
+          
+          if (orConditions.length > 0) {
+            query.$or = orConditions;
+          }
+        } else {
+          query['category.main'] = { $in: categories.map(c => new RegExp(`^${c}$`, 'i')) };
+        }
       }
     } else if (req.query.category) {
       query['category.main_slug'] = req.query.category;
@@ -141,7 +184,12 @@ export const filterProducts = async (req, res) => {
       query["category.main_slug"] = req.query.mainCategory;
     }
 
-    if (req.query.subCategory) {
+    if (req.query.subCategories && !req.query.categories) {
+      const subCategories = req.query.subCategories.split(',');
+      if (subCategories.length > 0) {
+        query['category.sub'] = { $in: subCategories.map(s => new RegExp(`^${s}$`, 'i')) };
+      }
+    } else if (req.query.subCategory) {
       query["category.sub_slug"] = req.query.subCategory;
     }
 
@@ -374,6 +422,7 @@ export const getFilterOptions = async (req, res) => {
             main: '$category.main',
             main_slug: '$category.main_slug'
           },
+          subcategories: { $addToSet: '$category.sub' },
           count: { $sum: 1 }
         }
       }
@@ -441,7 +490,8 @@ export const getFilterOptions = async (req, res) => {
       categories: categories.map(cat => ({
         name: cat._id.main,
         slug: cat._id.main_slug,
-        count: cat.count
+        count: cat.count,
+        subcategories: (cat.subcategories || []).filter(sub => sub && sub.trim() !== "")
       })),
       specialFilters: {
         ecoFriendly: {
