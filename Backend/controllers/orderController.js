@@ -37,30 +37,34 @@ export const executeOrderPlacement = async (customerId, orderData) => {
       throw new Error(`Invalid pricing for product: ${product.name}`);
     }
 
-    // ⭐ PRODUCTION TAX CALCULATION (e.g., GST 18%)
+    // ⭐ PRODUCTION INCLUSIVE TAX CALCULATION (e.g., GST 18% Included in Selling Price)
     let taxRate = 0.18; // Default 18%
     if (product.tax_class === 'reduced') taxRate = 0.05;
     if (product.tax_class === 'exempt') taxRate = 0;
 
-    const itemTaxAmount = serverPrice * quantity * taxRate;
+    const totalItemPrice = serverPrice * quantity;
+    const baseItemPrice = totalItemPrice / (1 + taxRate);
+    const itemTaxAmount = totalItemPrice - baseItemPrice;
 
     secureItems.push({
       productId: product._id,
       sku: product.sku,
       quantity: quantity,
-      price: serverPrice, // ⭐ Server-resolved price ONLY
+      price: serverPrice, // ⭐ Server-resolved inclusive price (e.g., 1099)
       taxAmount: itemTaxAmount
     });
   }
 
-  // 1. Calculate final totals from server-verified prices
-  const subTotal = secureItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
+  // 1. Calculate final totals from server-verified prices (Taxes are inclusive)
+  const totalItemAmount = secureItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
   const taxTotal = secureItems.reduce((sum, item) => sum + item.taxAmount, 0);
   
-  // Dynamic Shipping Logic (Simplified for production)
-  // E.g., Free shipping over ₹999, else ₹99
-  const shippingFee = subTotal > 999 ? 0 : 99;
-  const totalAmount = subTotal + taxTotal + shippingFee;
+  // Base subtotal excluding tax to store in database
+  const subTotal = totalItemAmount - taxTotal;
+  
+  // Dynamic Shipping Logic
+  const shippingFee = totalItemAmount > 999 ? 0 : 99;
+  const totalAmount = totalItemAmount + shippingFee;
 
   // 2. ATOMIC STOCK DEDUCTION
   for (const item of secureItems) {
@@ -368,7 +372,7 @@ export const returnOrder = async (req, res) => {
     }
 
     // Amazon/Flipkart Level: Check return window (e.g., 7 days)
-    const deliveryDate = order.updatedAt; // Simplified for this demo
+    const deliveryDate = order.deliveredAt || order.updatedAt; // Use explicit delivery date, fallback to updatedAt
     const daysSinceDelivery = (new Date() - new Date(deliveryDate)) / (1000 * 60 * 60 * 24);
 
     if (daysSinceDelivery > 7) {
@@ -460,7 +464,7 @@ export const updateOrderStatus = async (req, res) => {
       userId: order.customerId._id,
       userType: "customer",
       title: "Order Status Updated",
-      message: `Your order status has been updated to: ${status.replace('_', ' ')}`,
+      message: `Your order status has been updated to: ${status.replaceAll('_', ' ')}`,
       type: "order"
     });
 

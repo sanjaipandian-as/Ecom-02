@@ -121,9 +121,10 @@ const orderSchema = new mongoose.Schema(
       enum: ["cod", "online"],
       default: "online",
     },
-    razorpayOrderId: { type: String },
+    razorpayOrderId: { type: String, unique: true, sparse: true },
     razorpayPaymentId: { type: String },
     razorpaySignature: { type: String },
+    deliveredAt: { type: Date },
   },
   { timestamps: true }
 );

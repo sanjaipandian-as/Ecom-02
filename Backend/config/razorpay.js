@@ -1,6 +1,10 @@
 import Razorpay from "razorpay";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 let razorpayInstance = null;
+
 
 if (
   process.env.RAZORPAY_KEY_ID &&
