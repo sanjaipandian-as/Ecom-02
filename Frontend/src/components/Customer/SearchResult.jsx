@@ -567,7 +567,7 @@ const SearchResult = () => {
                                     <span className="text-sm text-slate-400 font-bold line-through">
                                         ₹{(product.pricing?.mrp || product.originalPrice || 0).toLocaleString()}
                                     </span>
-                                ) }
+                                )}
                             </div>
                             <div className={`px-3 py-1.5 rounded-xl border ${product.stock > 0 ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-rose-50 border-rose-100 text-rose-500'} text-[12px] font-black uppercase tracking-wider`}>
                                 {product.stock > 0 ? 'Verified' : 'Limited'}
@@ -593,7 +593,7 @@ const SearchResult = () => {
                                     ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
                                     : 'bg-[#2563EB] text-white shadow-xl shadow-blue-100 hover:bg-[#1E40AF]'
                                     }`}
-                            >           >
+                            >
                                 {addingToCart === product._id ? (
                                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/30 border-t-white"></div>
                                 ) : (

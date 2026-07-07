@@ -223,8 +223,7 @@ const AdminRefundsManagement = ({ refreshId }) => {
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    const nextStatus = order.paymentStatus === 'success' ? 'refund_initiated' : 'cancelled';
-                                                    handleUpdateStatus(order._id, nextStatus);
+                                                    handleUpdateStatus(order._id, 'cancelled');
                                                 }}
                                                 className="w-full py-4 bg-red-600 border border-red-600 text-white font-bold rounded-none hover:bg-red-700 transition-all shadow-sm active:scale-[0.98] flex items-center justify-center gap-2 uppercase tracking-wider text-xs"
                                             >

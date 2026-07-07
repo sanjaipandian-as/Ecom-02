@@ -327,9 +327,29 @@ const Checkout = () => {
                 prefill: {
                     name: userData.fullname || userData.name || userData.username || '',
                     email: userData.email || '',
-                    contact: selectedAddress?.phone || userData.phone || ''
+                    contact: selectedAddress?.phone || userData.phone || '',
+                    method: 'upi' // Prefill UPI as default
                 },
                 theme: { color: '#6d9b7a' },
+                // Restrict options list to UPI only
+                config: {
+                    display: {
+                        blocks: {
+                            upi: {
+                                name: 'UPI / QR Code',
+                                instruments: [
+                                    {
+                                        method: 'upi'
+                                    }
+                                ]
+                            }
+                        },
+                        sequence: ['block.upi'],
+                        preferences: {
+                            show_default_blocks: false
+                        }
+                    }
+                },
                 handler: async function (response) {
                     try {
                         const orderAddress = {
@@ -511,11 +531,10 @@ const Checkout = () => {
                                     {selectedAddress && !showAddressPanel && (
                                         <button
                                             onClick={() => setShowAddressEdit(!showAddressEdit)}
-                                            className={`flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl border transition-all ${
-                                                showAddressEdit
+                                            className={`flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl border transition-all ${showAddressEdit
                                                     ? 'bg-slate-900 text-white border-slate-900'
                                                     : 'text-slate-600 bg-slate-50 border-slate-200 hover:bg-slate-100'
-                                            }`}
+                                                }`}
                                         >
                                             {showAddressEdit ? <MdClose className="w-4 h-4" /> : <MdEdit className="w-4 h-4" />}
                                             {showAddressEdit ? 'Cancel' : 'Edit'}
@@ -523,11 +542,10 @@ const Checkout = () => {
                                     )}
                                     <button
                                         onClick={() => { setShowAddressPanel(!showAddressPanel); setShowAddressEdit(false); }}
-                                        className={`flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl border transition-all ${
-                                            showAddressPanel
+                                        className={`flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl border transition-all ${showAddressPanel
                                                 ? 'bg-slate-900 text-white border-slate-900'
                                                 : 'text-[#6d9b7a] bg-emerald-50 border-emerald-200 hover:bg-[#6d9b7a] hover:text-white hover:border-[#6d9b7a]'
-                                        }`}
+                                            }`}
                                     >
                                         {showAddressPanel ? <MdClose className="w-4 h-4" /> : <MdAdd className="w-4 h-4" />}
                                         {showAddressPanel ? 'Close' : 'Change'}
@@ -637,15 +655,13 @@ const Checkout = () => {
                                                         <div
                                                             key={address._id}
                                                             onClick={() => handleSelectAddress(address)}
-                                                            className={`flex items-start gap-3 p-4 rounded-xl cursor-pointer transition-all border-2 ${
-                                                                selectedAddressId === address._id
+                                                            className={`flex items-start gap-3 p-4 rounded-xl cursor-pointer transition-all border-2 ${selectedAddressId === address._id
                                                                     ? 'border-[#6d9b7a] bg-emerald-50'
                                                                     : 'border-slate-100 bg-slate-50 hover:border-slate-200 hover:bg-white'
-                                                            }`}
+                                                                }`}
                                                         >
-                                                            <div className={`w-5 h-5 mt-0.5 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${
-                                                                selectedAddressId === address._id ? 'border-[#6d9b7a] bg-[#6d9b7a]' : 'border-slate-300'
-                                                            }`}>
+                                                            <div className={`w-5 h-5 mt-0.5 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${selectedAddressId === address._id ? 'border-[#6d9b7a] bg-[#6d9b7a]' : 'border-slate-300'
+                                                                }`}>
                                                                 {selectedAddressId === address._id && <div className="w-2 h-2 bg-white rounded-full" />}
                                                             </div>
                                                             <div className="flex-1 min-w-0">

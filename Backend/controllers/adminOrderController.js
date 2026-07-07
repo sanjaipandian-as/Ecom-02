@@ -2,6 +2,7 @@ import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 import { createNotification } from "./notificationController.js";
 import { decrypt } from "../utils/cryptoUtils.js";
+import razorpayInstance from "../config/razorpay.js";
 
 export const getAllOrders = async (req, res) => {
   try {
@@ -75,39 +76,88 @@ export const adminUpdateOrderStatus = async (req, res) => {
       return res.status(400).json({ message: "Invalid status" });
     }
 
-    // Determine payment status based on order status
-    let paymentStatusUpdate = {};
-    if (status === 'cancelled') {
-      paymentStatusUpdate = { paymentStatus: 'failed' };
-      console.log('[AdminUpdateOrder] Setting paymentStatus to failed');
-    } else if (status === 'paid' || status === 'shipped' || status === 'delivered') {
-      // Only set to success if it wasn't already (though usually it should remain success)
-      // Ideally we assume if it's shipped/delivered it must be paid.
-      paymentStatusUpdate = { paymentStatus: 'success' };
-    } else if (status === 'pending_payment') {
-      paymentStatusUpdate = { paymentStatus: 'pending' };
-    } else if (status === 'refunded') {
-      paymentStatusUpdate = { paymentStatus: 'refunded' };
-    }
-
-    const order = await Order.findByIdAndUpdate(
-      orderIdToUse,
-      {
-        status,
-        ...paymentStatusUpdate
-      },
-      { new: true, runValidators: false }
-    ).populate("customerId");
-
+    // ⭐ Fetch order first (we need full data for refund/stock logic)
+    const order = await Order.findById(orderIdToUse).populate("customerId");
     if (!order) return res.status(404).json({ message: "Order not found" });
 
-    // Notify Customer about status update
+    const previousStatus = order.status;
+
+    // Determine payment status based on order status
+    if (status === 'cancelled') {
+      if (order.paymentStatus === 'success') {
+        // Will be updated to 'refunded' by the refund logic below
+      } else {
+        order.paymentStatus = 'failed';
+      }
+    } else if (status === 'paid' || status === 'shipped' || status === 'delivered') {
+      order.paymentStatus = 'success';
+    } else if (status === 'pending_payment') {
+      order.paymentStatus = 'pending';
+    } else if (status === 'refunded') {
+      order.paymentStatus = 'refunded';
+    }
+
+    // ⭐ Store deliveredAt timestamp when marking as delivered (MED-4 fix)
+    if (status === 'delivered' && previousStatus !== 'delivered') {
+      order.deliveredAt = new Date();
+    }
+
+    // ⭐ MANUAL REFUND ONLY: Record refund details in DB for tracking, no API call
+    if (status === 'refunded' || status === 'cancelled') {
+      if (order.paymentStatus === 'success') {
+        order.paymentStatus = 'refunded';
+      }
+      
+      if (!order.refundDetails || !order.refundDetails.refundAmount) {
+        order.refundDetails = {
+          refundAmount: order.totalAmount || 0,
+          refundStatus: 'processed',
+          refundedAt: new Date(),
+          notes: 'Manual refund processed by admin'
+        };
+      }
+      console.log(`[REFUND] Order ${order._id} marked as cancelled/refunded. Manual refund tracking recorded.`);
+    }
+
+    // ⭐ CRITICAL-4: Restore stock when status transitions to cancelled or refunded
+    if (['cancelled', 'refunded'].includes(status) && !['cancelled', 'refunded'].includes(previousStatus)) {
+      for (const item of order.items) {
+        await Product.findByIdAndUpdate(item.productId, {
+          $inc: {
+            stock: item.quantity,
+            sold_count: -item.quantity
+          }
+        });
+      }
+      console.log(`[STOCK] Restored stock for order ${order._id} (status: ${previousStatus} → ${status})`);
+    }
+
+    // Update status
+    order.status = status;
+    await order.save();
+
+    // ⭐ MED-1: Context-aware notification messages
+    const notificationMessages = {
+      cancelled: { title: "Order Cancelled", message: `Your order #${order._id.toString().slice(-6)} has been cancelled by the admin.` },
+      refunded: { title: "Refund Processed", message: `Your refund of ₹${order.totalAmount} for order #${order._id.toString().slice(-6)} has been processed.` },
+      return_approved: { title: "Return Approved", message: `Your return request for order #${order._id.toString().slice(-6)} has been approved. Please ship the item back.` },
+      return_rejected: { title: "Return Rejected", message: `Your return request for order #${order._id.toString().slice(-6)} has been reviewed and was not approved.` },
+      refund_initiated: { title: "Refund Initiated", message: `A refund has been initiated for your order #${order._id.toString().slice(-6)}. It will be processed shortly.` },
+      shipped: { title: "Order Shipped", message: `Your order #${order._id.toString().slice(-6)} has been shipped!` },
+      delivered: { title: "Order Delivered", message: `Your order #${order._id.toString().slice(-6)} has been delivered!` },
+    };
+
+    const notification = notificationMessages[status] || {
+      title: "Order Status Updated",
+      message: `Your order status has been updated to: ${status.replaceAll('_', ' ')}`
+    };
+
     if (order.customerId) {
       await createNotification({
         userId: order.customerId._id,
         userType: "customer",
-        title: "Order Status Updated",
-        message: `Your order status has been updated to: ${status.replace('_', ' ')}`,
+        title: notification.title,
+        message: notification.message,
         type: "order"
       });
     }
@@ -118,6 +168,7 @@ export const adminUpdateOrderStatus = async (req, res) => {
     });
 
   } catch (err) {
+    console.error('[AdminUpdateOrder] Error:', err.message);
     res.status(500).json({ error: err.message });
   }
 };

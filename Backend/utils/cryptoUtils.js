@@ -1,8 +1,13 @@
 import crypto from 'crypto';
 
 const ALGORITHM = 'aes-256-cbc';
-const ENCRYPTION_KEY = Buffer.from(process.env.ENCRYPTION_KEY || 'N9fQ7xA2!kZr5PpV0wLh@3Ds8TuYb6Mn', 'hex'); // fallback to a default if env not loaded properly, but env should be fine
 const IV_LENGTH = 16;
+
+// ⭐ HIGH-2 FIX: No hardcoded fallback — fail loudly if env var is missing
+if (!process.env.ENCRYPTION_KEY) {
+    console.error('[CRITICAL] ENCRYPTION_KEY environment variable is not set! Encryption/decryption will fail.');
+}
+
 
 export const encrypt = (text) => {
     if (!text) return text;

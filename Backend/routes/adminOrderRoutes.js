@@ -13,8 +13,9 @@ const router = express.Router();
 
 router.get("/", authenticate, isAdmin, getAllOrders);
 router.get("/:status", authenticate, isAdmin, getOrdersByStatus);
-router.put("/update/:orderId", authenticate, isAdmin, adminUpdateOrderStatus);
-router.put("/:id", authenticate, isAdmin, adminUpdateOrderStatus); // Match frontend expectation
+// ⭐ MED-2 FIX: Specific routes MUST come before parameterized catch-all
 router.put("/cancel/:orderId", authenticate, isAdmin, cancelOrder);
+router.put("/update/:orderId", authenticate, isAdmin, adminUpdateOrderStatus);
+router.put("/:id", authenticate, isAdmin, adminUpdateOrderStatus); // Catch-all for frontend compatibility
 
 export default router;

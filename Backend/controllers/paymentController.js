@@ -64,8 +64,12 @@ export const createPaymentOrder = async (req, res) => {
 
     if (totalAmount <= 0) return res.status(400).json({ message: "Transaction total is 0 or negative. Verify pricing." });
 
+    // ⭐ HIGH-3 FIX: Taxes are inclusive, so grand total is item total + shipping fee
+    const shippingFee = totalAmount > 999 ? 0 : 99;
+    const grandTotal = totalAmount + shippingFee;
+
     const options = {
-      amount: Math.round(totalAmount * 100),
+      amount: Math.round(grandTotal * 100), // Grand total including shipping (taxes are already included in prices)
       currency: "INR",
       receipt: `init_${Date.now()}`,
     };
@@ -118,6 +122,16 @@ export const verifyPayment = async (req, res) => {
       return res.status(400).json({ message: "Security Violation: Invalid Payment Signature Detected." });
     }
 
+    // ⭐ CRITICAL-2: Idempotency — prevent duplicate orders from callback retries
+    const existingOrder = await Order.findOne({ razorpayOrderId: razorpay_order_id });
+    if (existingOrder) {
+      console.log(`[IDEMPOTENCY] Order already exists for razorpay_order_id: ${razorpay_order_id}`);
+      return res.json({
+        message: "Payment already verified.",
+        order: await Order.findById(existingOrder._id).populate("items.productId")
+      });
+    }
+
     // ⭐ SECURITY FIX (VULN-1/2/3): Re-resolve ALL prices from DB — NEVER trust client prices
     const secureItems = [];
     let serverCalculatedTotal = 0;
@@ -153,10 +167,14 @@ export const verifyPayment = async (req, res) => {
     }
 
     // ⭐ SECURITY FIX (VULN-3): Verify Razorpay paid amount matches server-calculated total
+    // Taxes are inclusive, so expected total is subtotal + shipping fee
+    const verifyShippingFee = serverCalculatedTotal > 999 ? 0 : 99;
+    const expectedGrandTotal = serverCalculatedTotal + verifyShippingFee;
+
     try {
       const razorpayOrder = await razorpayInstance.orders.fetch(razorpay_order_id);
       const paidAmountPaise = razorpayOrder.amount; // Amount in paise
-      const expectedAmountPaise = Math.round(serverCalculatedTotal * 100);
+      const expectedAmountPaise = Math.round(expectedGrandTotal * 100);
 
       // Allow a small tolerance for rounding (±1 paisa)
       if (Math.abs(paidAmountPaise - expectedAmountPaise) > 1) {
@@ -190,9 +208,13 @@ export const verifyPayment = async (req, res) => {
       });
     } catch (orderErr) {
       console.error("Placement error after payment:", orderErr.message);
-      // Usually you'd initiate a refund here if stock deduction failed unexpectedly
+
+      // ⭐ MANUAL REFUND ONLY: Log the failure and ask user/admin to resolve manually
+      console.warn(`[MANUAL REFUND REQUIRED] Payment of ₹${expectedGrandTotal} received (Payment ID: ${razorpay_payment_id}) but order placement failed: ${orderErr.message}`);
+
       return res.status(500).json({
-        message: "Payment received but fulfillment failed. Please contact protocol support for manual override.",
+        message: "Payment received but order placement failed. A refund will be processed manually. Please contact support with your Payment ID.",
+        paymentId: razorpay_payment_id,
         error: orderErr.message
       });
     }

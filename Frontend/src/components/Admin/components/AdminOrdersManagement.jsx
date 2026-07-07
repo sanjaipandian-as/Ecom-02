@@ -82,18 +82,39 @@ const AdminOrders = ({ refreshId, triggerGlobalRefresh }) => {
     const [customDate, setCustomDate] = useState('');
     const [activeTab, setActiveTab] = useState('to_ship'); // 'unpaid', 'to_ship', 'in_transit', 'completed', 'all'
 
-    const statuses = ['all', 'pending_payment', 'paid', 'shipped', 'delivered', 'cancelled', 'return_requested', 'refund_initiated', 'refunded'];
+    const statuses = [
+        'all', 
+        'pending_payment', 
+        'paid', 
+        'packed',
+        'shipped', 
+        'delivered', 
+        'cancellation_requested',
+        'cancelled', 
+        'return_requested', 
+        'return_approved', 
+        'return_rejected',
+        'returned', 
+        'refund_initiated', 
+        'refunded'
+    ];
     const statusLabels = {
         'all': 'All Orders',
         'pending_payment': 'Pending Payment',
         'paid': 'Processing',
+        'packed': 'Packed',
         'shipped': 'Shipped',
         'delivered': 'Delivered',
+        'cancellation_requested': 'Cancel Requested',
         'cancelled': 'Cancelled',
         'return_requested': 'Return Requested',
+        'return_approved': 'Return Approved',
+        'return_rejected': 'Return Rejected',
+        'returned': 'Returned',
         'refund_initiated': 'Refund Pending',
         'refunded': 'Refunded'
     };
+
 
     useEffect(() => {
         fetchOrders();
@@ -145,6 +166,7 @@ const AdminOrders = ({ refreshId, triggerGlobalRefresh }) => {
         else if (activeTab === 'to_ship') matchesTab = order.status === 'paid';
         else if (activeTab === 'in_transit') matchesTab = order.status === 'shipped';
         else if (activeTab === 'completed') matchesTab = order.status === 'delivered';
+        else if (activeTab === 'cancelled') matchesTab = ['cancelled', 'cancellation_requested', 'refund_initiated', 'refunded'].includes(order.status);
         else if (activeTab === 'all') matchesTab = true;
 
         const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
@@ -185,10 +207,15 @@ const AdminOrders = ({ refreshId, triggerGlobalRefresh }) => {
         const colors = {
             'pending_payment': 'bg-amber-50 text-amber-600 border-amber-100',
             'paid': 'bg-indigo-50 text-indigo-650 border-indigo-150',
+            'packed': 'bg-purple-50 text-purple-650 border-purple-100',
             'shipped': 'bg-blue-50 text-blue-600 border-blue-100',
             'delivered': 'bg-emerald-50 text-emerald-600 border-emerald-100',
+            'cancellation_requested': 'bg-rose-50 text-rose-650 border-rose-150',
             'cancelled': 'bg-red-50 text-red-600 border-red-100',
             'return_requested': 'bg-orange-50 text-orange-655 border-orange-100',
+            'return_approved': 'bg-teal-50 text-teal-650 border-teal-150',
+            'return_rejected': 'bg-slate-100 text-slate-600 border-slate-200',
+            'returned': 'bg-slate-50 text-slate-600 border-slate-200',
             'refund_initiated': 'bg-teal-50 text-teal-600 border-teal-100',
             'refunded': 'bg-green-50 text-green-700 border-green-100'
         };
@@ -198,6 +225,7 @@ const AdminOrders = ({ refreshId, triggerGlobalRefresh }) => {
     const getStatusIcon = (status) => {
         switch (status) {
             case 'pending_payment': return <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />;
+            case 'cancellation_requested': return <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />;
             case 'delivered': return <MdCheckCircle />;
             case 'shipped': return <MdLocalShipping />;
             case 'cancelled': return <FaTimes className="text-red-500" />;
@@ -368,6 +396,7 @@ const AdminOrders = ({ refreshId, triggerGlobalRefresh }) => {
                         { id: 'unpaid', label: 'Unpaid Orders', icon: <MdReceipt />, color: 'amber', count: orders.filter(o => o.status === 'pending_payment').length },
                         { id: 'in_transit', label: 'In Transit', icon: <MdArrowForward />, color: 'blue', count: orders.filter(o => o.status === 'shipped').length },
                         { id: 'completed', label: 'Completed', icon: <MdCheckCircle />, color: 'emerald', count: orders.filter(o => o.status === 'delivered').length },
+                        { id: 'cancelled', label: 'Cancelled', icon: <FaTimes />, color: 'rose', count: orders.filter(o => ['cancelled', 'cancellation_requested', 'refund_initiated', 'refunded'].includes(o.status)).length },
                         { id: 'all', label: 'View All', icon: <MdFilterList />, color: 'slate', count: orders.length }
                     ].map((tab) => (
                         <button
@@ -408,6 +437,7 @@ const AdminOrders = ({ refreshId, triggerGlobalRefresh }) => {
                         {activeTab === 'unpaid' && "Ledger: Orders awaiting verified digital/physical checkout"}
                         {activeTab === 'in_transit' && "Active Logistics: Dispatched packages in transit"}
                         {activeTab === 'completed' && "Settled: Handover sequence completed by courier"}
+                        {activeTab === 'cancelled' && "Cancelled: Orders that were terminated or refunded"}
                         {activeTab === 'all' && "Central Directory: Comprehensive log history"}
                     </p>
                 </div>
@@ -778,7 +808,7 @@ const AdminOrders = ({ refreshId, triggerGlobalRefresh }) => {
                                                         {order.status === 'paid' && (
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); updateOrderStatus(order._id, 'shipped'); }}
-                                                                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 rounded-none text-[10px] font-bold uppercase tracking-widest transition-all mb-1 shadow-sm border-0 cursor-pointer"
+                                                                className="px-5 py-2.5 bg-indigo-650 hover:bg-indigo-700 rounded-none text-[10px] font-bold uppercase tracking-widest transition-all mb-1 shadow-sm border-0 cursor-pointer"
                                                             >
                                                                 Ship Now
                                                             </button>
@@ -790,6 +820,22 @@ const AdminOrders = ({ refreshId, triggerGlobalRefresh }) => {
                                                             >
                                                                 Set Delivered
                                                             </button>
+                                                        )}
+                                                        {order.status === 'cancellation_requested' && (
+                                                            <>
+                                                                <button
+                                                                    onClick={(e) => { e.stopPropagation(); updateOrderStatus(order._id, 'cancelled'); }}
+                                                                    className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-none text-[10px] font-bold uppercase tracking-widest transition-all mb-1 shadow-sm border-0 cursor-pointer"
+                                                                >
+                                                                    Approve Cancellation
+                                                                </button>
+                                                                <button
+                                                                    onClick={(e) => { e.stopPropagation(); updateOrderStatus(order._id, 'paid'); }}
+                                                                    className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-none text-[10px] font-bold uppercase tracking-widest transition-all mb-1 shadow-sm border-0 cursor-pointer"
+                                                                >
+                                                                    Reject Request
+                                                                </button>
+                                                            </>
                                                         )}
                                                     </div>
                                                 </div>
