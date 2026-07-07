@@ -7,7 +7,8 @@ import placeholderImg from '../../../assets/Placeholder.png';
 
 const ProductCard = ({ product }) => {
     const navigate = useNavigate();
-    const image = product.images?.find((img) => img && img.trim() !== '' && !/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(img)) || product.images?.[0] || placeholderImg;
+    const firstMedia = product.images?.[0] || placeholderImg;
+    const isVideo = product.images?.[0] && /\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(product.images[0]);
     const sellingPrice = product.pricing?.selling_price || 0;
     const mrp = product.pricing?.mrp || sellingPrice;
     const discount = mrp > sellingPrice && product.pricing?.discount_percentage > 0 
@@ -46,11 +47,26 @@ const ProductCard = ({ product }) => {
                     <Star className="w-4 h-4" />
                 </button>
 
-                <img
-                    src={image}
-                    alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                />
+                {isVideo ? (
+                    <video
+                        src={firstMedia}
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                    />
+                ) : (
+                    <img
+                        src={firstMedia}
+                        alt={product.name}
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = placeholderImg;
+                        }}
+                    />
+                )}
 
                 {/* Quick Add Overlay */}
                 <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">

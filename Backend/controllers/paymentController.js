@@ -209,14 +209,44 @@ export const verifyPayment = async (req, res) => {
     } catch (orderErr) {
       console.error("Placement error after payment:", orderErr.message);
 
-      // ⭐ MANUAL REFUND ONLY: Log the failure and ask user/admin to resolve manually
-      console.warn(`[MANUAL REFUND REQUIRED] Payment of ₹${expectedGrandTotal} received (Payment ID: ${razorpay_payment_id}) but order placement failed: ${orderErr.message}`);
+      let refundResult = null;
+      let refundError = null;
 
-      return res.status(500).json({
-        message: "Payment received but order placement failed. A refund will be processed manually. Please contact support with your Payment ID.",
-        paymentId: razorpay_payment_id,
-        error: orderErr.message
-      });
+      if (razorpayInstance) {
+        try {
+          console.log(`[AUTOMATIC REFUND] Initiating Razorpay refund for Payment ID: ${razorpay_payment_id} of amount ₹${expectedGrandTotal}`);
+          refundResult = await razorpayInstance.payments.refund(razorpay_payment_id, {
+            amount: Math.round(expectedGrandTotal * 100),
+            notes: {
+              reason: "Order execution placement failed",
+              error: orderErr.message
+            }
+          });
+          console.log(`[AUTOMATIC REFUND SUCCESS] Refund ID: ${refundResult.id} for Payment ID: ${razorpay_payment_id}`);
+        } catch (refErr) {
+          refundError = refErr.message;
+          console.error(`[AUTOMATIC REFUND FAILED] Payment ID: ${razorpay_payment_id} failed to refund automatically:`, refErr.message);
+        }
+      } else {
+        refundError = "Payment gateway not configured (razorpayInstance is null).";
+        console.warn(`[AUTOMATIC REFUND FAILED] razorpayInstance is null. Cannot refund Payment ID: ${razorpay_payment_id}`);
+      }
+
+      if (refundResult) {
+        return res.status(500).json({
+          message: "Payment was received but order placement failed. An automatic refund was successfully processed via Razorpay.",
+          paymentId: razorpay_payment_id,
+          refundId: refundResult.id,
+          error: orderErr.message
+        });
+      } else {
+        return res.status(500).json({
+          message: "Payment was received but order placement failed. Automatic refund initiation failed. Please contact support with your Payment ID.",
+          paymentId: razorpay_payment_id,
+          refundError: refundError,
+          error: orderErr.message
+        });
+      }
     }
 
   } catch (err) {

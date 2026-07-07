@@ -81,6 +81,7 @@ export const adminUpdateOrderStatus = async (req, res) => {
     if (!order) return res.status(404).json({ message: "Order not found" });
 
     const previousStatus = order.status;
+    const previousPaymentStatus = order.paymentStatus;
 
     // Determine payment status based on order status
     if (status === 'cancelled') {
@@ -102,8 +103,44 @@ export const adminUpdateOrderStatus = async (req, res) => {
       order.deliveredAt = new Date();
     }
 
-    // ⭐ MANUAL REFUND ONLY: Record refund details in DB for tracking, no API call
-    if (status === 'refunded' || status === 'cancelled') {
+    // ⭐ AUTOMATIC REFUND VIA RAZORPAY: If order is online, paid, has payment ID, and status transitions to cancelled or refunded
+    if (['cancelled', 'refunded'].includes(status) && order.paymentMethod === 'online' && previousPaymentStatus === 'success' && order.razorpayPaymentId) {
+      if (razorpayInstance) {
+        try {
+          console.log(`[AUTOMATIC REFUND] Initiating Razorpay refund for Order ${order._id}, Payment ID: ${order.razorpayPaymentId}`);
+          const refundResult = await razorpayInstance.payments.refund(order.razorpayPaymentId, {
+            amount: Math.round(order.totalAmount * 100), // in paise
+            notes: {
+              orderId: order._id.toString(),
+              reason: `Admin changed status to ${status}`
+            }
+          });
+          console.log(`[AUTOMATIC REFUND SUCCESS] Razorpay refund successful for Order ${order._id}. Refund ID: ${refundResult.id}`);
+          
+          order.paymentStatus = 'refunded';
+          order.refundDetails = {
+            refundId: refundResult.id,
+            refundAmount: order.totalAmount || 0,
+            refundStatus: 'processed',
+            refundedAt: new Date(),
+            notes: `Automatic refund processed via Razorpay. Refund ID: ${refundResult.id}`
+          };
+        } catch (refErr) {
+          const refundError = refErr.error?.description || refErr.description || refErr.message || JSON.stringify(refErr);
+          console.error(`[AUTOMATIC REFUND FAILED] Razorpay refund failed for Order ${order._id}:`, refundError);
+          return res.status(500).json({
+            message: `Failed to process automatic refund via Razorpay: ${refundError}. Order status not updated.`,
+            error: refundError
+          });
+        }
+      } else {
+        console.warn(`[AUTOMATIC REFUND] Razorpay instance not configured. Cannot process refund for Order ${order._id}`);
+        return res.status(500).json({
+          message: "Payment gateway is not configured. Cannot process automatic refund."
+        });
+      }
+    } else if (['cancelled', 'refunded'].includes(status)) {
+      // COD or manual payment refund tracking fallback
       if (order.paymentStatus === 'success') {
         order.paymentStatus = 'refunded';
       }
@@ -113,10 +150,10 @@ export const adminUpdateOrderStatus = async (req, res) => {
           refundAmount: order.totalAmount || 0,
           refundStatus: 'processed',
           refundedAt: new Date(),
-          notes: 'Manual refund processed by admin'
+          notes: 'Refund recorded for COD / Manual order'
         };
       }
-      console.log(`[REFUND] Order ${order._id} marked as cancelled/refunded. Manual refund tracking recorded.`);
+      console.log(`[REFUND] Order ${order._id} marked as cancelled/refunded. COD/Manual refund tracking recorded.`);
     }
 
     // ⭐ CRITICAL-4: Restore stock when status transitions to cancelled or refunded
@@ -186,8 +223,43 @@ export const cancelOrder = async (req, res) => {
       return res.status(400).json({ message: "Order is already cancelled." });
     }
 
-    order.status = "cancelled";
-    order.paymentStatus = "failed";
+    // ⭐ AUTOMATIC REFUND: If order is online, paid, and has razorpayPaymentId
+    if (order.paymentMethod === 'online' && order.paymentStatus === 'success' && order.razorpayPaymentId) {
+      if (razorpayInstance) {
+        try {
+          console.log(`[AUTOMATIC REFUND] Initiating Razorpay refund for Order ${order._id}, Payment ID: ${order.razorpayPaymentId}`);
+          const refundResult = await razorpayInstance.payments.refund(order.razorpayPaymentId, {
+            amount: Math.round(order.totalAmount * 100),
+            notes: {
+              orderId: order._id.toString(),
+              reason: "Admin cancelled order via cancel endpoint"
+            }
+          });
+          console.log(`[AUTOMATIC REFUND SUCCESS] Razorpay refund successful for Order ${order._id}. Refund ID: ${refundResult.id}`);
+          order.paymentStatus = "refunded";
+          order.refundDetails = {
+            refundId: refundResult.id,
+            refundAmount: order.totalAmount || 0,
+            refundStatus: 'processed',
+            refundedAt: new Date(),
+            notes: `Automatic refund processed via Razorpay. Refund ID: ${refundResult.id}`
+          };
+        } catch (refErr) {
+          const refundError = refErr.error?.description || refErr.description || refErr.message || JSON.stringify(refErr);
+          console.error(`[AUTOMATIC REFUND FAILED] Razorpay refund failed for Order ${order._id}:`, refundError);
+          return res.status(500).json({
+            message: `Failed to process automatic refund via Razorpay: ${refundError}. Order not cancelled.`,
+            error: refundError
+          });
+        }
+      } else {
+        return res.status(500).json({
+          message: "Payment gateway is not configured. Cannot process automatic refund."
+        });
+      }
+    } else {
+      order.paymentStatus = "failed";
+    }
     await order.save();
 
     // ⭐ SECURITY FIX (VULN-11 + VULN-5): Restore stock when admin confirms cancellation

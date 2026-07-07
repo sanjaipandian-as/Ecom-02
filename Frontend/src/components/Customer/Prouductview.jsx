@@ -663,11 +663,26 @@ const Productview = () => {
                             {similarProducts.map((p) => (
                                 <div key={p._id} onClick={() => navigate(`/product/${p._id}`)} className="group cursor-pointer">
                                     <div className="relative aspect-square rounded-[1.5rem] overflow-hidden bg-[#fdfaf7] border border-[#f3ece4] mb-4 shadow-xs group-hover:shadow-lg transition-all duration-500">
-                                        <img
-                                            src={p.images?.[0] || placeholderImg}
-                                            alt={p.name}
-                                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                                        />
+                                        {p.images?.[0] && /\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(p.images[0]) ? (
+                                            <video
+                                                src={p.images[0]}
+                                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                                                autoPlay
+                                                loop
+                                                muted
+                                                playsInline
+                                            />
+                                        ) : (
+                                            <img
+                                                src={p.images?.[0] || placeholderImg}
+                                                alt={p.name}
+                                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = placeholderImg;
+                                                }}
+                                            />
+                                        )}
                                         <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-black shadow-lg scale-50 group-hover:scale-100 transition-transform">
                                                 <FaShoppingBag className="text-sm" />

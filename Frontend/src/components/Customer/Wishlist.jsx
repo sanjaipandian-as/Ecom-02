@@ -205,15 +205,26 @@ const Wishlist = () => {
                                 onClick={() => navigate(`/product/${item.productId._id}`)}
                                 className="relative aspect-square w-full overflow-hidden bg-gradient-to-b from-slate-50/60 to-slate-100/30 flex items-center justify-center p-6 cursor-pointer"
                             >
-                                <img
-                                    src={item.productId.images?.find(img => img && img.trim() !== '' && !/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(img)) || item.productId.images?.[0] || placeholderImg}
-                                    alt={item.productId.name}
-                                    className="w-4/5 h-4/5 object-contain transition-transform duration-500 group-hover:scale-105"
-                                    onError={(e) => {
-                                        e.target.src = placeholderImg;
-                                        e.target.onerror = null;
-                                    }}
-                                />
+                                {item.productId.images?.[0] && /\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(item.productId.images[0]) ? (
+                                    <video
+                                        src={item.productId.images[0]}
+                                        className="w-4/5 h-4/5 object-contain transition-transform duration-500 group-hover:scale-105"
+                                        autoPlay
+                                        loop
+                                        muted
+                                        playsInline
+                                    />
+                                ) : (
+                                    <img
+                                        src={item.productId.images?.[0] || placeholderImg}
+                                        alt={item.productId.name}
+                                        className="w-4/5 h-4/5 object-contain transition-transform duration-500 group-hover:scale-105"
+                                        onError={(e) => {
+                                            e.target.src = placeholderImg;
+                                            e.target.onerror = null;
+                                        }}
+                                    />
+                                )}
 
                                 {/* Remove Button - Delicate Floating Circle */}
                                 <button

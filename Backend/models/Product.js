@@ -90,18 +90,6 @@ const ProductSchema = new Schema(
         {
           validator: (v) => Array.isArray(v) && v.length >= 2 && v.length <= 8,
           message: "You must upload between 2 and 8 images",
-        },
-        {
-          validator: (v) => {
-            if (!Array.isArray(v) || v.length === 0) return false;
-            const firstFile = v[0];
-            if (!firstFile) return false;
-            // Check if the first file is a video
-            const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.m4v', '.avi'];
-            const fileExt = firstFile.substring(firstFile.lastIndexOf('.')).toLowerCase();
-            return !videoExtensions.includes(fileExt);
-          },
-          message: "The first file must be an image, not a video",
         }
       ],
     },
@@ -249,26 +237,8 @@ const ProductSchema = new Schema(
             return fs.existsSync(absolutePath);
           });
 
-          // 2. Separate images and videos
-          const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.m4v', '.avi'];
-          const imagesOnly = [];
-          const videosOnly = [];
-
-          existingImages.forEach(imgPath => {
-            const lastDotIndex = imgPath.lastIndexOf('.');
-            const fileExt = lastDotIndex !== -1 ? imgPath.substring(lastDotIndex).toLowerCase() : '';
-            if (videoExtensions.includes(fileExt)) {
-              videosOnly.push(imgPath);
-            } else {
-              imagesOnly.push(imgPath);
-            }
-          });
-
-          // 3. Reconstruct: first working image is always first, then rest of images, then videos
-          const sortedImages = [...imagesOnly, ...videosOnly];
-
-          // 4. Map to public URLs
-          ret.images = sortedImages.map(imgPath => {
+          // 2. Map to public URLs (preserving original order)
+          ret.images = existingImages.map(imgPath => {
             if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return imgPath;
             return `${baseUrl}/${imgPath}`;
           });
@@ -301,23 +271,8 @@ const ProductSchema = new Schema(
             return fs.existsSync(absolutePath);
           });
 
-          const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.m4v', '.avi'];
-          const imagesOnly = [];
-          const videosOnly = [];
-
-          existingImages.forEach(imgPath => {
-            const lastDotIndex = imgPath.lastIndexOf('.');
-            const fileExt = lastDotIndex !== -1 ? imgPath.substring(lastDotIndex).toLowerCase() : '';
-            if (videoExtensions.includes(fileExt)) {
-              videosOnly.push(imgPath);
-            } else {
-              imagesOnly.push(imgPath);
-            }
-          });
-
-          const sortedImages = [...imagesOnly, ...videosOnly];
-
-          ret.images = sortedImages.map(imgPath => {
+          // Map to public URLs (preserving original order)
+          ret.images = existingImages.map(imgPath => {
             if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return imgPath;
             return `${baseUrl}/${imgPath}`;
           });

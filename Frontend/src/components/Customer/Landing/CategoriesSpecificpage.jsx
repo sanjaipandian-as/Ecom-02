@@ -26,16 +26,27 @@ const ProductCard = React.memo(({
                 className="aspect-square relative overflow-hidden bg-gray-100 cursor-pointer"
                 onClick={() => onProductClick(product._id)}
             >
-                <img
-                    src={product.images?.find(img => img && img.trim() !== '' && !/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(img)) || product.images?.[0] || placeholderImg}
-                    alt={product.name}
-                    loading="lazy" // Lazy load images for better performance
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    onError={(e) => {
-                        e.target.src = placeholderImg;
-                        e.target.onerror = null;
-                    }}
-                />
+                {product.images?.[0] && /\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(product.images[0]) ? (
+                    <video
+                        src={product.images[0]}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                    />
+                ) : (
+                    <img
+                        src={product.images?.[0] || placeholderImg}
+                        alt={product.name}
+                        loading="lazy" // Lazy load images for better performance
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        onError={(e) => {
+                            e.target.src = placeholderImg;
+                            e.target.onerror = null;
+                        }}
+                    />
+                )}
                 {product.pricing?.discount_percentage > 0 && product.pricing?.mrp > product.pricing?.selling_price && (
                     <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm font-bold">
                         {product.pricing.discount_percentage}% OFF

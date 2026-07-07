@@ -6,7 +6,8 @@ import placeholderImg from '../../assets/Placeholder.png';
 
 const SectionCard = ({ product, accent = 'from-amber-100 via-white to-rose-100' }) => {
     const navigate = useNavigate();
-    const image = product.images?.find((img) => img && img.trim() !== '' && !/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(img)) || product.images?.[0] || placeholderImg;
+    const firstMedia = product.images?.[0] || placeholderImg;
+    const isVideo = product.images?.[0] && /\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(product.images[0]);
     const sellingPrice = product.pricing?.selling_price || 0;
     const mrp = product.pricing?.mrp || sellingPrice;
     const discount = mrp > sellingPrice && product.pricing?.discount_percentage > 0 
@@ -25,15 +26,26 @@ const SectionCard = ({ product, accent = 'from-amber-100 via-white to-rose-100' 
                         {discount}% OFF
                     </div>
                 )}
-                <img
-                    src={image}
-                    alt={product.name}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = placeholderImg;
-                    }}
-                />
+                {isVideo ? (
+                    <video
+                        src={firstMedia}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                    />
+                ) : (
+                    <img
+                        src={firstMedia}
+                        alt={product.name}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = placeholderImg;
+                        }}
+                    />
+                )}
             </div>
 
             <div className="p-4 flex-1 flex flex-col justify-between">
