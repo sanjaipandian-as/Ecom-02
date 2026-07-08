@@ -105,12 +105,12 @@ const Register = () => {
                 email: formData.email,
                 phone: formData.phone,
                 password: formData.password,
-                address: `${formData.addressLine1}${formData.addressLine2 ? `, ${formData.addressLine2}` : ''}, ${formData.city}, ${formData.state} - ${formData.postalCode}`.trim(),
-                addressLine1: formData.addressLine1,
-                addressLine2: formData.addressLine2,
-                city: formData.city,
-                state: formData.state,
-                postalCode: formData.postalCode
+                address: '',
+                addressLine1: '',
+                addressLine2: '',
+                city: '',
+                state: '',
+                postalCode: ''
             };
 
             const response = await API.post('/customer/auth/register', registrationData);
@@ -269,91 +269,7 @@ const Register = () => {
                                     </div>
                                 </div>
 
-                                <div className="rounded-[28px] border border-stone-200 bg-stone-50 p-4 sm:p-5">
-                                    <div className="mb-4 flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#1f3b2d] shadow-sm">
-                                            <FaMapMarkerAlt />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-base font-semibold text-stone-900">Delivery address</h3>
-                                            <p className="text-sm text-stone-500">This helps us make checkout faster later.</p>
-                                        </div>
-                                    </div>
 
-                                    <div className="grid gap-4">
-                                        <div>
-                                            <label htmlFor="addressLine1" className="mb-2 block text-base font-semibold text-stone-700">Address line 1</label>
-                                            <input
-                                                type="text"
-                                                id="addressLine1"
-                                                name="addressLine1"
-                                                value={formData.addressLine1}
-                                                onChange={handleChange}
-                                                className={inputClasses}
-                                                placeholder="Street address, building name"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label htmlFor="addressLine2" className="mb-2 block text-base font-semibold text-stone-700">Address line 2 <span className="font-normal text-stone-400">(Optional)</span></label>
-                                            <input
-                                                type="text"
-                                                id="addressLine2"
-                                                name="addressLine2"
-                                                value={formData.addressLine2}
-                                                onChange={handleChange}
-                                                className={inputClasses}
-                                                placeholder="Apartment, landmark, unit"
-                                            />
-                                        </div>
-
-                                        <div className="grid gap-4 sm:grid-cols-3">
-                                            <div>
-                                                <label htmlFor="city" className="mb-2 block text-base font-semibold text-stone-700">City</label>
-                                                <input
-                                                    type="text"
-                                                    id="city"
-                                                    name="city"
-                                                    value={formData.city}
-                                                    onChange={handleChange}
-                                                    className={inputClasses}
-                                                    placeholder="City"
-                                                    required
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label htmlFor="state" className="mb-2 block text-base font-semibold text-stone-700">State</label>
-                                                <input
-                                                    type="text"
-                                                    id="state"
-                                                    name="state"
-                                                    value={formData.state}
-                                                    onChange={handleChange}
-                                                    className={inputClasses}
-                                                    placeholder="State"
-                                                    required
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label htmlFor="postalCode" className="mb-2 block text-base font-semibold text-stone-700">PIN code</label>
-                                                <input
-                                                    type="text"
-                                                    id="postalCode"
-                                                    name="postalCode"
-                                                    value={formData.postalCode}
-                                                    onChange={handleChange}
-                                                    className={inputClasses}
-                                                    placeholder="600001"
-                                                    pattern="[0-9]{6}"
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <div className="rounded-[28px] border border-stone-200 bg-stone-50 p-4 sm:p-5">
                                     <h3 className="mb-4 text-base font-semibold text-stone-900">Security</h3>

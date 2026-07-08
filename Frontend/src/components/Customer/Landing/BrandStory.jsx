@@ -130,10 +130,10 @@ const BrandStory = () => {
                 <div className="relative max-w-[1320px] mx-auto px-6 sm:px-10 lg:px-16">
                     <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
                         
-                        {/* Left: Founder Image (Larger) */}
-                        <div className="w-full lg:w-[58%] relative rounded-[24px] overflow-hidden aspect-[4/5] sm:aspect-[4/3] lg:aspect-[16/11] shadow-2xl flex-shrink-0">
+                        {/* Left: Founder Image (Matches text height on desktop) */}
+                        <div className="w-full lg:w-[48%] relative rounded-[24px] overflow-hidden aspect-[4/5] sm:aspect-[4/3] lg:aspect-auto lg:self-stretch shadow-2xl flex-shrink-0">
                             <img 
-                                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800" 
+                                src="/PlenoraFounder.jpeg" 
                                 alt="Founder" 
                                 className="w-full h-full object-cover"
                             />
@@ -148,18 +148,32 @@ const BrandStory = () => {
                             </div>
                         </div>
 
-                        {/* Right: Content (Smaller space, smaller text) */}
-                        <div className="w-full lg:w-[42%] flex flex-col justify-center">
-                            <h2 className="text-[28px] sm:text-[34px] lg:text-[38px] font-bold leading-[1.2] text-gold-lustrous mb-6 tracking-tight font-serif">
-                                We Make Skincare That Understands Indian Skin
+                        {/* Right: Content (Skincare story) */}
+                        <div className="w-full lg:w-[52%] flex flex-col justify-center">
+                            <h2 className="text-[28px] sm:text-[34px] lg:text-[38px] font-bold leading-[1.2] text-[#8b9d83] mb-6 tracking-tight font-serif">
+                                The Story Behind Plenora Scientific Skin
                             </h2>
-                            <p className="text-[17px] sm:text-[19px] lg:text-[20px] leading-[1.65] text-stone-600 italic font-serif mb-8 opacity-90">
-                                "Your skin isn't French. Your weather isn't Korean. So why should your skincare be? We make advanced plant-based formulations that understand Indian climate and work on Indian skin. Grounded in Nature, Growing with Science."
-                            </p>
-                            <div>
+                            <div className="text-stone-600 text-sm sm:text-[15px] leading-relaxed space-y-4 font-sans opacity-95">
+                                <p>
+                                    My passion for skincare began in childhood. I always loved caring for others and helping them achieve healthy, confident skin. That passion eventually became my purpose, leading me to create Plenora Scientific Skin—a brand that combines the power of nature with science to develop skin-friendly, effective skincare solutions.
+                                </p>
+                                <p>
+                                    Our journey has been filled with love and trust from our customers. Our Red Wine Facial Kit became a viral favorite, earning countless positive reviews and heartfelt compliments. Seeing the confidence our products bring to people's lives inspires us to keep innovating.
+                                </p>
+                                <p>
+                                    Skincare is deeply personal to me because I have walked the same path as many of our customers. During my teenage years, I struggled with severe acne, trying countless products without finding lasting results. That experience motivated me to research, formulate, and develop our Acne Clear Kit with the goal of helping others overcome the same challenges.
+                                </p>
+                                <p>
+                                    Today, the overwhelming positive feedback and success stories from our customers remind us why we started. Every product we create is carefully formulated with skin-friendly ingredients, backed by thoughtful research, and made with one mission—to help people feel confident in their own skin.
+                                </p>
+                                <p className="font-semibold text-[#6d7c67] font-serif italic text-[15px]">
+                                    "At Plenora Scientific Skin, we don't just create skincare products; we create solutions inspired by real experiences, driven by science, and made with care."
+                                </p>
+                            </div>
+                            <div className="mt-8">
                                 <button
                                     onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                                    className="inline-flex items-center justify-center bg-[#8b9d83] hover:bg-[#7a8a73] text-white rounded-[8px] px-7 py-3.5 text-[14px] sm:text-[15px] font-bold tracking-wide transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                                    className="inline-flex items-center justify-center bg-[#8b9d83] hover:bg-[#7a8a73] text-white rounded-[8px] px-7 py-3.5 text-[14px] sm:text-[15px] font-bold tracking-wide transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 cursor-pointer"
                                 >
                                     Explore Founder's Picks
                                 </button>

@@ -290,12 +290,12 @@ export default function AuthModal() {
                 email: regFormData.email,
                 phone: regFormData.phone,
                 password: regFormData.password,
-                address: `${regFormData.addressLine1}${regFormData.addressLine2 ? `, ${regFormData.addressLine2}` : ''}, ${regFormData.city}, ${regFormData.state} - ${regFormData.postalCode}`.trim(),
-                addressLine1: regFormData.addressLine1,
-                addressLine2: regFormData.addressLine2,
-                city: regFormData.city,
-                state: regFormData.state,
-                postalCode: regFormData.postalCode
+                address: '',
+                addressLine1: '',
+                addressLine2: '',
+                city: '',
+                state: '',
+                postalCode: ''
             };
 
             const response = await API.post('/customer/auth/register', registrationData);
@@ -447,14 +447,14 @@ export default function AuthModal() {
     return (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
             {/* Backdrop with elegant glassmorphic blur */}
-            <div 
+            <div
                 className="absolute inset-0 bg-emerald-deep/45 backdrop-blur-md transition-opacity duration-300"
                 onClick={closeModal}
             />
 
             {/* Modal Card */}
             <div className="relative w-full max-w-[460px] bg-white/95 backdrop-blur-xl rounded-[32px] border border-gold-champagne/25 shadow-[0_24px_50px_-12px_rgba(11,20,16,0.18)] overflow-hidden animate-scale-up max-h-[92vh] flex flex-col z-10 ring-1 ring-gold-champagne/15">
-                
+
                 {/* Borderless Luxury Header */}
                 <div className="flex items-start justify-between px-8 pt-8 pb-4 shrink-0">
                     <div>
@@ -473,7 +473,7 @@ export default function AuthModal() {
                             {viewState === 'reset' && 'Reset Password'}
                         </h2>
                     </div>
-                    <button 
+                    <button
                         onClick={closeModal}
                         className="w-8 h-8 rounded-full bg-cream-base border border-gold-champagne/15 hover:bg-gold-light/40 flex items-center justify-center text-slate-500 hover:text-emerald-deep transition-all cursor-pointer"
                         title="Close"
@@ -484,7 +484,7 @@ export default function AuthModal() {
 
                 {/* Form Container (Scrollable) */}
                 <div className="px-8 pb-8 pt-2 overflow-y-auto flex-1 custom-scrollbar">
-                    
+
                     {viewState === 'login' && (
                         /* LOGIN FORM */
                         <form onSubmit={handleLoginSubmit} className="space-y-5">
@@ -517,7 +517,7 @@ export default function AuthModal() {
                             <div>
                                 <div className="flex items-center justify-between mb-1.5">
                                     <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500">Password</label>
-                                    <button 
+                                    <button
                                         type="button"
                                         onClick={() => {
                                             setTargetEmail(email);
@@ -591,7 +591,7 @@ export default function AuthModal() {
 
                             <div className="pt-2 text-center text-xs text-stone-500 font-medium">
                                 New here?{' '}
-                                <button 
+                                <button
                                     type="button"
                                     onClick={() => switchMode('register')}
                                     className="font-bold text-gold-lustrous hover:text-gold-deep cursor-pointer"
@@ -685,95 +685,7 @@ export default function AuthModal() {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            {/* Section: Delivery Address */}
-                            <div className="space-y-3 pt-2">
-                                <div className="flex items-center gap-2 text-emerald-deep font-bold font-serif text-sm border-b border-gold-champagne/15 pb-1.5">
-                                    <FaMapMarkerAlt className="w-3.5 h-3.5 text-gold-lustrous" />
-                                    <span className="tracking-wide">Delivery Address</span>
-                                </div>
-
-                                <div>
-                                    <label className="block text-[9.5px] font-bold uppercase tracking-wider text-stone-500 mb-1">Address Line 1</label>
-                                    <div className="relative">
-                                        <FaMapMarkerAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-lustrous/40 w-3 h-3" />
-                                        <input
-                                            type="text"
-                                            name="addressLine1"
-                                            value={regFormData.addressLine1}
-                                            onChange={handleRegChange}
-                                            placeholder="Street name, building"
-                                            required
-                                            className="w-full rounded-xl border border-stone-200 bg-cream-base/20 pl-8 pr-3 py-2 text-xs text-stone-900 outline-none transition-all placeholder:text-stone-400 focus:border-gold-lustrous focus:bg-white focus:ring-2 focus:ring-gold-lustrous/10"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-[9.5px] font-bold uppercase tracking-wider text-stone-500 mb-1">Address Line 2 <span className="font-normal text-stone-400">(Optional)</span></label>
-                                    <div className="relative">
-                                        <FaMapMarkerAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-lustrous/40 w-3 h-3" />
-                                        <input
-                                            type="text"
-                                            name="addressLine2"
-                                            value={regFormData.addressLine2}
-                                            onChange={handleRegChange}
-                                            placeholder="Flat, landmark"
-                                            className="w-full rounded-xl border border-stone-200 bg-cream-base/20 pl-8 pr-3 py-2 text-xs text-stone-900 outline-none transition-all placeholder:text-stone-400 focus:border-gold-lustrous focus:bg-white focus:ring-2 focus:ring-gold-lustrous/10"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-3 gap-2">
-                                    <div>
-                                        <label className="block text-[9.5px] font-bold uppercase tracking-wider text-stone-500 mb-1">City</label>
-                                        <div className="relative">
-                                            <FaMapMarkerAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-lustrous/40 w-3 h-3" />
-                                            <input
-                                                type="text"
-                                                name="city"
-                                                value={regFormData.city}
-                                                onChange={handleRegChange}
-                                                placeholder="City"
-                                                required
-                                                className="w-full rounded-xl border border-stone-200 bg-cream-base/20 pl-8 pr-3 py-2 text-xs text-stone-900 outline-none transition-all placeholder:text-stone-400 focus:border-gold-lustrous focus:bg-white focus:ring-2 focus:ring-gold-lustrous/10"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-[9.5px] font-bold uppercase tracking-wider text-stone-500 mb-1">State</label>
-                                        <div className="relative">
-                                            <FaMapMarkerAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-lustrous/40 w-3 h-3" />
-                                            <input
-                                                type="text"
-                                                name="state"
-                                                value={regFormData.state}
-                                                onChange={handleRegChange}
-                                                placeholder="State"
-                                                required
-                                                className="w-full rounded-xl border border-stone-200 bg-cream-base/20 pl-8 pr-3 py-2 text-xs text-stone-900 outline-none transition-all placeholder:text-stone-400 focus:border-gold-lustrous focus:bg-white focus:ring-2 focus:ring-gold-lustrous/10"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-[9.5px] font-bold uppercase tracking-wider text-stone-500 mb-1">PIN Code</label>
-                                        <div className="relative">
-                                            <FaMapMarkerAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-lustrous/40 w-3 h-3" />
-                                            <input
-                                                type="text"
-                                                name="postalCode"
-                                                value={regFormData.postalCode}
-                                                onChange={handleRegChange}
-                                                placeholder="600001"
-                                                pattern="[0-9]{6}"
-                                                required
-                                                className="w-full rounded-xl border border-stone-200 bg-cream-base/20 pl-8 pr-3 py-2 text-xs text-stone-900 outline-none transition-all placeholder:text-stone-400 focus:border-gold-lustrous focus:bg-white focus:ring-2 focus:ring-gold-lustrous/10"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                              </div>
 
                             {/* Section: Security */}
                             <div className="space-y-3 pt-2">
@@ -893,7 +805,7 @@ export default function AuthModal() {
 
                             <div className="text-center text-xs text-stone-500 font-medium pt-2">
                                 Already have an account?{' '}
-                                <button 
+                                <button
                                     type="button"
                                     onClick={() => switchMode('login')}
                                     className="font-bold text-gold-lustrous hover:text-gold-deep cursor-pointer"
@@ -917,7 +829,7 @@ export default function AuthModal() {
                                 <p className="text-xs text-stone-500 leading-relaxed mb-4 text-center">
                                     A 6-digit verification code was sent to <strong className="text-emerald-deep font-semibold">{targetEmail}</strong>. Enter it below to verify your account:
                                 </p>
-                                
+
                                 <div className="relative">
                                     <FaKey className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-lustrous/50 w-3.5 h-3.5" />
                                     <input
@@ -944,7 +856,7 @@ export default function AuthModal() {
                             <div className="flex flex-col items-center justify-center gap-3 pt-2 text-xs">
                                 <div className="text-stone-500 font-medium">
                                     Didn't get the code?{' '}
-                                    <button 
+                                    <button
                                         type="button"
                                         onClick={handleResendOtp}
                                         disabled={resendTimer > 0}
@@ -977,7 +889,7 @@ export default function AuthModal() {
                                 <p className="text-xs text-stone-500 leading-relaxed mb-4">
                                     Enter your registered email address below. We'll send you a 6-digit OTP code to verify identity and reset your password.
                                 </p>
-                                
+
                                 <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1.5">Email Address</label>
                                 <div className="relative">
                                     <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-lustrous/50 w-3.5 h-3.5" />
