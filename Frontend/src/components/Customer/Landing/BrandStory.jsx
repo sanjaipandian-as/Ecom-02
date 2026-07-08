@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { FaCheckCircle, FaStar, FaArrowRight } from 'react-icons/fa';
+import { Sun, FlaskConical, Feather, Leaf, ShieldCheck, Sparkles } from 'lucide-react';
 
 const useInView = (threshold = 0.12) => {
     const [isInView, setIsInView] = useState(false);
@@ -88,27 +89,27 @@ const BrandStory = () => {
                     {/* Separator */}
                     <div style={anim(s1In, 0.3)} className="w-full h-px bg-gradient-to-r from-gold-champagne/30 via-gold-champagne/10 to-transparent mb-10" />
 
-                    {/* Three stats / pillars — horizontal strip */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-6 lg:gap-12">
+                    {/* Trust Badges Grid — Made for Indian Skintone, Clean & Safe Claims */}
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 lg:gap-8 mt-12">
                         {[
-                            { number: '100%', label: 'Science-Driven Formulas', sub: 'Clinically researched & dermatologist tested' },
-                            { number: 'Pure', label: 'Selected Ingredients', sub: 'Botanical purity meets active compounds' },
-                            { number: 'Safe', label: 'Effective Results', sub: 'Innovation, safety & visible transformation' },
+                            { label: 'Made for Indian Skintone', icon: Sun },
+                            { label: 'No Harsh Chemicals', icon: FlaskConical },
+                            { label: 'Gentle and Effective', icon: Feather },
+                            { label: 'Skin Friendly Ingredients', icon: Leaf },
+                            { label: 'No Harsh Preservatives', icon: ShieldCheck },
+                            { label: 'Parabens & Sulphate Free', icon: Sparkles }
                         ].map((item, i) => (
                             <div
                                 key={item.label}
-                                style={anim(s1In, 0.35 + i * 0.1)}
-                                className="group"
+                                style={anim(s1In, 0.35 + i * 0.08)}
+                                className="group flex flex-col items-center text-center p-6 rounded-2xl bg-[#12221b]/40 border border-gold-champagne/10 hover:bg-[#12221b]/80 hover:border-gold-champagne/30 transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1"
                             >
-                                <p className="text-[38px] sm:text-[44px] lg:text-[52px] font-bold text-gold-champagne leading-none mb-3 tracking-tight">
-                                    {item.number}
-                                </p>
-                                <p className="text-[16px] sm:text-[18px] font-semibold text-white mb-1.5 tracking-wide uppercase">
+                                <div className="w-12 h-12 rounded-full bg-gold-champagne/10 text-gold-champagne flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-gold-champagne/20 transition-all duration-300">
+                                    <item.icon className="w-6 h-6 stroke-[1.5]" />
+                                </div>
+                                <h4 className="text-[12px] sm:text-[13px] font-bold text-white uppercase tracking-[0.15em] font-outfit leading-relaxed max-w-[150px]">
                                     {item.label}
-                                </p>
-                                <p className="text-[14px] sm:text-[15px] text-[#8a9e94] leading-relaxed">
-                                    {item.sub}
-                                </p>
+                                </h4>
                             </div>
                         ))}
                     </div>

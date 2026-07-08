@@ -23,25 +23,25 @@ const BrandRegistry = () => {
     const [openFaq, setOpenFaq] = useState(null);
 
     const brandLogos = [
-        'Standard', 'Coronation', 'Cock Brand', 'Sony', 'Ayyan', 'Peacock', 'Celebration', 'Shakthi'
+        'Plenora Face', 'Plenora Glow', 'Plenora Clinical', 'Plenora Botanicals', 'Plenora Safe', 'Plenora Pure', 'Plenora Essential', 'Plenora Active'
     ];
 
     const faqs = [
         {
-            question: "What are the requirements for enrolling a crackers brand?",
-            answer: "You need your brand name or logo on products/packaging, all safety certifications (BIS, PESO approval), and a pending or registered trademark from the government trademark office."
+            question: "What are the requirements for enrolling a skincare brand?",
+            answer: "You need your brand name or logo on products/packaging, all safety certifications (dermatologist testing, GMP compliance), and a pending or registered trademark from the government trademark office."
         },
         {
             question: "Do I need multiple accounts for different states?",
             answer: "No, you can manage multiple states from one account. Just add your licenses and certifications for each state."
         },
         {
-            question: "Can I enroll more than one crackers brand?",
+            question: "Can I enroll more than one skincare brand?",
             answer: "Yes, you can enroll multiple brands. Each brand needs to meet the requirements and safety certifications separately."
         },
         {
             question: "Why am I receiving an error message during enrollment?",
-            answer: "Common reasons: incomplete safety certification, brand name mismatch, missing PESO license, or pending verification. Check all required safety documents are uploaded."
+            answer: "Common reasons: incomplete safety certification, brand name mismatch, missing GMP compliance certificate, or pending verification. Check all required safety documents are uploaded."
         },
         {
             question: "How do I view or edit my application?",
@@ -61,7 +61,7 @@ const BrandRegistry = () => {
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <h1 className="text-2xl font-bold text-gray-900">
-                                APK<span className="text-primary">Crackers</span>
+                                Plenora<span className="text-primary"> Scientific Skin</span>
                                 <span className="text-sm text-gray-500 ml-2 font-normal">Brand Registry</span>
                             </h1>
                         </div>
@@ -80,10 +80,10 @@ const BrandRegistry = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="max-w-3xl">
                         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                            Protect and Grow Your Crackers Brand
+                            Protect and Grow Your Skincare Brand
                         </h2>
                         <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                            Join Anti Turnish Jewellery Brand Registry to protect your intellectual property, ensure product safety, and reach millions of customers during festive seasons.
+                            Join Plenora Scientific Skin Brand Registry to protect your intellectual property, ensure product safety, and reach millions of customers.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <button
@@ -110,11 +110,11 @@ const BrandRegistry = () => {
                         </div>
                         <div>
                             <div className="text-4xl font-bold mb-2">15,000+</div>
-                            <p className="text-primary-foreground/80">Trusted crackers brands</p>
+                            <p className="text-primary-foreground/80">Trusted skincare brands</p>
                         </div>
                         <div>
                             <div className="text-4xl font-bold mb-2">500M+</div>
-                            <p className="text-primary-foreground/80">Safe crackers units sold</p>
+                            <p className="text-primary-foreground/80">Safe skincare units sold</p>
                         </div>
                     </div>
                 </div>
@@ -124,7 +124,7 @@ const BrandRegistry = () => {
             <section className="py-16 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h3 className="text-3xl font-bold text-gray-900 mb-12 text-center">
-                        Why Register Your Crackers Brand?
+                        Why Register Your Skincare Brand?
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -134,7 +134,7 @@ const BrandRegistry = () => {
                             </div>
                             <h4 className="text-xl font-bold text-gray-900 mb-3">Protect Your Brand</h4>
                             <p className="text-gray-600 leading-relaxed">
-                                Detect and report counterfeit crackers and safety violations. Our system blocks dangerous fake products before they reach customers.
+                                Detect and report counterfeit skincare and safety violations. Our system blocks dangerous fake products before they reach customers.
                             </p>
                         </div>
 
@@ -165,7 +165,7 @@ const BrandRegistry = () => {
             <section className="py-12 bg-gray-50 border-y border-gray-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
-                        Trusted by Leading Crackers Brands
+                        Trusted by Leading Skincare Brands
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-6">
                         {brandLogos.map((brand, index) => (
@@ -209,8 +209,8 @@ const BrandRegistry = () => {
                                 <div className="flex gap-3">
                                     <FaCheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-1" />
                                     <div>
-                                        <p className="font-semibold text-gray-900">PESO License</p>
-                                        <p className="text-gray-600 text-sm">Valid license for manufacturing/selling crackers</p>
+                                        <p className="font-semibold text-gray-900">GMP Compliance</p>
+                                        <p className="text-gray-600 text-sm">Valid Good Manufacturing Practice compliance certification</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-3">
@@ -247,7 +247,7 @@ const BrandRegistry = () => {
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <FaCheckCircle className="w-5 h-5 text-gray-600" />
-                                    <span className="text-gray-700">PESO license application</span>
+                                    <span className="text-gray-700">GMP compliance application</span>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <FaCheckCircle className="w-5 h-5 text-gray-600" />
@@ -293,7 +293,7 @@ const BrandRegistry = () => {
                             <FaShieldAlt className="w-8 h-8 text-primary mb-4" />
                             <h4 className="text-lg font-bold text-gray-900 mb-2">Brand Store</h4>
                             <p className="text-gray-600 text-sm mb-4">
-                                Create a dedicated store to showcase your complete crackers range
+                                Create a dedicated store to showcase your complete skincare range
                             </p>
                         </div>
 
@@ -427,7 +427,7 @@ const BrandRegistry = () => {
                         Ready to Register Your Brand?
                     </h3>
                     <p className="text-xl text-primary-foreground/80 mb-8">
-                        Join thousands of trusted crackers brands. Start your registration today.
+                        Join thousands of trusted skincare brands. Start your registration today.
                     </p>
                     <div className="flex flex-wrap gap-4 justify-center">
                         <button
@@ -447,7 +447,7 @@ const BrandRegistry = () => {
             <footer className="bg-gray-900 text-white py-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <p className="text-gray-400">
-                        © 2024 Anti Turnish Jewellery Brand Registry. All rights reserved.
+                        © 2024 Plenora Scientific Skin Brand Registry. All rights reserved.
                     </p>
                 </div>
             </footer>

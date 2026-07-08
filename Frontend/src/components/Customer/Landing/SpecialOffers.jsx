@@ -109,12 +109,12 @@ const SpecialOffers = () => {
                             <div className="bg-gray-50 rounded-lg overflow-hidden mb-2 aspect-square flex items-center justify-center">
                                 <img
                                     src="https://images.unsplash.com/photo-1616422323382-74843b0ce49d?w=400&q=80"
-                                    alt="Jewelry"
+                                    alt="Skincare"
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                     onError={(e) => { e.target.src = '/Monkey.jpg'; e.target.onerror = null; }}
                                 />
                             </div>
-                            <p className="text-xs text-gray-700">Jewelry</p>
+                            <p className="text-xs text-gray-700">Skincare</p>
                         </div>
                     </div>
                     <button

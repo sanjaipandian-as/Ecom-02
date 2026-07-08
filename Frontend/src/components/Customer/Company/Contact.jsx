@@ -245,10 +245,10 @@ const Contact = () => {
                                     </p>
                                     <div className="space-y-2 text-sm">
                                         <p className="text-gray-700">
-                                            <strong>Email:</strong> business@apkcrackers.com
+                                            <strong>Email:</strong> plenorascientificskin@gmail.com
                                         </p>
                                         <p className="text-gray-700">
-                                            <strong>Phone:</strong> +91 98765 43211
+                                            <strong>Phone:</strong> +91 74488 33345
                                         </p>
                                     </div>
                                 </div>
@@ -256,7 +256,7 @@ const Contact = () => {
                                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
                                     <h3 className="font-bold text-gray-900 mb-3">Visit Our Store</h3>
                                     <p className="text-gray-600 mb-4">
-                                        Come visit our showroom in Sivakasi to see our complete range of products.
+                                        Come visit our showroom in Chennai to see our complete range of products.
                                     </p>
                                     <div className="space-y-2 text-sm">
                                         <p className="text-gray-700">
@@ -319,7 +319,7 @@ const Contact = () => {
                         Call us now for instant support
                     </p>
                     <a
-                        href="tel:+919876543210"
+                        href="tel:+917448833345"
                         className="inline-flex items-center gap-2 bg-white hover:bg-gray-100 text-primary font-semibold px-8 py-4 rounded-lg text-lg transition-colors"
                     >
                         <FiPhone className="w-5 h-5" />

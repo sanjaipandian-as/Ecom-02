@@ -33,7 +33,7 @@ const Shipping = () => {
                         <div>
                             <FiPackage className="w-10 h-10 mx-auto mb-3" />
                             <div className="text-3xl font-bold mb-1">Safe</div>
-                            <p className="text-primary-foreground/80">PESO compliant</p>
+                            <p className="text-primary-foreground/80">Eco-friendly & Safe</p>
                         </div>
                     </div>
                 </div>
@@ -139,7 +139,7 @@ const Shipping = () => {
             <section className="py-16 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 className="text-3xl font-bold text-gray-900 mb-6">Safety & Packaging</h2>
-                    <p className="text-lg text-gray-600 mb-8">All crackers packed per PESO guidelines:</p>
+                    <p className="text-lg text-gray-600 mb-8">All skincare packages are carefully prepared for shipping:</p>
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div className="text-center p-6">
                             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -160,7 +160,7 @@ const Shipping = () => {
                                 <FiPackage className="w-8 h-8 text-primary" />
                             </div>
                             <h3 className="font-bold text-gray-900 mb-2">Safety Labels</h3>
-                            <p className="text-gray-600 text-sm">Hazardous material labels</p>
+                            <p className="text-gray-600 text-sm">Fragile & care labels</p>
                         </div>
                         <div className="text-center p-6">
                             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -206,7 +206,7 @@ const Shipping = () => {
                     <div className="grid md:grid-cols-2 gap-4">
                         <div className="flex items-start gap-3">
                             <span className="text-primary font-bold text-xl">•</span>
-                            <p className="text-gray-700">Delivery times may vary during festive seasons</p>
+                            <p className="text-gray-700">Delivery times may vary slightly during holiday seasons</p>
                         </div>
                         <div className="flex items-start gap-3">
                             <span className="text-primary font-bold text-xl">•</span>

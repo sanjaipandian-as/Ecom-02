@@ -69,16 +69,13 @@ const AdminBestSellerCategories = () => {
         selected.some((s, i) => i !== slotIdx && s === catName);
 
     const handleSave = async () => {
-        const filled = selected.map(c => c.trim());
-        if (filled.some(c => !c)) {
-            showToast('error', 'Please select a category for all 4 slots.');
-            return;
-        }
         try {
             setSaving(true);
-            const res = await API.put('/bestseller-config', { categories: filled });
-            setSaved(res.data.categories);
-            setSelected(res.data.categories);
+            const res = await API.put('/bestseller-config', { categories: selected });
+            const cats = res.data.categories || [];
+            const padded = [...cats, '', '', '', ''].slice(0, 4);
+            setSaved(padded);
+            setSelected(padded);
             showToast('success', 'Categories saved successfully!');
         } catch (err) {
             showToast('error', err?.response?.data?.message || 'Failed to save.');
@@ -91,8 +88,10 @@ const AdminBestSellerCategories = () => {
         try {
             setResetting(true);
             const res = await API.post('/bestseller-config/reset');
-            setSaved(res.data.categories);
-            setSelected(res.data.categories);
+            const cats = res.data.categories || [];
+            const padded = [...cats, '', '', '', ''].slice(0, 4);
+            setSaved(padded);
+            setSelected(padded);
             showToast('success', 'Reset to defaults.');
         } catch (err) {
             showToast('error', 'Failed to reset.');
