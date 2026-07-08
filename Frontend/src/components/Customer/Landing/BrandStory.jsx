@@ -170,14 +170,6 @@ const BrandStory = () => {
                                     "At Plenora Scientific Skin, we don't just create skincare products; we create solutions inspired by real experiences, driven by science, and made with care."
                                 </p>
                             </div>
-                            <div className="mt-8">
-                                <button
-                                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                                    className="inline-flex items-center justify-center bg-[#8b9d83] hover:bg-[#7a8a73] text-white rounded-[8px] px-7 py-3.5 text-[14px] sm:text-[15px] font-bold tracking-wide transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 cursor-pointer"
-                                >
-                                    Explore Founder's Picks
-                                </button>
-                            </div>
                         </div>
 
                     </div>
