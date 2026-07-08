@@ -413,6 +413,10 @@ const Checkout = () => {
 
     const handlePayment = () => {
         if (processing || orderCreated) return;
+        if (!selectedAddress) {
+            setToast({ show: true, type: 'error', message: 'Address Required', subMessage: 'Please select or add a shipping address to proceed.' });
+            return;
+        }
         if (!acceptPolicy) {
             setToast({ show: true, type: 'error', message: 'Policy Required', subMessage: 'Please accept the terms to continue' });
             return;
