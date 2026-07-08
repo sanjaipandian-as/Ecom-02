@@ -7,6 +7,7 @@ import Skeleton from '../Common/Skeleton';
 import placeholderImg from '../../assets/Placeholder.png';
 import Topbar from './Topbar';
 import Footer from './Footer';
+import { getLocalWishlist, removeFromLocalWishlist, getLocalCart, addToLocalCart } from '../../utils/localCart';
 
 const Wishlist = () => {
     const navigate = useNavigate();
@@ -24,13 +25,15 @@ const Wishlist = () => {
 
     const fetchWishlist = async () => {
         try {
+            setLoading(true);
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (!token) {
-                navigate('/Login');
+                const localItems = getLocalWishlist();
+                setWishlistItems(localItems);
+                setError('');
                 return;
             }
 
-            setLoading(true);
             const response = await API.get('/wishlist');
             setWishlistItems(Array.isArray(response.data) ? response.data : []);
             setError('');
@@ -54,6 +57,12 @@ const Wishlist = () => {
     const removeFromWishlist = useCallback(async (productId) => {
         setRemovingItem(productId);
         try {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (!token) {
+                removeFromLocalWishlist(productId);
+                setWishlistItems(prevItems => prevItems.filter(item => item && item.productId && (item.productId._id || item.productId) !== productId));
+                return;
+            }
             await API.delete(`/wishlist/remove/${productId}`);
             setWishlistItems(prevItems => prevItems.filter(item => item && item.productId && item.productId._id !== productId));
         } catch (err) {
@@ -67,7 +76,11 @@ const Wishlist = () => {
     const fetchCart = async () => {
         try {
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-            if (!token) return;
+            if (!token) {
+                const localItems = getLocalCart();
+                setCartItems(localItems);
+                return;
+            }
 
             const response = await API.get('/cart');
             setCartItems(response.data.items || []);
@@ -89,6 +102,13 @@ const Wishlist = () => {
 
         setAddingToCart(product._id);
         try {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (!token) {
+                addToLocalCart(product, 1);
+                setError('');
+                fetchCart(); // Refresh cart items
+                return;
+            }
             await API.post('/cart/add', {
                 productId: product._id,
                 quantity: 1
@@ -97,7 +117,7 @@ const Wishlist = () => {
             fetchCart(); // Refresh cart items
         } catch (err) {
             console.error('Add to cart error:', err);
-            setError(err.response?.data?.message || 'Failed to add to cart');
+            setError(err.response?.data?.message || err.message || 'Failed to add to cart');
         } finally {
             setAddingToCart(null);
         }

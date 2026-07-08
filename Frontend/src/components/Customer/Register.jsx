@@ -12,6 +12,7 @@ import {
 } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import API from '../../../api';
+import { syncLocalDataWithServer } from '../../utils/localCart';
 
 const benefits = [
     'Save addresses for faster future checkout',
@@ -121,11 +122,18 @@ const Register = () => {
                 localStorage.setItem('userRole', 'customer');
                 localStorage.setItem('loginTime', new Date().getTime().toString());
 
+                // Sync local guest data to DB on register success
+                await syncLocalDataWithServer();
+
+                const searchParams = new URLSearchParams(window.location.search);
+                const redirect = searchParams.get('redirect');
+                const nextUrl = redirect || '/';
+
                 setSuccess('Account created successfully. Redirecting...');
                 toast.success('Welcome! Your account is ready.');
 
                 setTimeout(() => {
-                    window.location.href = '/';
+                    window.location.href = nextUrl;
                 }, 1400);
             }
         } catch (err) {

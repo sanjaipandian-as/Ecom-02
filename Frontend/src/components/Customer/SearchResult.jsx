@@ -4,6 +4,7 @@ import { FaStar, FaShoppingCart, FaCheckCircle, FaExclamationCircle, FaHeart, Fa
 import API from '../../../api';
 import Skeleton from '../Common/Skeleton';
 import placeholderImg from '../../assets/Placeholder.png';
+import { getLocalCart, addToLocalCart, getLocalWishlist, addToLocalWishlist, removeFromLocalWishlist } from '../../utils/localCart';
 
 
 const SearchResult = () => {
@@ -115,10 +116,17 @@ const SearchResult = () => {
     const fetchWishlist = async () => {
         try {
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-            if (!token) return;
+            if (!token) {
+                const localWish = getLocalWishlist();
+                const wishlistProductIds = localWish.map(item => item.productId?._id || item.productId);
+                setWishlistItems(wishlistProductIds);
+                return;
+            }
 
             const response = await API.get('/wishlist');
-            const wishlistProductIds = (Array.isArray(response.data) ? response.data : []).map(item => item.productId._id);
+            const wishlistProductIds = (Array.isArray(response.data) ? response.data : [])
+                .filter(item => item && item.productId)
+                .map(item => item.productId._id);
             setWishlistItems(wishlistProductIds);
         } catch (error) {
             console.error('Error fetching wishlist:', error);
@@ -128,7 +136,11 @@ const SearchResult = () => {
     const fetchCart = async () => {
         try {
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-            if (!token) return;
+            if (!token) {
+                const localItems = getLocalCart();
+                setCartItems(localItems);
+                return;
+            }
 
             const response = await API.get('/cart');
             setCartItems(response.data.items || []);
@@ -137,56 +149,62 @@ const SearchResult = () => {
         }
     };
 
-    const toggleWishlist = async (e, productId) => {
+    const toggleWishlist = async (e, product) => {
         e.stopPropagation();
-
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (!token) {
-            showNotification('Please login to add items to wishlist', 'error');
-            setTimeout(() => navigate('/Login'), 1500);
-            return;
-        }
+        const productId = product._id;
+        const isFav = wishlistItems.includes(productId);
 
         setTogglingWishlist(productId);
-
         try {
-            const isInWishlist = wishlistItems.includes(productId);
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (!token) {
+                if (isFav) {
+                    removeFromLocalWishlist(productId);
+                    showNotification('Removed from wishlist', 'success');
+                } else {
+                    addToLocalWishlist(product);
+                    showNotification('Added to wishlist!', 'success');
+                }
+                fetchWishlist();
+                return;
+            }
 
-            if (isInWishlist) {
+            if (isFav) {
                 await API.delete(`/wishlist/remove/${productId}`);
-                setWishlistItems(prev => prev.filter(id => id !== productId));
                 showNotification('Removed from wishlist', 'success');
             } else {
                 await API.post('/wishlist/add', { productId });
-                setWishlistItems(prev => [...prev, productId]);
                 showNotification('Added to wishlist!', 'success');
             }
+            fetchWishlist();
         } catch (error) {
             console.error('Wishlist error:', error);
-            if (error.response?.status === 401) {
-                showNotification('Session expired. Please login again', 'error');
-                setTimeout(() => navigate('/Login'), 1500);
-            } else {
-                showNotification(error.response?.data?.message || 'Failed to update wishlist', 'error');
-            }
+            showNotification('Failed to update wishlist', 'error');
         } finally {
             setTogglingWishlist(null);
         }
     };
 
-    const handleAddToCart = async (e, productId) => {
+    const handleAddToCart = async (e, product) => {
         e.stopPropagation();
-
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (!token) {
-            showNotification('Please login to add items to cart', 'error');
-            setTimeout(() => navigate('/Login'), 1500);
+        const productId = product._id;
+        
+        const inCart = cartItems.some(item => (item.productId?._id || item.productId) === productId);
+        if (inCart) {
+            navigate('/Cart');
             return;
         }
 
         setAddingToCart(productId);
-
         try {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (!token) {
+                addToLocalCart(product, 1);
+                showNotification('Added to cart successfully!', 'success');
+                fetchCart();
+                return;
+            }
+
             await API.post('/cart/add', {
                 productId: productId.toString(),
                 quantity: 1
@@ -196,12 +214,7 @@ const SearchResult = () => {
             fetchCart();
         } catch (error) {
             console.error('Add to cart error:', error);
-            if (error.response?.status === 401) {
-                showNotification('Session expired. Please login again', 'error');
-                setTimeout(() => navigate('/Login'), 1500);
-            } else {
-                showNotification(error.response?.data?.message || 'Failed to add to cart', 'error');
-            }
+            showNotification(error.response?.data?.message || error.message || 'Failed to add to cart', 'error');
         } finally {
             setAddingToCart(null);
         }
@@ -449,7 +462,7 @@ const SearchResult = () => {
 
                             <div className="flex items-center gap-4 w-full sm:w-auto">
                                 <button
-                                    onClick={(e) => toggleWishlist(e, product._id)}
+                                    onClick={(e) => toggleWishlist(e, product)}
                                     className="p-5 rounded-2xl bg-slate-50 text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-all border border-slate-100"
                                 >
                                     <FaHeart size={20} className={wishlistItems.includes(product._id) ? 'text-rose-500' : ''} />
@@ -468,7 +481,7 @@ const SearchResult = () => {
                                     </button>
                                 ) : (
                                     <button
-                                        onClick={(e) => handleAddToCart(e, product._id)}
+                                        onClick={(e) => handleAddToCart(e, product)}
                                         disabled={addingToCart === product._id || product.stock <= 0}
                                         className={`flex-1 sm:flex-none px-12 py-5 rounded-[24px] text-[14px] font-black uppercase tracking-wider shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3 ${product.stock <= 0
                                             ? 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
@@ -543,7 +556,7 @@ const SearchResult = () => {
 
                         {/* Wishlist Action */}
                         <button
-                            onClick={(e) => toggleWishlist(e, product._id)}
+                            onClick={(e) => toggleWishlist(e, product)}
                             disabled={togglingWishlist === product._id}
                             className="absolute top-4 right-4 w-10 h-10 backdrop-blur-md bg-white/80 rounded-2xl flex items-center justify-center shadow-sm border border-white/40 hover:bg-white transition-all transform hover:scale-105 active:scale-95"
                         >
@@ -609,7 +622,7 @@ const SearchResult = () => {
                             </button>
                         ) : (
                             <button
-                                onClick={(e) => handleAddToCart(e, product._id)}
+                                onClick={(e) => handleAddToCart(e, product)}
                                 disabled={addingToCart === product._id || product.stock <= 0}
                                 className={`w-full flex items-center justify-center gap-2.5 py-4 rounded-[20px] transition-all active:scale-[0.98] text-[13px] font-bold uppercase tracking-wider ${product.stock <= 0
                                     ? 'bg-slate-100 text-slate-400 cursor-not-allowed'

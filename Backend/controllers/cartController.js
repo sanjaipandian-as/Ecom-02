@@ -135,3 +135,50 @@ export const removeCartItem = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// 2.5 Sync Local Cart with Database Cart
+export const syncCart = async (req, res) => {
+  try {
+    const customerId = req.user._id;
+    const { items } = req.body; // Array of { productId, quantity }
+
+    if (!items || !Array.isArray(items)) {
+      return res.status(400).json({ message: "Items must be an array." });
+    }
+
+    let cart = await Cart.findOne({ customerId });
+    if (!cart) {
+      cart = new Cart({ customerId, items: [] });
+    }
+
+    for (const item of items) {
+      const { productId, quantity } = item;
+      const qty = parseInt(quantity, 10);
+      if (!productId || isNaN(qty) || qty < 1) continue;
+
+      const product = await Product.findOne({ _id: productId, is_deleted: { $ne: true } });
+      if (!product) continue;
+
+      const itemIndex = cart.items.findIndex(
+        (i) => i.productId.toString() === productId
+      );
+
+      if (itemIndex >= 0) {
+        // Merge quantities, capping at available stock
+        const mergedQty = cart.items[itemIndex].quantity + qty;
+        cart.items[itemIndex].quantity = Math.min(mergedQty, product.stock || 0);
+      } else {
+        // Add new item, capping at available stock
+        cart.items.push({
+          productId,
+          quantity: Math.min(qty, product.stock || 0)
+        });
+      }
+    }
+
+    await cart.save();
+    return res.json({ message: "Cart synced successfully", cart });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};

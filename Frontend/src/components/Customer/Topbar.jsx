@@ -20,6 +20,7 @@ import { toast } from 'react-toastify';
 import API from '../../../api';
 import Logo from '../Common/Logo';
 import AnnouncementBar from '../Common/AnnouncementBar';
+import { getLocalCart } from '../../utils/localCart';
 
 const Searchbar = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -82,35 +83,11 @@ const Searchbar = () => {
     const [loadingNotifications, setLoadingNotifications] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
 
-    const navItems = categories.length > 0 ? categories : [
-        { label: 'Viral skin glow kit', path: '/category/viral-skin-glow-kit' },
-        { label: 'Viral skin whitening kit', path: '/category/viral-skin-whitening-kit' },
-        { label: 'Best Sellers', path: '/category/best-sellers' },
-        { label: 'Face wash', path: '/category/face-wash' },
-        { label: 'Serums', path: '/category/serums' },
-        { label: 'Sunscreen/ Moisture', path: '/category/sunscreen-moisture' },
-        { label: 'Face pack', path: '/category/face-pack' },
-        { label: 'Soaps', path: '/category/soaps' },
-        { label: 'Eye care', path: '/category/eye-care' },
-        { label: 'Lip care', path: '/category/lip-care' },
-        { label: 'Face cream', path: '/category/face-cream' }
-    ];
+    const navItems = categories;
 
     const mobileLinks = [
         { label: 'Home', path: '/' },
-        ...(categories.length > 0 ? categories : [
-            { label: 'Viral skin glow kit', path: '/category/viral-skin-glow-kit' },
-            { label: 'Viral skin whitening kit', path: '/category/viral-skin-whitening-kit' },
-            { label: 'Best Sellers', path: '/category/best-sellers' },
-            { label: 'Face wash', path: '/category/face-wash' },
-            { label: 'Serums', path: '/category/serums' },
-            { label: 'Sunscreen/ Moisture', path: '/category/sunscreen-moisture' },
-            { label: 'Face pack', path: '/category/face-pack' },
-            { label: 'Soaps', path: '/category/soaps' },
-            { label: 'Eye care', path: '/category/eye-care' },
-            { label: 'Lip care', path: '/category/lip-care' },
-            { label: 'Face cream', path: '/category/face-cream' }
-        ]),
+        ...categories,
         { label: 'Support', path: '/Support' },
         { label: 'My Wishlist', path: '/Wishlist' },
         { label: 'My Cart', path: '/Cart' }
@@ -253,7 +230,9 @@ const Searchbar = () => {
         try {
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (!token) {
-                setCartCount(0);
+                const localCart = getLocalCart();
+                const count = localCart.reduce((acc, item) => acc + (item.quantity || 1), 0);
+                setCartCount(count);
                 return;
             }
             const response = await API.get('/cart');

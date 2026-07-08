@@ -5,6 +5,7 @@ import { BsFillBagHeartFill } from 'react-icons/bs';
 import API from '../../../api';
 import Skeleton from '../Common/Skeleton';
 import placeholderImg from '../../assets/Placeholder.png';
+import { getLocalCart, addToLocalCart, updateLocalCartQuantity, removeFromLocalCart, getLocalWishlist } from '../../utils/localCart';
 
 const Cart = () => {
     const navigate = useNavigate();
@@ -37,7 +38,8 @@ const Cart = () => {
         try {
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             if (!token) {
-                navigate('/Login');
+                const localItems = getLocalCart();
+                setCartItems(localItems);
                 return;
             }
 
@@ -60,7 +62,11 @@ const Cart = () => {
         try {
             setLoadingWishlist(true);
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-            if (!token) return;
+            if (!token) {
+                const localWish = getLocalWishlist();
+                setWishlistItems(localWish.slice(0, 4));
+                return;
+            }
 
             const response = await API.get('/wishlist');
             const wishlistData = Array.isArray(response.data) ? response.data : [];
@@ -75,12 +81,22 @@ const Cart = () => {
     const addWishlistItemToCart = async (productId) => {
         try {
             setAddingToCart(productId);
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (!token) {
+                const wishItem = wishlistItems.find(item => (item.productId?._id || item.productId) === productId);
+                if (wishItem && wishItem.productId) {
+                    addToLocalCart(wishItem.productId, 1);
+                }
+                await fetchCart();
+                setError('');
+                return;
+            }
             await API.post('/cart/add', { productId, quantity: 1 });
             await fetchCart();
             setError('');
         } catch (err) {
             console.error('Add to cart error:', err);
-            setError('Failed to add item to cart');
+            setError(err.message || 'Failed to add item to cart');
         } finally {
             setAddingToCart(null);
         }
@@ -101,6 +117,16 @@ const Cart = () => {
 
         setUpdatingItem(productId);
         try {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (!token) {
+                updateLocalCartQuantity(productId, newQuantity);
+                setCartItems(prevItems =>
+                    prevItems.map(item =>
+                        (item?.productId?._id || item?.productId) === productId ? { ...item, quantity: newQuantity } : item
+                    )
+                );
+                return;
+            }
             await API.put('/cart/update', { productId, quantity: newQuantity });
             setCartItems(prevItems =>
                 prevItems.map(item =>
@@ -110,7 +136,7 @@ const Cart = () => {
             window.dispatchEvent(new Event('cartUpdated'));
         } catch (err) {
             console.error('Update quantity error:', err);
-            setError('Failed to update quantity');
+            setError(err.message || 'Failed to update quantity');
         } finally {
             setUpdatingItem(null);
         }
@@ -119,13 +145,20 @@ const Cart = () => {
     const removeItem = useCallback(async (productId) => {
         setUpdatingItem(productId);
         try {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (!token) {
+                removeFromLocalCart(productId);
+                setCartItems(prevItems => prevItems.filter(item => (item?.productId?._id || item?.productId) !== productId));
+                setSelectedItems(prev => prev.filter(id => id !== productId));
+                return;
+            }
             await API.delete(`/cart/remove/${productId}`);
             setCartItems(prevItems => prevItems.filter(item => item?.productId?._id !== productId));
             setSelectedItems(prev => prev.filter(id => id !== productId));
             window.dispatchEvent(new Event('cartUpdated'));
         } catch (err) {
             console.error('Remove item error:', err);
-            setError('Failed to remove item');
+            setError(err.message || 'Failed to remove item');
         } finally {
             setUpdatingItem(null);
         }
@@ -158,6 +191,12 @@ const Cart = () => {
             return;
         }
         localStorage.setItem('selectedCartItems', JSON.stringify(selectedItems));
+        
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if (!token) {
+            navigate('/Login?redirect=/checkout');
+            return;
+        }
         navigate('/checkout');
     }, [selectedItems, navigate]);
 

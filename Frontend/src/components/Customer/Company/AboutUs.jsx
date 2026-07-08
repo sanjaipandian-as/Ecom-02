@@ -28,77 +28,80 @@ const AboutUs = () => {
                     </div>
                 </section>
 
-                {/* Chapter 1: The Vision */}
+                {/* The Brand Story Section */}
                 <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid lg:grid-cols-12 gap-12 items-start">
-                        {/* Quote Statement */}
+                    <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+                        
+                        {/* Left Column: Founder Image & Quote Badge */}
                         <div className="lg:col-span-5 space-y-6">
-                            <span className="inline-block p-3 rounded-2xl bg-gold-light/50 border border-gold-champagne/20 text-gold-lustrous">
-                                <FiHeart className="w-6 h-6" />
-                            </span>
-                            <h2 className="text-3xl sm:text-4xl font-bold text-emerald-deep font-serif leading-tight">
-                                Born from a dream to make every skin glow
-                            </h2>
-                            <div className="h-1.5 w-16 bg-gold-lustrous rounded-full" />
-                            <p className="text-sm font-semibold tracking-wider text-gold-lustrous uppercase">
-                                Science, Purity & Self-Love
-                            </p>
+                            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-gold-champagne/20 group">
+                                <img 
+                                    src="/PlenoraFounder.jpeg" 
+                                    alt="Founder of Plenora Scientific Skin" 
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                />
+                                {/* Overlay text */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 sm:p-8">
+                                    <span className="text-gold-lustrous text-xs font-bold uppercase tracking-[0.2em] mb-1">Founder's Note</span>
+                                    <h3 className="text-white text-2xl sm:text-3xl font-serif font-bold">
+                                        Priya Sharma
+                                    </h3>
+                                    <p className="text-stone-300 text-xs sm:text-sm font-semibold uppercase tracking-[0.2em] mt-1">
+                                        Founder, Plenora Scientific Skin
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Philosophy Callout */}
+                            <div className="bg-white border border-gold-champagne/15 rounded-2xl p-6 shadow-sm flex items-start gap-4">
+                                <span className="p-3 rounded-xl bg-gold-light/50 border border-gold-champagne/20 text-gold-lustrous flex-shrink-0">
+                                    <FiHeart className="w-6 h-6 animate-pulse" />
+                                </span>
+                                <div>
+                                    <h4 className="text-stone-500 text-xs uppercase tracking-wider font-bold">Our Philosophy</h4>
+                                    <p className="text-emerald-deep font-serif text-sm font-semibold mt-1">
+                                        Empowering you to feel confident and beautiful in your own skin.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
 
-                        {/* Content Paragraphs */}
-                        <div className="lg:col-span-7 text-stone-700 space-y-6 text-sm sm:text-base leading-relaxed">
-                            <p className="font-semibold text-emerald-deep text-base sm:text-lg">
-                                Plenora Scientific Skin was born from the dream of a woman who believed that everyone deserves to feel beautiful, confident, and comfortable in their own skin every single day.
-                            </p>
-                            <p>
-                                Behind this brand is not just a business… It’s a journey of passion, scientific research, and dedication to skin health. ✨
-                            </p>
-                            <p>
-                                From small beginnings and big dreams, Plenora was created to deliver clean, dermatologist-tested, and highly effective skincare solutions that help you glow without worrying about harsh chemicals or preservatives. 🌿
-                            </p>
-                            <p>
-                                We believe skincare is more than a routine. It’s self-care. It’s the daily ritual that protects, heals, and reminds you of your natural radiance and strength. 🌸
-                            </p>
-                            <p>
-                                Every serum, cream, cleanser, and facial kit is formulated with love for people who want healthy, radiant skin. At Plenora, we celebrate every skin type — its uniqueness, its resilience, and its journey.
-                            </p>
+                        {/* Right Column: Founder's Narrative */}
+                        <div className="lg:col-span-7 space-y-6">
+                            <div className="space-y-2">
+                                <span className="text-gold-lustrous text-xs font-bold uppercase tracking-[0.3em] block">Our Journey</span>
+                                <h2 className="text-3xl sm:text-4xl font-bold text-emerald-deep font-serif leading-tight">
+                                    The Story Behind Plenora Scientific Skin
+                                </h2>
+                                <div className="h-1 w-20 bg-gold-lustrous rounded-full" />
+                            </div>
+
+                            <div className="text-stone-750 text-sm sm:text-base leading-relaxed space-y-5 font-sans">
+                                <p className="font-semibold text-emerald-deep text-base sm:text-lg leading-relaxed">
+                                    My passion for skincare began in childhood. I always loved caring for others and helping them achieve healthy, confident skin. That passion eventually became my purpose, leading me to create Plenora Scientific Skin—a brand that combines the power of nature with science to develop skin-friendly, effective skincare solutions.
+                                </p>
+                                
+                                <p>
+                                    Skincare is deeply personal to me because I have walked the same path as many of our customers. During my teenage years, I struggled with severe acne, trying countless products without finding lasting results. That experience motivated me to research, formulate, and develop our <strong className="text-emerald-deep font-bold">Acne Clear Kit</strong> with the goal of helping others overcome the same challenges.
+                                </p>
+
+                                <p>
+                                    Our journey has been filled with love and trust from our customers. Our <strong className="text-emerald-deep font-bold">Red Wine Facial Kit</strong> became a viral favorite, earning countless positive reviews and heartfelt compliments. Seeing the confidence our products bring to people's lives inspires us to keep innovating.
+                                </p>
+
+                                <p>
+                                    Today, the overwhelming positive feedback and success stories from our customers remind us why we started. Every product we create is carefully formulated with skin-friendly ingredients, backed by thoughtful research, and made with one mission—to help people feel confident in their own skin.
+                                </p>
+
+                                <div className="border-l-4 border-gold-lustrous bg-white/70 p-5 rounded-r-2xl shadow-sm italic text-emerald-deep font-serif font-medium leading-relaxed my-6">
+                                    "At Plenora Scientific Skin, we don't just create skincare products; we create solutions inspired by real experiences, driven by science, and made with care."
+                                </div>
+                            </div>
                         </div>
+
                     </div>
                 </section>
 
-                {/* Chapter 2: The Founder's Journey */}
-                <section className="py-16 bg-white border-y border-gold-champagne/15">
-                    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
-                        <span className="inline-block p-3 rounded-2xl bg-cream-base border border-gold-champagne/15 text-gold-lustrous">
-                            <FiStar className="w-6 h-6 animate-pulse" />
-                        </span>
-
-                        <h2 className="text-3xl font-bold text-emerald-deep font-serif">
-                            A Journey of Ambition & Science
-                        </h2>
-
-                        <div className="relative rounded-3xl border border-gold-champagne/20 bg-cream-soft p-6 sm:p-10 shadow-sm max-w-3xl mx-auto">
-                            <p className="text-base sm:text-lg italic text-stone-850 leading-relaxed font-serif">
-                                “She started with nothing but a dream in her heart and courage in her soul. 💖 Struggling with skin issues herself, she believed one thing — True beauty is backed by science and nurtured by nature. ✨”
-                            </p>
-                        </div>
-
-                        <div className="text-stone-700 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto space-y-6 pt-4">
-                            <p>
-                                Instead of giving up, she turned her passion into purpose. Having struggled with severe acne in her youth, she set out to create real solutions—not just products, but confidence for everyone who uses them. 🧪
-                            </p>
-                            <p>
-                                That’s why **Plenora Scientific Skin** was created — a brand for people who value clean beauty, scientific innovation, and healthy skin that glows naturally. 🌸
-                            </p>
-                            <p>
-                                Every product, from our viral Red Wine Facial Kit to our targeted Acne Clear Kit, is designed to remind you that healthy skin is a journey. Whether you are addressing acne, dullness, or simply maintaining your glow — you deserve gentle, effective care every single day. 💕
-                            </p>
-                            <p className="font-semibold text-emerald-light text-base sm:text-lg">
-                                This is more than a skincare brand. It’s a journey of science, self-love, and empowerment. ✨ Because when you feel good in your skin, you become unstoppable. 💖
-                            </p>
-                        </div>
-                    </div>
-                </section>
 
                 {/* Core Brand Pillars */}
                 <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

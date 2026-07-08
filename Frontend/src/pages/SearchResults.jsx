@@ -4,6 +4,7 @@ import { FaStar, FaShoppingCart, FaHeart, FaSearch, FaFilter, FaTimes, FaCheckCi
 import API from '../../api';
 import Skeleton from '../components/Common/Skeleton';
 import placeholderImg from '../assets/Placeholder.png';
+import { getLocalCart, addToLocalCart, getLocalWishlist, addToLocalWishlist, removeFromLocalWishlist } from '../utils/localCart';
 
 import Topbar from '../components/Customer/Topbar';
 import Footer from '../components/Customer/Footer';
@@ -198,10 +199,17 @@ const SearchResults = () => {
     const fetchWishlist = async () => {
         try {
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-            if (!token) return;
+            if (!token) {
+                const localWish = getLocalWishlist();
+                const wishlistProductIds = localWish.map(item => item.productId?._id || item.productId);
+                setWishlistItems(wishlistProductIds);
+                return;
+            }
 
             const response = await API.get('/wishlist');
-            const wishlistProductIds = (Array.isArray(response.data) ? response.data : []).map(item => item.productId._id);
+            const wishlistProductIds = (Array.isArray(response.data) ? response.data : [])
+                .filter(item => item && item.productId)
+                .map(item => item.productId._id);
             setWishlistItems(wishlistProductIds);
         } catch (error) {
             console.error('Error fetching wishlist:', error);
@@ -211,7 +219,11 @@ const SearchResults = () => {
     const fetchCart = async () => {
         try {
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-            if (!token) return;
+            if (!token) {
+                const localItems = getLocalCart();
+                setCartItems(localItems);
+                return;
+            }
 
             const response = await API.get('/cart');
             setCartItems(response.data.items || []);
@@ -220,46 +232,61 @@ const SearchResults = () => {
         }
     };
 
-    const toggleWishlist = async (e, productId) => {
+    const toggleWishlist = async (e, product) => {
         e.stopPropagation();
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (!token) {
-            showNotification('Please login to add items to wishlist', 'error');
-            setTimeout(() => navigate('/Login'), 1500);
-            return;
-        }
-
+        const productId = product._id;
+        const isFav = wishlistItems.includes(productId);
+        
         setTogglingWishlist(productId);
         try {
-            const isInWishlist = wishlistItems.includes(productId);
-            if (isInWishlist) {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (!token) {
+                if (isFav) {
+                    removeFromLocalWishlist(productId);
+                    showNotification('Removed from wishlist', 'success');
+                } else {
+                    addToLocalWishlist(product);
+                    showNotification('Added to wishlist', 'success');
+                }
+                fetchWishlist();
+                return;
+            }
+
+            if (isFav) {
                 await API.delete(`/wishlist/remove/${productId}`);
-                setWishlistItems(prev => prev.filter(id => id !== productId));
                 showNotification('Removed from wishlist', 'success');
             } else {
                 await API.post('/wishlist/add', { productId });
-                setWishlistItems(prev => [...prev, productId]);
-                showNotification('Added to wishlist!', 'success');
+                showNotification('Added to wishlist', 'success');
             }
+            fetchWishlist();
         } catch (error) {
-            console.error('Wishlist error:', error);
-            showNotification(error.response?.data?.message || 'Failed to update wishlist', 'error');
+            console.error('Error toggling wishlist:', error);
+            showNotification('Failed to update wishlist', 'error');
         } finally {
             setTogglingWishlist(null);
         }
     };
 
     const addToCart = async (e, product) => {
-        e.stopPropagation();
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (!token) {
-            showNotification('Please login to add items to cart', 'error');
-            setTimeout(() => navigate('/Login'), 1500);
+        if (e) e.stopPropagation();
+        
+        const inCart = cartItems.some(item => (item.productId?._id || item.productId) === product._id);
+        if (inCart) {
+            navigate('/cart');
             return;
         }
 
         setAddingToCart(product._id);
         try {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (!token) {
+                addToLocalCart(product, 1);
+                showNotification('Added to cart successfully!', 'success');
+                fetchCart();
+                return;
+            }
+
             await API.post('/cart/add', {
                 productId: product._id,
                 quantity: 1
@@ -268,7 +295,7 @@ const SearchResults = () => {
             fetchCart();
         } catch (error) {
             console.error('Add to cart error:', error);
-            showNotification(error.response?.data?.message || 'Failed to add to cart', 'error');
+            showNotification(error.response?.data?.message || error.message || 'Failed to add to cart', 'error');
         } finally {
             setAddingToCart(null);
         }
@@ -403,7 +430,7 @@ const SearchResults = () => {
 
                                                 {/* Wishlist Button - Sleek Glassmorphism */}
                                                 <button
-                                                    onClick={(e) => toggleWishlist(e, product._id)}
+                                                    onClick={(e) => toggleWishlist(e, product)}
                                                     disabled={togglingWishlist === product._id}
                                                     className={`absolute top-3.5 right-3.5 w-9 h-9 rounded-full flex items-center justify-center shadow-sm border transition-all duration-300 hover:scale-105 active:scale-95 z-10 ${wishlistItems.includes(product._id)
                                                             ? 'bg-rose-50 border-rose-100 text-rose-500 hover:bg-rose-100/80'

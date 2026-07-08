@@ -5,6 +5,7 @@ import { BsFillBagHeartFill } from 'react-icons/bs';
 import API from '../../../api';
 import Skeleton from '../Common/Skeleton';
 import placeholderImg from '../../assets/Placeholder.png';
+import { getLocalCart, addToLocalCart } from '../../utils/localCart';
 
 const defaultFilters = {};
 
@@ -139,15 +140,20 @@ const Products = ({ filters = defaultFilters }) => {
                     }
                 }
 
-                if (results[1]?.status === 'fulfilled') {
-                    const wishlistProductIds = (Array.isArray(results[1].value.data) ? results[1].value.data : [])
-                        .filter(item => item?.productId?._id)
-                        .map(item => item.productId._id);
-                    setWishlistItems(wishlistProductIds);
-                }
+                if (isLoggedIn) {
+                    if (results[1]?.status === 'fulfilled') {
+                        const wishlistProductIds = (Array.isArray(results[1].value.data) ? results[1].value.data : [])
+                            .filter(item => item?.productId?._id)
+                            .map(item => item.productId._id);
+                        setWishlistItems(wishlistProductIds);
+                    }
 
-                if (results[2]?.status === 'fulfilled') {
-                    setCartItems(results[2].value.data.items || []);
+                    if (results[2]?.status === 'fulfilled') {
+                        setCartItems(results[2].value.data.items || []);
+                    }
+                } else {
+                    const localItems = getLocalCart();
+                    setCartItems(localItems);
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -226,15 +232,19 @@ const Products = ({ filters = defaultFilters }) => {
     const handleAddToCart = async (e, productId) => {
         e.stopPropagation();
 
-        if (!isLoggedIn) {
-            showNotification('Please login to add items to cart', 'error');
-            setTimeout(() => navigate('/Login'), 1500);
-            return;
-        }
-
         setAddingToCart(productId);
 
         try {
+            const productObj = products.find(p => p._id === productId);
+            if (!isLoggedIn) {
+                if (productObj) {
+                    addToLocalCart(productObj, 1);
+                    showNotification('Added to cart successfully!', 'success');
+                    setCartItems(getLocalCart());
+                }
+                return;
+            }
+
             await API.post('/cart/add', {
                 productId: productId.toString(),
                 quantity: 1
@@ -247,12 +257,7 @@ const Products = ({ filters = defaultFilters }) => {
             window.dispatchEvent(new Event('cartUpdated'));
         } catch (error) {
             console.error('Add to cart error:', error);
-            if (error.response?.status === 401) {
-                showNotification('Session expired. Please login again', 'error');
-                setTimeout(() => navigate('/Login'), 1500);
-            } else {
-                showNotification(error.response?.data?.message || 'Failed to add to cart', 'error');
-            }
+            showNotification(error.response?.data?.message || error.message || 'Failed to add to cart', 'error');
         } finally {
             setAddingToCart(null);
         }
