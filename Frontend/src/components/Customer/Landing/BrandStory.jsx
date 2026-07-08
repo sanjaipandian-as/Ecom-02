@@ -40,57 +40,63 @@ const BrandStory = () => {
     return (
         <div className="w-full">
 
+
             {/* ═══════════════════════════════════════════
-                SECTION 1 — BRAND STORY  
+                SECTION 1.5 — FOUNDER'S NOTE  
             ═══════════════════════════════════════════ */}
-            <section ref={s1} className="relative bg-emerald-deep overflow-hidden">
+            <section className="relative bg-white overflow-hidden pt-8 sm:pt-12 lg:pt-16 pb-8 sm:pb-12 lg:pb-16">
+                <div className="relative max-w-[1320px] mx-auto px-6 sm:px-10 lg:px-16">
+                    <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
 
-                {/* background ambience */}
-                <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute -top-40 right-0 w-[700px] h-[700px] rounded-full bg-gold-champagne/[0.035] blur-[160px]" />
-                    <div className="absolute bottom-0 -left-32 w-[500px] h-[500px] rounded-full bg-gold-champagne/[0.025] blur-[120px]" />
+                        {/* Left: Founder Image (Matches text height on desktop) */}
+                        {/* Left: Founder Image */}
+                        <div className="w-[90%] sm:w-[60%] md:w-[50%] lg:w-[32%] relative rounded-[24px] overflow-hidden aspect-[4/5] shadow-2xl flex-shrink-0 mx-auto lg:mx-0">
+                            <img 
+                                src="/PlenoraFounder.jpeg" 
+                                alt="Founder" 
+                                className="w-full h-full object-cover"
+                            />
+                            {/* Overlay text */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8 sm:p-10">
+                                <h3 className="text-white text-2xl sm:text-3xl font-bold font-serif">
+                                    Pavithra
+                                </h3>
+                                <p className="text-white/90 text-[12px] sm:text-[13px] font-semibold uppercase tracking-[0.2em] mt-2">
+                                    Founder at Plenora
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Right: Content (Skincare story) */}
+                        <div className="w-full lg:w-[68%] flex flex-col justify-center lg:pl-10">
+                            <h2 className="text-[32px] sm:text-[40px] lg:text-[44px] font-bold leading-[1.1] text-[#b38e55] mb-8 tracking-tight font-serif max-w-[500px]">
+                                We Make Skincare That Understands Indian Skin
+                            </h2>
+                            
+                            <p className="text-stone-600 text-lg sm:text-[22px] leading-[1.6] font-serif italic mb-10 opacity-90 max-w-[600px]">
+                                Your skin isn't French. Your weather isn't Korean. So why should your skincare be? We make advanced plant-based formulations that understand Indian climate and work on Indian skin. Grounded in Nature, Growing with Science.
+                            </p>
+
+                            <div>
+                                <button className="bg-[#9db564] hover:bg-[#8ca655] text-white px-8 py-4 rounded-xl font-bold font-sans text-sm sm:text-base tracking-wide shadow-md hover:shadow-lg transition-all duration-300">
+                                    Explore Founder's Picks
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
+            </section>
 
-                <div className="relative max-w-[1320px] mx-auto px-6 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-24">
-
-                    {/* Top accent line */}
-                    <div style={anim(s1In, 0)} className="flex items-center gap-4 mb-10">
-                        <span className="w-14 h-[2px] bg-gold-champagne/50 rounded-full" />
-                        <span className="text-[13px] sm:text-sm font-bold uppercase tracking-[0.35em] text-gold-champagne">
-                            About Plenora
-                        </span>
-                    </div>
-
-                    {/* Big headline — editorial style */}
-                    <h2
-                        style={anim(s1In, 0.08)}
-                        className="text-[36px] sm:text-[50px] lg:text-[62px] font-bold leading-[1.08] tracking-tight text-white max-w-4xl mb-10"
-                    >
-                        Where Science Meets{' '}
-                        <span className="text-gold-champagne">Beautiful Skin.</span>
+            {/* ═══════════════════════════════════════════
+                SECTION 1.6 — TRUST BADGES  
+            ═══════════════════════════════════════════ */}
+            <section className="bg-white pt-6 sm:pt-10 lg:pt-12 pb-10 sm:pb-12 lg:pb-16 border-b border-[#f2ebe1]">
+                <div className="max-w-[1320px] mx-auto px-6 sm:px-10 lg:px-16 text-center">
+                    <h2 className="text-2xl sm:text-3xl md:text-[34px] font-serif font-bold text-[#b38e55] mb-12 lg:mb-20">
+                        Grounded In Nature, Growing With Science
                     </h2>
-
-                    {/* Two-column editorial body */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 mb-10">
-                        <p
-                            style={anim(s1In, 0.16)}
-                            className="text-[17px] sm:text-[19px] lg:text-[21px] leading-[1.75] text-[#b8c8c0] font-light"
-                        >
-                            Plenora Scientific Skin is a skincare brand dedicated to combining the power of science with the purity of thoughtfully selected ingredients. Our mission is to create effective, high-quality skincare solutions that nourish, protect, and enhance your skin's natural beauty.
-                        </p>
-                        <p
-                            style={anim(s1In, 0.24)}
-                            className="text-[17px] sm:text-[19px] lg:text-[21px] leading-[1.75] text-[#b8c8c0] font-light"
-                        >
-                            Every formula is developed with a focus on innovation, safety, and visible results — helping you achieve healthy, radiant skin with confidence. We believe skincare should be both a science and a ritual.
-                        </p>
-                    </div>
-
-                    {/* Separator */}
-                    <div style={anim(s1In, 0.3)} className="w-full h-px bg-gradient-to-r from-gold-champagne/30 via-gold-champagne/10 to-transparent mb-10" />
-
-                    {/* Trust Badges Grid — Made for Indian Skintone, Clean & Safe Claims */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 lg:gap-8 mt-12">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 lg:gap-10">
                         {[
                             { label: 'Made for Indian Skintone', icon: Sun },
                             { label: 'No Harsh Chemicals', icon: FlaskConical },
@@ -99,80 +105,15 @@ const BrandStory = () => {
                             { label: 'No Harsh Preservatives', icon: ShieldCheck },
                             { label: 'Parabens & Sulphate Free', icon: Sparkles }
                         ].map((item, i) => (
-                            <div
-                                key={item.label}
-                                style={anim(s1In, 0.35 + i * 0.08)}
-                                className="group flex flex-col items-center text-center p-6 rounded-2xl bg-[#12221b]/40 border border-gold-champagne/10 hover:bg-[#12221b]/80 hover:border-gold-champagne/30 transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1"
-                            >
-                                <div className="w-12 h-12 rounded-full bg-gold-champagne/10 text-gold-champagne flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-gold-champagne/20 transition-all duration-300">
-                                    <item.icon className="w-6 h-6 stroke-[1.5]" />
+                            <div key={item.label} className="flex flex-col items-center">
+                                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-stone-300 flex items-center justify-center mb-5 hover:border-[#b38e55] transition-colors duration-300 group shadow-sm bg-white">
+                                    <item.icon className="w-8 h-8 sm:w-10 sm:h-10 text-stone-500 stroke-[1.25] group-hover:text-[#b38e55] transition-colors duration-300" />
                                 </div>
-                                <h4 className="text-[12px] sm:text-[13px] font-bold text-white uppercase tracking-[0.15em] font-outfit leading-relaxed max-w-[150px]">
+                                <h4 className="text-[14px] sm:text-[16px] font-bold text-stone-900 font-sans text-center leading-snug">
                                     {item.label}
                                 </h4>
                             </div>
                         ))}
-                    </div>
-
-                    {/* Tagline */}
-                    <p
-                        style={{ opacity: s1In ? 1 : 0, transition: 'opacity 1.2s ease 0.9s' }}
-                        className="mt-12 text-[13px] sm:text-[14px] font-semibold uppercase tracking-[0.4em] text-gold-champagne/50 text-center"
-                    >
-                        Plenora Scientific Skin — Where Science Meets Beautiful Skin.
-                    </p>
-                </div>
-            </section>
-
-            {/* ═══════════════════════════════════════════
-                SECTION 1.5 — FOUNDER'S NOTE  
-            ═══════════════════════════════════════════ */}
-            <section className="relative bg-white overflow-hidden py-20 sm:py-28 lg:py-32">
-                <div className="relative max-w-[1320px] mx-auto px-6 sm:px-10 lg:px-16">
-                    <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
-                        
-                        {/* Left: Founder Image (Matches text height on desktop) */}
-                        <div className="w-full lg:w-[48%] relative rounded-[24px] overflow-hidden aspect-[4/5] sm:aspect-[4/3] lg:aspect-auto lg:self-stretch shadow-2xl flex-shrink-0">
-                            <img 
-                                src="/PlenoraFounder.jpeg" 
-                                alt="Founder" 
-                                className="w-full h-full object-cover"
-                            />
-                            {/* Overlay text */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent flex flex-col justify-end p-8 sm:p-10">
-                                <h3 className="text-white text-2xl sm:text-3xl lg:text-4xl font-bold font-serif">
-                                    Priya Sharma
-                                </h3>
-                                <p className="text-white/90 text-[13px] sm:text-sm font-semibold uppercase tracking-[0.2em] mt-2">
-                                    Founder at Plenora
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Right: Content (Skincare story) */}
-                        <div className="w-full lg:w-[52%] flex flex-col justify-center">
-                            <h2 className="text-[28px] sm:text-[34px] lg:text-[38px] font-bold leading-[1.2] text-[#8b9d83] mb-6 tracking-tight font-serif">
-                                The Story Behind Plenora Scientific Skin
-                            </h2>
-                            <div className="text-stone-600 text-sm sm:text-[15px] leading-relaxed space-y-4 font-sans opacity-95">
-                                <p>
-                                    My passion for skincare began in childhood. I always loved caring for others and helping them achieve healthy, confident skin. That passion eventually became my purpose, leading me to create Plenora Scientific Skin—a brand that combines the power of nature with science to develop skin-friendly, effective skincare solutions.
-                                </p>
-                                <p>
-                                    Our journey has been filled with love and trust from our customers. Our Red Wine Facial Kit became a viral favorite, earning countless positive reviews and heartfelt compliments. Seeing the confidence our products bring to people's lives inspires us to keep innovating.
-                                </p>
-                                <p>
-                                    Skincare is deeply personal to me because I have walked the same path as many of our customers. During my teenage years, I struggled with severe acne, trying countless products without finding lasting results. That experience motivated me to research, formulate, and develop our Acne Clear Kit with the goal of helping others overcome the same challenges.
-                                </p>
-                                <p>
-                                    Today, the overwhelming positive feedback and success stories from our customers remind us why we started. Every product we create is carefully formulated with skin-friendly ingredients, backed by thoughtful research, and made with one mission—to help people feel confident in their own skin.
-                                </p>
-                                <p className="font-semibold text-[#6d7c67] font-serif italic text-[15px]">
-                                    "At Plenora Scientific Skin, we don't just create skincare products; we create solutions inspired by real experiences, driven by science, and made with care."
-                                </p>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </section>
@@ -187,7 +128,7 @@ const BrandStory = () => {
                     <div className="absolute top-0 left-1/2 w-[900px] h-[500px] rounded-full bg-gold-champagne/[0.045] blur-[180px] -translate-x-1/2 -translate-y-1/3" />
                 </div>
 
-                <div className="relative max-w-[1320px] mx-auto px-6 sm:px-10 lg:px-16 py-24 sm:py-32 lg:py-36">
+                <div className="relative max-w-[1320px] mx-auto px-6 sm:px-10 lg:px-16 pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-16 lg:pb-20">
                     <div className="grid grid-cols-1 lg:grid-cols-5 gap-14 lg:gap-20 items-start">
 
                         {/* Left column — 3 of 5 */}

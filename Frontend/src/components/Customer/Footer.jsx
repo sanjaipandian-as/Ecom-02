@@ -138,20 +138,20 @@ const Footer = () => {
                         <div className="mb-6">
                             <div className="mb-4 flex items-center gap-3">
                                 <img src="/plenorabg.jpeg" alt="Plenora Logo" className="w-10 h-10 rounded-full object-cover" />
-                                <Logo 
-                                    className="h-10 w-auto" 
-                                    primaryColor="#c5a880" 
-                                    secondaryColor="#f7f5f0" 
+                                <Logo
+                                    className="h-10 w-auto"
+                                    primaryColor="#c5a880"
+                                    secondaryColor="#f7f5f0"
                                 />
                             </div>
-                            <p className="text-[#a3b3ac] text-sm leading-relaxed max-w-sm">
+                            <p className="text-[#a3b3ac] text-sm md:text-base leading-relaxed max-w-sm">
                                 Elevating your natural beauty with Plenora's scientific skincare. Our meticulously crafted formulas combine botanical purity with clinical precision for radiant, healthy skin.
                             </p>
                         </div>
 
                         {/* Social Media Links */}
                         <div>
-                            <h4 className="text-xs font-bold uppercase tracking-[0.25em] mb-4 text-gold-champagne">Follow PLENORA</h4>
+                            <h4 className="text-sm font-bold uppercase tracking-[0.25em] mb-4 text-gold-champagne">Follow PLENORA</h4>
                             <div className="flex gap-3">
                                 {[
                                     { icon: FaFacebookF, color: 'hover:bg-blue-600 hover:text-white', label: 'Facebook', url: 'https://www.facebook.com/share/1BT5As9w1w/' },
@@ -180,20 +180,20 @@ const Footer = () => {
                                 onClick={() => toggleSection('collection')}
                                 className="w-full flex items-center justify-between text-left lg:pointer-events-none focus:outline-none"
                             >
-                                <h4 className="text-xs font-bold uppercase tracking-[0.25em] text-gold-champagne lg:mb-5">
+                                <h4 className="text-sm font-bold uppercase tracking-[0.25em] text-gold-champagne lg:mb-4">
                                     The Collection
                                 </h4>
                                 <span className="lg:hidden text-gold-champagne">
                                     {openSections.collection ? <FaChevronUp className="w-3.5 h-3.5" /> : <FaChevronDown className="w-3.5 h-3.5" />}
                                 </span>
                             </button>
-                            <ul className={`space-y-3 transition-all duration-300 overflow-hidden lg:max-h-full ${openSections.collection ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0 lg:opacity-100 lg:max-h-full overflow-hidden mt-0 lg:mt-0'
+                            <ul className={`space-y-2 transition-all duration-300 overflow-hidden lg:max-h-full ${openSections.collection ? 'max-h-96 opacity-100 mt-3' : 'max-h-0 opacity-0 lg:opacity-100 lg:max-h-full overflow-hidden mt-0 lg:mt-0'
                                 }`}>
-                                {collectionLinks.map((link, index) => (
+                                {collectionLinks.slice(0, 5).map((link, index) => (
                                     <li key={index}>
                                         <button
                                             onClick={() => navigate(link.path)}
-                                            className="text-[#a3b3ac] hover:text-gold-lustrous transition-all duration-200 text-xs font-medium uppercase tracking-[0.1em] hover:translate-x-1 inline-block transform focus:outline-none"
+                                            className="text-[#a3b3ac] hover:text-gold-lustrous transition-all duration-200 text-xs md:text-sm font-medium uppercase tracking-[0.1em] hover:translate-x-1 inline-block transform focus:outline-none text-left"
                                         >
                                             {link.name}
                                         </button>
@@ -209,20 +209,20 @@ const Footer = () => {
                             onClick={() => toggleSection('services')}
                             className="w-full flex items-center justify-between text-left lg:pointer-events-none focus:outline-none"
                         >
-                            <h4 className="text-xs font-bold uppercase tracking-[0.25em] text-gold-champagne lg:mb-5">
-                                Client Services
+                            <h4 className="text-sm font-bold uppercase tracking-[0.25em] text-gold-champagne lg:mb-4">
+                                Policies
                             </h4>
                             <span className="lg:hidden text-gold-champagne">
                                 {openSections.services ? <FaChevronUp className="w-3.5 h-3.5" /> : <FaChevronDown className="w-3.5 h-3.5" />}
                             </span>
                         </button>
-                        <ul className={`space-y-3 transition-all duration-300 overflow-hidden lg:max-h-full ${openSections.services ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0 lg:opacity-100 lg:max-h-full overflow-hidden mt-0 lg:mt-0'
+                        <ul className={`space-y-2 transition-all duration-300 overflow-hidden lg:max-h-full ${openSections.services ? 'max-h-96 opacity-100 mt-3' : 'max-h-0 opacity-0 lg:opacity-100 lg:max-h-full overflow-hidden mt-0 lg:mt-0'
                             }`}>
                             {footerLinks.services.map((link, index) => (
                                 <li key={index}>
                                     <button
                                         onClick={() => navigate(link.path)}
-                                        className="text-[#a3b3ac] hover:text-gold-lustrous transition-all duration-200 text-xs font-medium uppercase tracking-[0.1em] hover:translate-x-1 inline-block transform focus:outline-none"
+                                        className="text-[#a3b3ac] hover:text-gold-lustrous transition-all duration-200 text-xs md:text-sm font-medium uppercase tracking-[0.1em] hover:translate-x-1 inline-block transform focus:outline-none text-left"
                                     >
                                         {link.name}
                                     </button>
@@ -237,18 +237,18 @@ const Footer = () => {
                             onClick={() => toggleSection('showroom')}
                             className="w-full flex items-center justify-between text-left lg:pointer-events-none focus:outline-none"
                         >
-                            <h4 className="text-xs font-bold uppercase tracking-[0.25em] text-gold-champagne lg:mb-5">
+                            <h4 className="text-sm font-bold uppercase tracking-[0.25em] text-gold-champagne lg:mb-4">
                                 Flagship Showroom
                             </h4>
                             <span className="lg:hidden text-gold-champagne">
                                 {openSections.showroom ? <FaChevronUp className="w-3.5 h-3.5" /> : <FaChevronDown className="w-3.5 h-3.5" />}
                             </span>
                         </button>
-                        <ul className={`space-y-4 transition-all duration-300 overflow-hidden lg:max-h-full ${openSections.showroom ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0 lg:opacity-100 lg:max-h-full overflow-hidden mt-0 lg:mt-0'
+                        <ul className={`space-y-3 transition-all duration-300 overflow-hidden lg:max-h-full ${openSections.showroom ? 'max-h-96 opacity-100 mt-3' : 'max-h-0 opacity-0 lg:opacity-100 lg:max-h-full overflow-hidden mt-0 lg:mt-0'
                             }`}>
                             <li className="flex items-start gap-3">
                                 <FaMapMarkerAlt className="w-4 h-4 text-gold-champagne mt-1 flex-shrink-0" />
-                                <span className="text-[#a3b3ac] text-xs leading-relaxed uppercase tracking-[0.05em]">
+                                <span className="text-[#a3b3ac] text-xs md:text-sm leading-relaxed uppercase tracking-[0.05em]">
                                     Flat 407, Manchester Apartment,<br />
                                     Chelliamman Koil Street, Athipet,<br />
                                     Ambattur, Chennai 600058
@@ -258,7 +258,7 @@ const Footer = () => {
                                 <FaPhone className="w-4 h-4 text-gold-champagne flex-shrink-0" />
                                 <a
                                     href="tel:+917448833345"
-                                    className="text-[#a3b3ac] hover:text-gold-lustrous text-xs uppercase tracking-[0.05em] transition-colors focus:outline-none"
+                                    className="text-[#a3b3ac] hover:text-gold-lustrous text-xs md:text-sm uppercase tracking-[0.05em] transition-colors focus:outline-none"
                                 >
                                     +91 74488 33345
                                 </a>
@@ -267,7 +267,7 @@ const Footer = () => {
                                 <FaEnvelope className="w-4 h-4 text-gold-champagne flex-shrink-0" />
                                 <a
                                     href="mailto:plenorascientificskin@gmail.com"
-                                    className="text-[#a3b3ac] hover:text-gold-lustrous text-xs uppercase tracking-[0.05em] transition-colors focus:outline-none"
+                                    className="text-[#a3b3ac] hover:text-gold-lustrous text-xs md:text-sm uppercase tracking-[0.05em] transition-colors focus:outline-none"
                                 >
                                     plenorascientificskin@gmail.com
                                 </a>
@@ -277,20 +277,48 @@ const Footer = () => {
                 </div>
             </div>
 
-            {/* Bottom Bar */}
-            <div className="border-t border-gold-champagne/5 bg-emerald-dark">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6">
-                            <p className="text-xs text-[#a3b3ac] text-center sm:text-left">
-                                © {currentYear} <span className="text-gold-lustrous font-semibold">Plenora</span>. All rights reserved.
+            {/* SEO Content Section */}
+            <div>
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-12 lg:pb-16 pt-8 lg:pt-12">
+                    <div className="max-w-6xl mx-auto flex flex-col gap-8">
+                        <div>
+                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-white mb-3">Plenora Brand Description</h3>
+                            <p className="text-sm md:text-base text-[#f7f5f0] leading-relaxed">
+                                Plenora Scientific Skin is a skincare brand dedicated to combining the power of science with the purity of thoughtfully selected ingredients. Our mission is to create effective, high-quality skincare solutions that nourish, protect, and enhance your skin's natural beauty. Every formula is developed with a focus on innovation, safety, and visible results, helping you achieve healthy, radiant skin with confidence.
                             </p>
-                            <div className="flex gap-4">
-                                <button onClick={() => navigate('/privacy-policy')} className="text-[10px] text-[#a3b3ac] hover:text-gold-lustrous uppercase tracking-wider transition-colors cursor-pointer">Privacy Policy</button>
-                                <button onClick={() => navigate('/terms-and-conditions')} className="text-[10px] text-[#a3b3ac] hover:text-gold-lustrous uppercase tracking-wider transition-colors cursor-pointer">Terms & Conditions</button>
+                        </div>
+
+                        <div>
+                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-white mb-3">Plenora Scientific Skin — Where Science Meets Beautiful Skin.</h3>
+                            <p className="text-sm md:text-base text-[#f7f5f0] leading-relaxed">
+                                Bestselling Skin Glow kit - Experience the perfect blend of science and skincare with the Plenora Scientific Skin Bestselling Skin Glow Kit—your daily ritual for naturally glowing, healthy-looking skin.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-white mb-3">Key Benefits:</h3>
+                            <p className="text-sm md:text-base text-[#f7f5f0] leading-relaxed">
+                                • Brightens dull and tired-looking skin, Deeply hydrates and nourishes, Improves skin texture and smoothness, Promotes an even, radiant complexion, Suitable for most skin types, Ideal for everyday skincare.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Bottom Bar */}
+            <div>
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
+                            <p className="text-sm text-[#f7f5f0] text-center sm:text-left">
+                                © {currentYear} <span className="font-semibold">Plenora</span>. All rights reserved.
+                            </p>
+                            <div className="flex gap-5">
+                                <button onClick={() => navigate('/privacy-policy')} className="text-xs text-[#f7f5f0] hover:text-white uppercase tracking-wider transition-colors cursor-pointer">Privacy Policy</button>
+                                <button onClick={() => navigate('/terms-and-conditions')} className="text-xs text-[#f7f5f0] hover:text-white uppercase tracking-wider transition-colors cursor-pointer">Terms & Conditions</button>
                             </div>
                         </div>
-                        <p className="text-[10px] text-[#a3b3ac]/50 uppercase tracking-widest text-center md:text-right">
+                        <p className="text-xs text-[#f7f5f0]/80 uppercase tracking-widest text-center md:text-right">
                             Glow with Confidence
                         </p>
                     </div>
@@ -315,13 +343,13 @@ const Footer = () => {
                             </div>
                         </div>
                         <div className="flex gap-2 justify-end">
-                            <button 
+                            <button
                                 onClick={rejectCookies}
                                 className="px-4 py-2 border border-gold-champagne/20 text-[#a3b3ac] hover:text-white text-[10px] font-bold uppercase tracking-widest transition-all rounded-md cursor-pointer"
                             >
                                 Reject
                             </button>
-                            <button 
+                            <button
                                 onClick={acceptCookies}
                                 className="px-4 py-2 bg-gold-champagne hover:bg-gold-lustrous text-[#0e1612] text-[10px] font-bold uppercase tracking-widest transition-all rounded-md shadow-md cursor-pointer"
                             >
