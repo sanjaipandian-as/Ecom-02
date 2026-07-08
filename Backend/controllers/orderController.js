@@ -97,7 +97,7 @@ export const executeOrderPlacement = async (customerId, orderData) => {
   const subTotal = totalItemAmount - taxTotal;
   
   // Dynamic Shipping Logic
-  const shippingFee = 0; // ⚠️ TEMP: Set to 0 for testing. Restore to: totalItemAmount > 999 ? 0 : 99
+  const shippingFee = totalItemAmount > 999 ? 0 : 99;
   const totalAmount = totalItemAmount + shippingFee;
 
   // 2. ATOMIC STOCK DEDUCTION

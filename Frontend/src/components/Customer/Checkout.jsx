@@ -435,7 +435,7 @@ const Checkout = () => {
     };
 
     const subtotal = calculateTotal();
-    const shippingFee = 0; // ⚠️ TEMP: Set to 0 for testing. Restore to: subtotal > 999 ? 0 : 99
+    const shippingFee = subtotal > 999 ? 0 : 99;
     const total = subtotal + shippingFee;
 
     // ---- Loading State ----
