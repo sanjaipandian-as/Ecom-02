@@ -44,7 +44,7 @@ const AboutUs = () => {
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 sm:p-8">
                                     <span className="text-gold-lustrous text-xs font-bold uppercase tracking-[0.2em] mb-1">Founder's Note</span>
                                     <h3 className="text-white text-2xl sm:text-3xl font-serif font-bold">
-                                        Priya Sharma
+                                        Pavithra
                                     </h3>
                                     <p className="text-stone-300 text-xs sm:text-sm font-semibold uppercase tracking-[0.2em] mt-1">
                                         Founder, Plenora Scientific Skin
