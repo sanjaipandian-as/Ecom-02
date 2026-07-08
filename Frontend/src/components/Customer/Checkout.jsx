@@ -320,7 +320,7 @@ const Checkout = () => {
                 key: data.razorpayKey,
                 amount: data.paymentOrder.amount,
                 currency: data.paymentOrder.currency,
-                name: 'HA Jewellery',
+                name: 'Plenora',
                 description: `Order Payment - ${Date.now()}`,
                 image: '',
                 order_id: data.paymentOrder.id,
@@ -971,7 +971,7 @@ const Checkout = () => {
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <h3 className="font-bold text-slate-900 text-sm truncate">{productName}</h3>
-                                                <p className="text-xs text-slate-400 mt-0.5 font-medium">{item.productId?.category?.main || 'Jewellery'}</p>
+                                                <p className="text-xs text-slate-400 mt-0.5 font-medium">{item.productId?.category?.main || 'Skincare'}</p>
                                                 {!order && (
                                                     <div className="flex items-center gap-2 mt-2">
                                                         <button onClick={() => handleUpdateQuantity(productId, item.quantity - 1)} className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center hover:bg-slate-200 transition-colors">

@@ -21,28 +21,27 @@ import {
 } from 'react-icons/fa';
 
 const categoryNameMap = {
-    'rings': 'Rings & Bands',
-    'necklaces': 'Necklaces & Pendants',
-    'earrings': 'Earrings & Studs',
-    'bracelets': 'Bracelets & Cuffs',
-    'jewelry-sets': 'Fine Jewelry Sets',
-    'jewelry sets': 'Fine Jewelry Sets'
+    'face-care': 'Face Care',
+    'hair-care': 'Hair Care',
+    'body-care': 'Body Care',
+    'lip-care': 'Lip Care',
+    'skincare-kits': 'Skincare Kits',
+    'kits': 'Skincare Kits'
 };
 
 const defaultCollectionLinks = [
-    { name: 'Rings & Bands', path: '/category/rings' },
-    { name: 'Necklaces & Pendants', path: '/category/necklaces' },
-    { name: 'Earrings & Studs', path: '/category/earrings' },
-    { name: 'Bracelets & Cuffs', path: '/category/bracelets' },
-    { name: 'Fine Jewelry Sets', path: '/category/jewelry-sets' },
-    { name: 'Anklets', path: '/category/anklets' }
+    { name: 'Face Care', path: '/category/face-care' },
+    { name: 'Hair Care', path: '/category/hair-care' },
+    { name: 'Body Care', path: '/category/body-care' },
+    { name: 'Lip Care', path: '/category/lip-care' },
+    { name: 'Skincare Kits', path: '/category/skincare-kits' }
 ];
 
 const Footer = () => {
     const navigate = useNavigate();
     const currentYear = new Date().getFullYear();
 
-    const [collectionLinks, setCollectionLinks] = useState(defaultCollectionLinks);
+    const [collectionLinks, setCollectionLinks] = useState([]);
     const [openSections, setOpenSections] = useState({
         collection: false,
         services: false,
@@ -88,9 +87,12 @@ const Footer = () => {
                             };
                         });
                     setCollectionLinks(mapped);
+                } else {
+                    setCollectionLinks([]);
                 }
             } catch (error) {
                 console.error('Error fetching categories for footer:', error);
+                setCollectionLinks([]);
             }
         };
         fetchCategories();
@@ -114,8 +116,8 @@ const Footer = () => {
         ],
         brand: [
             { name: 'Our Heritage', path: '/about' },
-            { name: 'Craftsmanship & Materials', path: '/craftsmanship' },
-            { name: 'Anti-Tarnish Care Guide', path: '/care-guide' },
+            { name: 'Ingredients & Safety', path: '/ingredients' },
+            { name: 'Skincare Routine Guide', path: '/care-guide' },
             { name: 'Sustainability Commitment', path: '/sustainability' },
             { name: 'Store Locator', path: '/stores' }
         ]
@@ -172,32 +174,34 @@ const Footer = () => {
                     </div>
 
                     {/* Collection Links */}
-                    <div className="pb-4 lg:pb-0 border-b border-[#d4c5b3]/10 lg:border-none">
-                        <button
-                            onClick={() => toggleSection('collection')}
-                            className="w-full flex items-center justify-between text-left lg:pointer-events-none focus:outline-none"
-                        >
-                            <h4 className="text-xs font-bold uppercase tracking-[0.25em] text-gold-champagne lg:mb-5">
-                                The Collection
-                            </h4>
-                            <span className="lg:hidden text-gold-champagne">
-                                {openSections.collection ? <FaChevronUp className="w-3.5 h-3.5" /> : <FaChevronDown className="w-3.5 h-3.5" />}
-                            </span>
-                        </button>
-                        <ul className={`space-y-3 transition-all duration-300 overflow-hidden lg:max-h-full ${openSections.collection ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0 lg:opacity-100 lg:max-h-full overflow-hidden mt-0 lg:mt-0'
-                            }`}>
-                            {collectionLinks.map((link, index) => (
-                                <li key={index}>
-                                    <button
-                                        onClick={() => navigate(link.path)}
-                                        className="text-[#a3b3ac] hover:text-gold-lustrous transition-all duration-200 text-xs font-medium uppercase tracking-[0.1em] hover:translate-x-1 inline-block transform focus:outline-none"
-                                    >
-                                        {link.name}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    {collectionLinks.length > 0 && (
+                        <div className="pb-4 lg:pb-0 border-b border-[#d4c5b3]/10 lg:border-none">
+                            <button
+                                onClick={() => toggleSection('collection')}
+                                className="w-full flex items-center justify-between text-left lg:pointer-events-none focus:outline-none"
+                            >
+                                <h4 className="text-xs font-bold uppercase tracking-[0.25em] text-gold-champagne lg:mb-5">
+                                    The Collection
+                                </h4>
+                                <span className="lg:hidden text-gold-champagne">
+                                    {openSections.collection ? <FaChevronUp className="w-3.5 h-3.5" /> : <FaChevronDown className="w-3.5 h-3.5" />}
+                                </span>
+                            </button>
+                            <ul className={`space-y-3 transition-all duration-300 overflow-hidden lg:max-h-full ${openSections.collection ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0 lg:opacity-100 lg:max-h-full overflow-hidden mt-0 lg:mt-0'
+                                }`}>
+                                {collectionLinks.map((link, index) => (
+                                    <li key={index}>
+                                        <button
+                                            onClick={() => navigate(link.path)}
+                                            className="text-[#a3b3ac] hover:text-gold-lustrous transition-all duration-200 text-xs font-medium uppercase tracking-[0.1em] hover:translate-x-1 inline-block transform focus:outline-none"
+                                        >
+                                            {link.name}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
 
                     {/* Services Links */}
                     <div className="pb-4 lg:pb-0 border-b border-[#d4c5b3]/10 lg:border-none">

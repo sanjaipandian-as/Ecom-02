@@ -60,9 +60,9 @@ const Affiliate = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <h1 className="text-2xl font-bold">
-                            <span className="text-gray-900">APK</span>
-                            <span className="text-primary">Crackers</span>
-                            <span className="text-sm text-gray-600 ml-2">associates</span>
+                            <span className="text-gray-900">Plenora</span>
+                            <span className="text-primary"> Scientific Skin</span>
+                            <span className="text-sm text-gray-600 ml-2">Associates</span>
                         </h1>
                     </div>
                     <div className="flex items-center gap-4">
@@ -110,10 +110,10 @@ const Affiliate = () => {
                 {/* Introduction */}
                 <div className="mb-16">
                     <h3 className="text-3xl font-bold text-gray-900 mb-4">
-                        Anti Turnish Jewellery Associates - Our affiliate marketing program
+                        Plenora Scientific Skin Associates - Our affiliate marketing program
                     </h3>
                     <p className="text-gray-700 leading-relaxed max-w-4xl">
-                        Welcome to one of the largest affiliate marketing programs in the world. The Anti Turnish Jewellery Associates Program helps content creators, publishers and bloggers monetize their traffic. With millions of products and programs available on our platform, associates use easy link-building tools to direct their audience to their recommendations, and earn from qualifying purchases and programs.
+                        Welcome to one of the largest affiliate marketing programs in the world. The Plenora Scientific Skin Associates Program helps content creators, publishers and bloggers monetize their traffic. With millions of products and programs available on our platform, associates use easy link-building tools to direct their audience to their recommendations, and earn from qualifying purchases and programs.
                     </p>
                 </div>
 
@@ -131,7 +131,7 @@ const Affiliate = () => {
                             onClick={() => navigate('/seller-register')}
                             className="text-xl font-bold text-gray-900 mb-3 cursor-pointer">Sign up</h4>
                         <p className="text-gray-600">
-                            Join tens of thousands of creators, publishers and bloggers who are earning with the Anti Turnish Jewellery Associates Program.
+                            Join tens of thousands of creators, publishers and bloggers who are earning with the Plenora Scientific Skin Associates Program.
                         </p>
                     </div>
 
@@ -248,9 +248,9 @@ const Affiliate = () => {
                 <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl p-12 text-center">
                     <div className="flex items-center justify-center gap-3 mb-6">
                         <h2 className="text-3xl font-bold">
-                            <span className="text-gray-900">APK</span>
-                            <span className="text-primary">Crackers</span>
-                            <span className="text-lg text-gray-600 ml-2">associates</span>
+                            <span className="text-gray-900">Plenora</span>
+                            <span className="text-primary"> Scientific Skin</span>
+                            <span className="text-lg text-gray-600 ml-2">Associates</span>
                         </h2>
                     </div>
                     <h3 className="text-2xl font-bold text-gray-900 mb-6">
@@ -269,7 +269,7 @@ const Affiliate = () => {
             <footer className="bg-gray-900 text-white py-8 mt-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <p className="text-gray-400">
-                        © 2024 Anti Turnish Jewellery Associates. All rights reserved.
+                        © 2024 Plenora Scientific Skin Associates. All rights reserved.
                     </p>
                 </div>
             </footer>

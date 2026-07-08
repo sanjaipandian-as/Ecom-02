@@ -40,14 +40,14 @@ export const updateBestSellerConfig = async (req, res) => {
         if (!Array.isArray(categories)) {
             return res.status(400).json({ message: 'categories must be an array.' });
         }
-        if (categories.length !== 4) {
+        
+        // Clean and filter out empty categories
+        const cleaned = categories.map((c) => String(c || '').trim()).filter(Boolean);
+        
+        if (cleaned.length > 4) {
             return res.status(400).json({
-                message: 'Exactly 4 categories are required (slots 1–4). "All" is always slot 0.',
+                message: 'A maximum of 4 categories can be configured.',
             });
-        }
-        const cleaned = categories.map((c) => String(c).trim()).filter(Boolean);
-        if (cleaned.length !== 4) {
-            return res.status(400).json({ message: 'All 4 category names must be non-empty strings.' });
         }
 
         const config = await BestSellerConfig.findOneAndUpdate(

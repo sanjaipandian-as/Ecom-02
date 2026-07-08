@@ -241,7 +241,7 @@ const AdminOrders = ({ refreshId, triggerGlobalRefresh }) => {
         // Header
         doc.setFontSize(20);
         doc.setTextColor(79, 70, 229); // Indigo-600
-        doc.text("HA - Invoice", 14, 22);
+        doc.text("Plenora - Invoice", 14, 22);
 
         // Order Info
         doc.setFontSize(10);
@@ -324,7 +324,7 @@ const AdminOrders = ({ refreshId, triggerGlobalRefresh }) => {
         doc.setFontSize(8);
         doc.setTextColor(150);
         doc.setFont("helvetica", "normal");
-        doc.text("Thank you for shopping with HA!", 105, 285, { align: 'center' });
+        doc.text("Thank you for shopping with Plenora!", 105, 285, { align: 'center' });
 
         doc.save(`Invoice_${order._id}.pdf`);
     };

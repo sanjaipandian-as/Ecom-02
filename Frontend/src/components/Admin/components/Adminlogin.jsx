@@ -121,9 +121,9 @@ const Adminlogin = () => {
                 {/* Brand */}
                 <div className="text-center mb-8">
                     <div className="w-16 h-16 bg-slate-900 rounded-none flex items-center justify-center mx-auto mb-6 shadow-xl shadow-slate-200 transition-transform duration-500">
-                        <span className="text-white font-bold text-2xl font-hero">N</span>
+                        <span className="text-white font-bold text-2xl font-hero">P</span>
                     </div>
-                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight font-hero mb-2">HA Admin</h1>
+                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight font-hero mb-2">Plenora Admin</h1>
                     <p className="text-slate-500 font-medium text-xs">Sign in to manage your storefront.</p>
                 </div>
 

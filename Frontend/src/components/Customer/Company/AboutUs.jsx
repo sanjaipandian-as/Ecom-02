@@ -23,7 +23,7 @@ const AboutUs = () => {
                             <span className="text-gold-lustrous">— Our Story ✨</span>
                         </h1>
                         <p className="text-stone-300 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed font-sans pt-2">
-                            "Because true beauty is not just about what you wear… It’s about how confidently you shine."
+                            "Because true beauty starts with healthy, happy skin… It’s about glowing with confidence every single day."
                         </p>
                     </div>
                 </section>
@@ -37,30 +37,30 @@ const AboutUs = () => {
                                 <FiHeart className="w-6 h-6" />
                             </span>
                             <h2 className="text-3xl sm:text-4xl font-bold text-emerald-deep font-serif leading-tight">
-                                Born from a dream to make every girl shine
+                                Born from a dream to make every skin glow
                             </h2>
                             <div className="h-1.5 w-16 bg-gold-lustrous rounded-full" />
                             <p className="text-sm font-semibold tracking-wider text-gold-lustrous uppercase">
-                                Confidence & Self-Love
+                                Science, Purity & Self-Love
                             </p>
                         </div>
 
                         {/* Content Paragraphs */}
                         <div className="lg:col-span-7 text-stone-700 space-y-6 text-sm sm:text-base leading-relaxed">
                             <p className="font-semibold text-emerald-deep text-base sm:text-lg">
-                                Plenora was born from the dream of a woman who believed that every girl deserves to feel beautiful, confident, and special every single day.
+                                Plenora Scientific Skin was born from the dream of a woman who believed that everyone deserves to feel beautiful, confident, and comfortable in their own skin every single day.
                             </p>
                             <p>
-                                Behind this brand is not just a business… It’s a journey of passion, courage, and hard work. ✨
+                                Behind this brand is not just a business… It’s a journey of passion, scientific research, and dedication to skin health. ✨
                             </p>
                             <p>
-                                From small beginnings and big dreams, Plenora was created to bring elegant, premium anti-tarnish jewellery that helps women shine without worrying about fading trends or losing sparkle. 💎
+                                From small beginnings and big dreams, Plenora was created to deliver clean, dermatologist-tested, and highly effective skincare solutions that help you glow without worrying about harsh chemicals or preservatives. 🌿
                             </p>
                             <p>
-                                We believe jewellery is more than an accessory. It’s confidence. It’s self-love. It’s the little sparkle that reminds a woman of her strength and beauty. 🌸
+                                We believe skincare is more than a routine. It’s self-care. It’s the daily ritual that protects, heals, and reminds you of your natural radiance and strength. 🌸
                             </p>
                             <p>
-                                Every chain, ring, bracelet, and earring is chosen with love for women who dream big, work hard, and glow through every phase of life. At Plenora, we celebrate every woman — her confidence, her independence, and her story.
+                                Every serum, cream, cleanser, and facial kit is formulated with love for people who want healthy, radiant skin. At Plenora, we celebrate every skin type — its uniqueness, its resilience, and its journey.
                             </p>
                         </div>
                     </div>
@@ -74,27 +74,27 @@ const AboutUs = () => {
                         </span>
 
                         <h2 className="text-3xl font-bold text-emerald-deep font-serif">
-                            A Journey of Ambition & Courage
+                            A Journey of Ambition & Science
                         </h2>
 
                         <div className="relative rounded-3xl border border-gold-champagne/20 bg-cream-soft p-6 sm:p-10 shadow-sm max-w-3xl mx-auto">
                             <p className="text-base sm:text-lg italic text-stone-850 leading-relaxed font-serif">
-                                “She started with nothing but a dream in her heart and courage in her soul. 💖 There were days filled with doubts, struggles, and people who said, ‘It’s impossible.’ But she believed one thing — A strong woman can create her own shine. ✨”
+                                “She started with nothing but a dream in her heart and courage in her soul. 💖 Struggling with skin issues herself, she believed one thing — True beauty is backed by science and nurtured by nature. ✨”
                             </p>
                         </div>
 
                         <div className="text-stone-700 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto space-y-6 pt-4">
                             <p>
-                                Instead of giving up, she turned her passion into purpose. She wanted to create something beautiful… not just jewellery, but confidence for every woman who wears it. 💎
+                                Instead of giving up, she turned her passion into purpose. Having struggled with severe acne in her youth, she set out to create real solutions—not just products, but confidence for everyone who uses them. 🧪
                             </p>
                             <p>
-                                That’s why **Plenora Anti-Tarnish** was created — a brand for women who work hard, dream fearlessly, and never stop glowing. 🌸
+                                That’s why **Plenora Scientific Skin** was created — a brand for people who value clean beauty, scientific innovation, and healthy skin that glows naturally. 🌸
                             </p>
                             <p>
-                                Every anti-tarnish piece is designed to remind women that elegance is not about price… it’s about confidence. Whether you’re a student, working woman, business owner, homemaker, or dreamer — you deserve to feel beautiful every single day. 💕
+                                Every product, from our viral Red Wine Facial Kit to our targeted Acne Clear Kit, is designed to remind you that healthy skin is a journey. Whether you are addressing acne, dullness, or simply maintaining your glow — you deserve gentle, effective care every single day. 💕
                             </p>
                             <p className="font-semibold text-emerald-light text-base sm:text-lg">
-                                This is more than a jewellery brand. It’s a journey of ambition, self-love, and women empowering women. ✨ Because when a woman believes in herself… she becomes unstoppable. 💖
+                                This is more than a skincare brand. It’s a journey of science, self-love, and empowerment. ✨ Because when you feel good in your skin, you become unstoppable. 💖
                             </p>
                         </div>
                     </div>
@@ -112,9 +112,9 @@ const AboutUs = () => {
                             <div className="w-12 h-12 rounded-xl bg-gold-light/40 flex items-center justify-center text-gold-lustrous">
                                 <FiStar className="w-6 h-6" />
                             </div>
-                            <h4 className="text-lg font-bold text-emerald-deep font-serif">Premium Anti-Tarnish</h4>
+                            <h4 className="text-lg font-bold text-emerald-deep font-serif">Science-Driven Formulas</h4>
                             <p className="text-stone-600 text-xs sm:text-sm leading-relaxed">
-                                Our collection features high-grade anti-tarnish materials designed to keep their brilliance and sparkle through daily wear and active lifestyles.
+                                Our skincare products are backed by scientific research and dermatologist testing to ensure safety, potency, and visible results.
                             </p>
                         </div>
 
@@ -123,9 +123,9 @@ const AboutUs = () => {
                             <div className="w-12 h-12 rounded-xl bg-gold-light/40 flex items-center justify-center text-gold-lustrous">
                                 <FiHeart className="w-6 h-6" />
                             </div>
-                            <h4 className="text-lg font-bold text-emerald-deep font-serif">Confidence In Every Gift</h4>
+                            <h4 className="text-lg font-bold text-emerald-deep font-serif">Skin Friendly Ingredients</h4>
                             <p className="text-stone-600 text-xs sm:text-sm leading-relaxed">
-                                We curate rings, necklaces, bracelets, and earrings that reflect strength and self-love, making them the perfect reminder of your personal worth.
+                                We formulate our products with pure, skin-friendly botanical ingredients and active compounds, free from harsh chemicals and preservatives.
                             </p>
                         </div>
 
@@ -134,9 +134,9 @@ const AboutUs = () => {
                             <div className="w-12 h-12 rounded-xl bg-gold-light/40 flex items-center justify-center text-gold-lustrous">
                                 <FiAward className="w-6 h-6" />
                             </div>
-                            <h4 className="text-lg font-bold text-emerald-deep font-serif">Women Empowering Women</h4>
+                            <h4 className="text-lg font-bold text-emerald-deep font-serif">Empowering Your Skin Journey</h4>
                             <p className="text-stone-600 text-xs sm:text-sm leading-relaxed">
-                                A community-centered brand supporting ambition and independence. We celebrate women dreamers, doers, homemakers, and leaders everywhere.
+                                A brand built on real experiences and shared stories. We are here to guide you toward skin health, self-care, and ultimate confidence.
                             </p>
                         </div>
                     </div>
@@ -153,7 +153,7 @@ const AboutUs = () => {
                         <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto pt-4">
                             <div className="bg-white border border-gold-champagne/10 rounded-2xl p-6">
                                 <p className="font-bold text-emerald-deep mb-1 text-sm uppercase tracking-wider">Email Address</p>
-                                <p className="text-stone-600 text-sm">hello@plenora.com</p>
+                                <p className="text-stone-600 text-sm">plenorascientificskin@gmail.com</p>
                             </div>
                             <div className="bg-white border border-gold-champagne/10 rounded-2xl p-6">
                                 <p className="font-bold text-emerald-deep mb-1 text-sm uppercase tracking-wider">Phone Support</p>
@@ -167,9 +167,9 @@ const AboutUs = () => {
                 <section className="py-20 bg-emerald-deep text-white text-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(197,168,128,0.1),transparent_40%)]" />
                     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
-                        <h2 className="text-3xl sm:text-4xl font-bold font-serif">Ready to find your sparkle?</h2>
+                        <h2 className="text-3xl sm:text-4xl font-bold font-serif">Ready to start your skin journey?</h2>
                         <p className="text-stone-300 text-sm sm:text-base max-w-xl mx-auto">
-                            Explore our curated anti-tarnish jewelry collections chosen with love to empower your everyday look.
+                            Explore our clinically researched, botanical skincare collections crafted to reveal your natural glow.
                         </p>
                         <button
                             onClick={() => navigate('/products')}

@@ -127,7 +127,7 @@ const ProductCard = ({ product }) => {
 const BestSellers = () => {
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
-    const [categories, setCategories] = useState(['All', 'Face Care', 'Hair Care', 'Body Care', 'Lip Care']);
+    const [categories, setCategories] = useState(['All']);
     const [activeTab, setActiveTab] = useState('All');
     const [loading, setLoading] = useState(true);
 
@@ -135,20 +135,34 @@ const BestSellers = () => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                // Fetch products and category config in parallel
-                const [productsRes, configRes] = await Promise.allSettled([
+                // Fetch products, category config, and all categories in parallel
+                const [productsRes, configRes, categoriesRes] = await Promise.allSettled([
                     API.get('/products/customer/homepage-sections'),
                     API.get('/bestseller-config'),
+                    API.get('/categories')
                 ]);
 
                 if (productsRes.status === 'fulfilled') {
                     setProducts(productsRes.value.data?.topSellingProducts || []);
                 }
-                if (configRes.status === 'fulfilled') {
+
+                let activeDbCats = [];
+                if (categoriesRes.status === 'fulfilled') {
+                    activeDbCats = categoriesRes.value.data?.filter(c => c.isActive !== false) || [];
+                }
+
+                if (configRes.status === 'fulfilled' && activeDbCats.length > 0) {
                     const cats = configRes.value.data?.categories || [];
-                    if (cats.length > 0) {
-                        setCategories(['All', ...cats]);
+                    const validCats = cats.filter(catName =>
+                        activeDbCats.some(dbCat => dbCat.name.toLowerCase().trim() === catName.toLowerCase().trim())
+                    );
+                    if (validCats.length > 0) {
+                        setCategories(['All', ...validCats]);
+                    } else {
+                        setCategories(['All']);
                     }
+                } else {
+                    setCategories(['All']);
                 }
             } catch (error) {
                 console.error('Error fetching best sellers data:', error);
