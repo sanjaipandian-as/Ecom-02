@@ -62,7 +62,7 @@ const Contact = () => {
                                 <FiPhone className="w-8 h-8 text-primary" />
                             </div>
                             <h3 className="font-bold text-gray-900 mb-2">Phone</h3>
-                            <p className="text-gray-600">+91 98765 43210</p>
+                            <p className="text-gray-600">+91 74488 33345</p>
                             <p className="text-sm text-gray-500 mt-1">Mon-Sat, 9 AM - 6 PM</p>
                         </div>
 
@@ -71,7 +71,7 @@ const Contact = () => {
                                 <FiMail className="w-8 h-8 text-primary" />
                             </div>
                             <h3 className="font-bold text-gray-900 mb-2">Email</h3>
-                            <p className="text-gray-600">support@apkcrackers.com</p>
+                            <p className="text-gray-600">plenorascientificskin@gmail.com</p>
                             <p className="text-sm text-gray-500 mt-1">24-hour response</p>
                         </div>
 
@@ -80,8 +80,8 @@ const Contact = () => {
                                 <FiMapPin className="w-8 h-8 text-primary" />
                             </div>
                             <h3 className="font-bold text-gray-900 mb-2">Address</h3>
-                            <p className="text-gray-600">Sivakasi, Tamil Nadu</p>
-                            <p className="text-sm text-gray-500 mt-1">India - 626123</p>
+                            <p className="text-gray-600 text-sm">Flat 407, Manchester Apartment</p>
+                            <p className="text-sm text-gray-500 mt-1">Athipet, Chennai 600058</p>
                         </div>
 
                         <div className="bg-white border border-gray-200 rounded-lg p-6 text-center">
@@ -230,10 +230,10 @@ const Contact = () => {
                                     </p>
                                     <div className="space-y-2 text-sm">
                                         <p className="text-gray-700">
-                                            <strong>Email:</strong> support@apkcrackers.com
+                                            <strong>Email:</strong> plenorascientificskin@gmail.com
                                         </p>
                                         <p className="text-gray-700">
-                                            <strong>Phone:</strong> +91 98765 43210
+                                            <strong>Phone:</strong> +91 74488 33345
                                         </p>
                                     </div>
                                 </div>
@@ -260,9 +260,9 @@ const Contact = () => {
                                     </p>
                                     <div className="space-y-2 text-sm">
                                         <p className="text-gray-700">
-                                            123, Sivakasi Main Road<br />
-                                            Sivakasi, Tamil Nadu<br />
-                                            India - 626123
+                                            Flat 407, Manchester Apartment<br />
+                                            Chelliamman Koil Street, Athipet<br />
+                                            Ambattur, Chennai 600058
                                         </p>
                                         <p className="text-gray-700">
                                             <strong>Hours:</strong> Mon-Sat, 9:00 AM - 6:00 PM
@@ -323,7 +323,7 @@ const Contact = () => {
                         className="inline-flex items-center gap-2 bg-white hover:bg-gray-100 text-primary font-semibold px-8 py-4 rounded-lg text-lg transition-colors"
                     >
                         <FiPhone className="w-5 h-5" />
-                        +91 98765 43210
+                        +91 74488 33345
                     </a>
                 </div>
             </section>

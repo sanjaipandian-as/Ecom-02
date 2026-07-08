@@ -132,9 +132,9 @@ const TrackOrder = () => {
                                         <h3 className="text-xl font-bold text-gray-900">Delivery Address</h3>
                                     </div>
                                     <p className="text-gray-600">
-                                        123, Main Street<br />
-                                        Sivakasi, Tamil Nadu<br />
-                                        India - 626123
+                                        Flat 407, Manchester Apartment<br />
+                                        Chelliamman Koil Street, Athipet<br />
+                                        Ambattur, Chennai 600058
                                     </p>
                                 </div>
 
@@ -191,11 +191,11 @@ const TrackOrder = () => {
                     <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
                         <div className="bg-white border border-gray-200 rounded-lg p-6">
                             <p className="font-bold text-gray-900 mb-2">Email Support</p>
-                            <p className="text-gray-600">support@apkcrackers.com</p>
+                            <p className="text-gray-600">plenorascientificskin@gmail.com</p>
                         </div>
                         <div className="bg-white border border-gray-200 rounded-lg p-6">
                             <p className="font-bold text-gray-900 mb-2">Phone Support</p>
-                            <p className="text-gray-600">+91 98765 43210</p>
+                            <p className="text-gray-600">+91 74488 33345</p>
                         </div>
                     </div>
                 </div>

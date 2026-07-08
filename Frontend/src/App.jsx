@@ -4,34 +4,34 @@ import AppSkeleton from './components/Common/AppSkeleton';
 import ServerWakeup from './components/Common/ServerWakeup';
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import './App.css'
+
+// Lazy-load ALL route components for code splitting
 const Homepage = lazy(() => import('./pages/Homepage'));
 const ProductsPage = lazy(() => import('./pages/ProductsPage'));
-import './App.css'
-import Settings from './pages/Settings'
-import Adminlogin from './components/Admin/components/Adminlogin'
-import Adminhome from './components/Admin/Adminpages/Adminhome'
-import Productview from './components/Customer/Prouductview'
-import Checkout from './components/Customer/Checkout'
-import Login from './components/Customer/Login'
-import Register from './components/Customer/Register'
-import AuthModal from './components/Customer/AuthModal'
-import CartPage from './pages/CartPage'
-import WishlistPage from './pages/WishlistPage'
-import SearchResults from './pages/SearchResults'
-import SitePrivacy from "./components/Customer/Policys/SitePrivacy"
-import TermsAndConditions from './components/Customer/Policys/TermsAndConditions'
-import Support from './components/Customer/Policys/Support'
-import Affiliate from "./components/Customer/Affiliate"
-import BrandRegistry from "./components/Customer/BrandRegistry"
-import Shipping from "./components/Customer/Policys/Shipping"
-import Returns from "./components/Customer/Policys/Returns"
-import TrackOrder from "./components/Customer/Policys/TrackOrder"
-import FAQs from "./components/Customer/Policys/FAQs"
-import AboutUs from "./components/Customer/Company/AboutUs"
-import Contact from "./components/Customer/Company/Contact"
-import CategoriesSpecificpage from "./components/Customer/Landing/CategoriesSpecificpage"
-import ShopProductsPage from "./pages/ShopProductsPage"
-import NotFound from "./pages/NotFound"
+const Settings = lazy(() => import('./pages/Settings'));
+const Adminlogin = lazy(() => import('./components/Admin/components/Adminlogin'));
+const Adminhome = lazy(() => import('./components/Admin/Adminpages/Adminhome'));
+const Productview = lazy(() => import('./components/Customer/Prouductview'));
+const Checkout = lazy(() => import('./components/Customer/Checkout'));
+const AuthModal = lazy(() => import('./components/Customer/AuthModal'));
+const CartPage = lazy(() => import('./pages/CartPage'));
+const WishlistPage = lazy(() => import('./pages/WishlistPage'));
+const SearchResults = lazy(() => import('./pages/SearchResults'));
+const SitePrivacy = lazy(() => import("./components/Customer/Policys/SitePrivacy"));
+const TermsAndConditions = lazy(() => import('./components/Customer/Policys/TermsAndConditions'));
+const Support = lazy(() => import('./components/Customer/Policys/Support'));
+const Affiliate = lazy(() => import("./components/Customer/Affiliate"));
+const BrandRegistry = lazy(() => import("./components/Customer/BrandRegistry"));
+const Shipping = lazy(() => import("./components/Customer/Policys/Shipping"));
+const Returns = lazy(() => import("./components/Customer/Policys/Returns"));
+const TrackOrder = lazy(() => import("./components/Customer/Policys/TrackOrder"));
+const FAQs = lazy(() => import("./components/Customer/Policys/FAQs"));
+const AboutUs = lazy(() => import("./components/Customer/Company/AboutUs"));
+const Contact = lazy(() => import("./components/Customer/Company/Contact"));
+const CategoriesSpecificpage = lazy(() => import("./components/Customer/Landing/CategoriesSpecificpage"));
+const ShopProductsPage = lazy(() => import("./pages/ShopProductsPage"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 import {
   ProtectedCustomerRoute,
@@ -151,7 +151,9 @@ function App() {
         </Routes>
       </Suspense>
       <ServerWakeup />
-      <AuthModal />
+      <Suspense fallback={null}>
+        <AuthModal />
+      </Suspense>
       <ToastContainer
         position="top-right"
         autoClose={3000}

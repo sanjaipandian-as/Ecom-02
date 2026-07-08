@@ -138,7 +138,7 @@ const Register = () => {
         }
     };
 
-    const inputClasses = 'w-full rounded-2xl border border-stone-200 bg-white px-4 py-3.5 text-sm text-stone-900 outline-none transition-all placeholder:text-stone-400 focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10';
+    const inputClasses = 'w-full rounded-2xl border border-stone-200 bg-white px-4 py-3.5 text-base text-stone-900 outline-none transition-all placeholder:text-stone-400 focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10';
 
     return (
         <div className="h-screen w-full overflow-hidden bg-[linear-gradient(180deg,#f8f5ef_0%,#ffffff_40%,#f5fbf7_100%)]">
@@ -148,10 +148,10 @@ const Register = () => {
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(31,59,45,0.08),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(129,199,132,0.18),transparent_28%)]" />
                         <div className="relative">
 
-                            <h1 className="mt-8 max-w-md text-5xl font-bold leading-[1.02] tracking-tight text-stone-950">
+                            <h1 className="mt-8 max-w-md text-6xl font-bold leading-[1.02] tracking-tight text-stone-950">
                                 Set up your account in a few easy steps.
                             </h1>
-                            <p className="mt-5 max-w-lg text-base leading-7 text-stone-600">
+                            <p className="mt-5 max-w-lg text-lg leading-7 text-stone-600">
                                 Join with your delivery details now so the next checkout feels instant, organized, and personal.
                             </p>
 
@@ -172,8 +172,8 @@ const Register = () => {
                         <div className="mx-auto max-w-2xl">
                             <div className="mb-8">
                                 <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-stone-500">Start here</p>
-                                <h2 className="mt-2 text-3xl font-bold tracking-tight text-stone-950 sm:text-4xl">Create your account</h2>
-                                <p className="mt-3 text-sm leading-6 text-stone-500">
+                                <h2 className="mt-2 text-4xl font-bold tracking-tight text-stone-950 sm:text-5xl">Create your account</h2>
+                                <p className="mt-3 text-base leading-6 text-stone-500">
                                     Add your details once and we will keep your shopping flow simple from login to delivery.
                                 </p>
                             </div>
@@ -204,7 +204,7 @@ const Register = () => {
 
                                     <div className="grid gap-4 sm:grid-cols-2">
                                         <div>
-                                            <label htmlFor="firstName" className="mb-2 block text-sm font-semibold text-stone-700">First name</label>
+                                            <label htmlFor="firstName" className="mb-2 block text-base font-semibold text-stone-700">First name</label>
                                             <input
                                                 type="text"
                                                 id="firstName"
@@ -218,7 +218,7 @@ const Register = () => {
                                         </div>
 
                                         <div>
-                                            <label htmlFor="lastName" className="mb-2 block text-sm font-semibold text-stone-700">Last name</label>
+                                            <label htmlFor="lastName" className="mb-2 block text-base font-semibold text-stone-700">Last name</label>
                                             <input
                                                 type="text"
                                                 id="lastName"
@@ -232,7 +232,7 @@ const Register = () => {
                                         </div>
 
                                         <div className="sm:col-span-2">
-                                            <label htmlFor="email" className="mb-2 block text-sm font-semibold text-stone-700">Email address</label>
+                                            <label htmlFor="email" className="mb-2 block text-base font-semibold text-stone-700">Email address</label>
                                             <div className="relative">
                                                 <FaEnvelope className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" />
                                                 <input
@@ -249,7 +249,7 @@ const Register = () => {
                                         </div>
 
                                         <div className="sm:col-span-2">
-                                            <label htmlFor="phone" className="mb-2 block text-sm font-semibold text-stone-700">Phone number</label>
+                                            <label htmlFor="phone" className="mb-2 block text-base font-semibold text-stone-700">Phone number</label>
                                             <div className="relative">
                                                 <FaPhone className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" />
                                                 <input
@@ -282,7 +282,7 @@ const Register = () => {
 
                                     <div className="grid gap-4">
                                         <div>
-                                            <label htmlFor="addressLine1" className="mb-2 block text-sm font-semibold text-stone-700">Address line 1</label>
+                                            <label htmlFor="addressLine1" className="mb-2 block text-base font-semibold text-stone-700">Address line 1</label>
                                             <input
                                                 type="text"
                                                 id="addressLine1"
@@ -296,7 +296,7 @@ const Register = () => {
                                         </div>
 
                                         <div>
-                                            <label htmlFor="addressLine2" className="mb-2 block text-sm font-semibold text-stone-700">Address line 2 <span className="font-normal text-stone-400">(Optional)</span></label>
+                                            <label htmlFor="addressLine2" className="mb-2 block text-base font-semibold text-stone-700">Address line 2 <span className="font-normal text-stone-400">(Optional)</span></label>
                                             <input
                                                 type="text"
                                                 id="addressLine2"
@@ -310,7 +310,7 @@ const Register = () => {
 
                                         <div className="grid gap-4 sm:grid-cols-3">
                                             <div>
-                                                <label htmlFor="city" className="mb-2 block text-sm font-semibold text-stone-700">City</label>
+                                                <label htmlFor="city" className="mb-2 block text-base font-semibold text-stone-700">City</label>
                                                 <input
                                                     type="text"
                                                     id="city"
@@ -324,7 +324,7 @@ const Register = () => {
                                             </div>
 
                                             <div>
-                                                <label htmlFor="state" className="mb-2 block text-sm font-semibold text-stone-700">State</label>
+                                                <label htmlFor="state" className="mb-2 block text-base font-semibold text-stone-700">State</label>
                                                 <input
                                                     type="text"
                                                     id="state"
@@ -338,7 +338,7 @@ const Register = () => {
                                             </div>
 
                                             <div>
-                                                <label htmlFor="postalCode" className="mb-2 block text-sm font-semibold text-stone-700">PIN code</label>
+                                                <label htmlFor="postalCode" className="mb-2 block text-base font-semibold text-stone-700">PIN code</label>
                                                 <input
                                                     type="text"
                                                     id="postalCode"
@@ -359,7 +359,7 @@ const Register = () => {
                                     <h3 className="mb-4 text-base font-semibold text-stone-900">Security</h3>
                                     <div className="grid gap-4 sm:grid-cols-2">
                                         <div>
-                                            <label htmlFor="password" className="mb-2 block text-sm font-semibold text-stone-700">Password</label>
+                                            <label htmlFor="password" className="mb-2 block text-base font-semibold text-stone-700">Password</label>
                                             <div className="relative">
                                                 <input
                                                     type={showPassword ? 'text' : 'password'}
@@ -383,7 +383,7 @@ const Register = () => {
                                         </div>
 
                                         <div>
-                                            <label htmlFor="confirmPassword" className="mb-2 block text-sm font-semibold text-stone-700">Confirm password</label>
+                                            <label htmlFor="confirmPassword" className="mb-2 block text-base font-semibold text-stone-700">Confirm password</label>
                                             <div className="relative">
                                                 <input
                                                     type={showConfirmPassword ? 'text' : 'password'}
@@ -430,7 +430,7 @@ const Register = () => {
                                 </div>
 
                                 <div className="space-y-3 rounded-[28px] border border-stone-200 bg-white p-4 sm:p-5">
-                                    <label className="flex items-start gap-3 text-sm leading-6 text-stone-600">
+                                    <label className="flex items-start gap-3 text-base leading-6 text-stone-600">
                                         <input
                                             type="checkbox"
                                             name="newsletter"
@@ -441,7 +441,7 @@ const Register = () => {
                                         <span>Send me festival offers, launch alerts, and occasional product updates.</span>
                                     </label>
 
-                                    <label className="flex items-start gap-3 text-sm leading-6 text-stone-600">
+                                    <label className="flex items-start gap-3 text-base leading-6 text-stone-600">
                                         <input
                                             type="checkbox"
                                             name="agreeToTerms"
@@ -467,7 +467,7 @@ const Register = () => {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className={`flex w-full items-center justify-center gap-3 rounded-2xl px-5 py-4 text-sm font-semibold text-white shadow-lg transition-all active:scale-[0.99] ${loading
+                                    className={`flex w-full items-center justify-center gap-3 rounded-2xl px-5 py-4 text-base font-semibold text-white shadow-lg transition-all active:scale-[0.99] ${loading
                                         ? 'cursor-not-allowed bg-[#6f8f7a]'
                                         : 'bg-[#1f3b2d] hover:bg-[#315542]'
                                         }`}
@@ -477,7 +477,7 @@ const Register = () => {
                                 </button>
                             </form>
 
-                            <p className="mt-7 text-center text-sm text-stone-500">
+                            <p className="mt-7 text-center text-base text-stone-500">
                                 Already have an account?{' '}
                                 <Link to="/Login" className="font-semibold text-[#1f3b2d] hover:text-[#315542]">
                                     Sign in

@@ -212,10 +212,10 @@ const PrivacyPolicy = () => {
                             </p>
                             <div className="bg-gray-50 p-4 rounded-lg space-y-1">
                                 <p><strong>Grievance Officer</strong></p>
-                                <p>Plenora Organic Skincare Private Limited</p>
-                                <p>45 Grand Avenue, Luxury District, Chennai</p>
-                                <p>Tamil Nadu, India - 600002</p>
-                                <p className="mt-2">Email: <a href="mailto:privacy@plenora.com" className="text-primary hover:text-primary/80 underline">privacy@plenora.com</a></p>
+                                <p>Plenora Scientific Skin</p>
+                                <p>Flat 407, Manchester Apartment, Chelliamman Koil Street, Athipet, Ambattur, Chennai 600058.</p>
+                                <p className="mt-2">Email: <a href="mailto:plenorascientificskin@gmail.com" className="text-primary hover:text-primary/80 underline">plenorascientificskin@gmail.com</a></p>
+                                <p>Phone: <a href="tel:+917448833345" className="text-primary hover:text-primary/80 underline">+91 74488 33345</a></p>
                             </div>
                         </div>
                     </section>
@@ -225,10 +225,10 @@ const PrivacyPolicy = () => {
                         <h2 className="text-base font-bold text-gray-900">Customer Support</h2>
                         <div className="text-sm text-gray-700 space-y-2">
                             <p className="leading-relaxed">
-                                If you have a query, concern, or complaint in relation to collection or usage of your personal data under this Privacy Policy please contact us at <a href="mailto:privacy@plenora.com" className="text-primary hover:text-primary/80 underline">privacy@plenora.com</a>
+                                If you have a query, concern, or complaint in relation to collection or usage of your personal data under this Privacy Policy please contact us at <a href="mailto:plenorascientificskin@gmail.com" className="text-primary hover:text-primary/80 underline">plenorascientificskin@gmail.com</a>
                             </p>
                             <p className="leading-relaxed">
-                                You can reach our customer support team to address any of your queries or complaints related to product and services by contacting us at <strong>+91 98765 43210</strong> (Monday-Saturday, 9:00 AM - 6:00 PM IST)
+                                You can reach our customer support team to address any of your queries or complaints related to product and services by contacting us at <strong>+91 74488 33345</strong> (Monday–Sunday, 8:00 AM – 10:00 PM IST)
                             </p>
                         </div>
                     </section>

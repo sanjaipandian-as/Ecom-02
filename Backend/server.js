@@ -165,6 +165,7 @@ import searchRoutes from "./routes/searchRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import supportRoutes from "./routes/supportRoutes.js";
 import announcementRoutes from "./routes/announcementRoutes.js";
+import bestSellerConfigRoutes from "./routes/bestSellerConfigRoutes.js";
 
 
 // =========================
@@ -204,6 +205,7 @@ app.use("/api/search", searchRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/support", supportRoutes);
 app.use("/api/announcements", announcementRoutes);
+app.use("/api/bestseller-config", bestSellerConfigRoutes);
 
 
 // =========================

@@ -3,6 +3,40 @@ import Product from "../models/Product.js";
 import Order from "../models/Order.js";
 import { createNotification } from "../controllers/notificationController.js";  // ⭐ UPDATED
 import { encrypt, decrypt } from "../utils/cryptoUtils.js";
+import razorpayInstance from "../config/razorpay.js";
+
+// Helper to check and update order status from Razorpay for pending refunds
+const syncPendingRefunds = async (orders) => {
+  if (!razorpayInstance) return;
+
+  const pendingRefundOrders = orders.filter(o => 
+    ['return_approved', 'refund_initiated'].includes(o.status) && 
+    o.refundDetails && 
+    o.refundDetails.refundId && 
+    o.refundDetails.refundStatus !== 'processed'
+  );
+
+  if (pendingRefundOrders.length === 0) return;
+
+  for (const order of pendingRefundOrders) {
+    try {
+      console.log(`[REFUND SYNC] Fetching status for Refund ID: ${order.refundDetails.refundId}`);
+      const refund = await razorpayInstance.refunds.fetch(order.refundDetails.refundId);
+      
+      console.log(`[REFUND SYNC] Refund status on Razorpay: ${refund.status}`);
+      if (refund.status === 'processed') {
+        order.status = 'refunded';
+        order.paymentStatus = 'refunded';
+        order.refundDetails.refundStatus = 'processed';
+        order.refundDetails.notes = `Automatic refund processed via Razorpay. Refund ID: ${refund.id}`;
+        await order.save();
+        console.log(`[REFUND SYNC SUCCESS] Order ${order._id} auto-updated to 'refunded'`);
+      }
+    } catch (err) {
+      console.error(`[REFUND SYNC FAILED] Error syncing refund for Order ${order._id}:`, err.message);
+    }
+  }
+};
 
 
 // ==============================
@@ -63,7 +97,7 @@ export const executeOrderPlacement = async (customerId, orderData) => {
   const subTotal = totalItemAmount - taxTotal;
   
   // Dynamic Shipping Logic
-  const shippingFee = totalItemAmount > 999 ? 0 : 99;
+  const shippingFee = 0; // ⚠️ TEMP: Set to 0 for testing. Restore to: totalItemAmount > 999 ? 0 : 99
   const totalAmount = totalItemAmount + shippingFee;
 
   // 2. ATOMIC STOCK DEDUCTION
@@ -208,6 +242,9 @@ export const getMyOrders = async (req, res) => {
     const orders = await Order.find({ customerId })
       .populate("items.productId")
       .sort({ createdAt: -1 }); // Most recent first
+
+    // Sync any pending refunds from Razorpay
+    await syncPendingRefunds(orders);
 
     return res.json({
       count: orders.length,
@@ -366,8 +403,8 @@ export const returnOrder = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
-    // Validation: Must be delivered to return
-    if (order.status !== 'delivered') {
+    // Validation: Must be delivered or previously rejected to return
+    if (!['delivered', 'return_rejected'].includes(order.status)) {
       return res.status(400).json({ message: "Only delivered orders can be returned" });
     }
 
@@ -382,10 +419,16 @@ export const returnOrder = async (req, res) => {
     order.status = 'return_requested';
     order.returnReason = reason;
     order.returnRequestDate = new Date();
+    order.returnRejectReason = undefined; // Clear previous rejection reason
 
-    // 📸 ⭐ HANDLE RETURN IMAGES (MULTER)
-    if (req.files && req.files.length > 0) {
-      order.returnImages = req.files.map((file) => file.path);
+    // 📸 ⭐ HANDLE RETURN IMAGES & VIDEOS (MULTER)
+    if (req.files) {
+      if (req.files.images && req.files.images.length > 0) {
+        order.returnImages = req.files.images.map((file) => file.path);
+      }
+      if (req.files.video && req.files.video.length > 0) {
+        order.returnVideo = req.files.video[0].path;
+      }
     }
 
     // ⭐ REFD-DETAILS (Encrypt Sensitive Data)

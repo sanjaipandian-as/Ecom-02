@@ -15,7 +15,8 @@ import {
     MdLiveHelp,
     MdAutoAwesome,
     MdTrendingUp,
-    MdCampaign
+    MdCampaign,
+    MdFilterList
 } from 'react-icons/md';
 import Logo from '../../Common/Logo';
 
@@ -85,6 +86,7 @@ const Adminsidebar = ({ onNavigate, activePage = 'Dashboard', onOpenUploadModal,
         { name: 'Announcement Bar', icon: MdCampaign },
         { name: 'Top Selling Products', icon: MdAutoAwesome },
         { name: 'Viral Products', icon: MdTrendingUp },
+        { name: 'Best Seller Categories', icon: MdFilterList },
         { name: 'Finance', icon: MdAttachMoney },
     ];
 
