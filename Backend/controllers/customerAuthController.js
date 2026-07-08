@@ -273,7 +273,7 @@ export const loginCustomer = async (req, res) => {
       isTempUser.otp = otp;
       isTempUser.otpExpires = new Date(Date.now() + 15 * 60 * 1000);
       await isTempUser.save();
-      sendVerificationEmail(isTempUser.email, isTempUser.name, otp).catch(err => {});
+      sendVerificationEmail(isTempUser.email, isTempUser.name, otp).catch(err => { });
 
       return res.status(403).json({
         message: "Your email address is not verified. A verification code has been sent to your inbox.",
@@ -388,10 +388,10 @@ export const resetPassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;
     user.resetPasswordOtp = undefined;
-    
+
     // Automatically verify the email if they resets their password successfully
-    user.isVerified = true; 
-    
+    user.isVerified = true;
+
     await user.save();
 
     return res.json({ message: "Password reset successfully. You can now login with your new password." });
