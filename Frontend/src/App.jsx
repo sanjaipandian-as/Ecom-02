@@ -122,17 +122,13 @@ function App() {
           <Route
             path="/Cart"
             element={
-              <ProtectedCustomerRoute>
-                <CartPage />
-              </ProtectedCustomerRoute>
+              <CartPage />
             }
           />
           <Route
             path="/Wishlist"
             element={
-              <ProtectedCustomerRoute>
-                <WishlistPage />
-              </ProtectedCustomerRoute>
+              <WishlistPage />
             }
           />
           <Route

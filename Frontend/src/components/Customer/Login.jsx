@@ -11,6 +11,7 @@ import {
 } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import API from '../../../api';
+import { syncLocalDataWithServer } from '../../utils/localCart';
 
 const featurePoints = [
     'Fast checkout and order tracking',
@@ -89,11 +90,19 @@ const Login = () => {
                 storage.setItem('userRole', 'customer');
                 storage.setItem('loginTime', new Date().getTime().toString());
 
+                // Sync guest cart & wishlist data to database
+                await syncLocalDataWithServer();
+
+                // Check if redirect query parameter exists
+                const searchParams = new URLSearchParams(window.location.search);
+                const redirect = searchParams.get('redirect');
+                const nextUrl = redirect || '/';
+
                 setSuccess('Login successful. Taking you to your account...');
                 toast.success('Login successful!');
 
                 setTimeout(() => {
-                    window.location.href = '/';
+                    window.location.href = nextUrl;
                 }, 1200);
             }
         } catch (err) {

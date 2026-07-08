@@ -4,7 +4,8 @@ import {
   addToCart,
   getCart,
   updateCartItem,
-  removeCartItem
+  removeCartItem,
+  syncCart
 } from "../controllers/cartController.js";
 import { cartWishlistLimiter } from "../middleware/rateLimiters.js";
 
@@ -12,6 +13,9 @@ const router = express.Router();
 
 // Apply cartWishlistLimiter to all cart routes
 router.use(cartWishlistLimiter);
+
+// /api/cart/sync
+router.post("/sync", authenticate, syncCart);
 
 // /api/cart/add
 router.post("/add", authenticate, addToCart);

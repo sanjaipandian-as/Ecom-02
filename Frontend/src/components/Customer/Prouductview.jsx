@@ -13,6 +13,7 @@ import Skeleton from '../Common/Skeleton';
 import placeholderImg from '../../assets/Placeholder.png';
 import Topbar from './Topbar';
 import Footer from './Footer';
+import { getLocalCart, addToLocalCart, getLocalWishlist, addToLocalWishlist, removeFromLocalWishlist } from '../../utils/localCart';
 
 
 
@@ -61,9 +62,9 @@ const Productview = () => {
                     API.get(`/products/customer/product/${id}`),
                     API.get('/products/customer/page?page=1'),
                     API.get(`/reviews/${id}`),
-                    isLoggedIn ? API.get('/wishlist') : Promise.resolve({ value: { data: [] } }),
-                    isLoggedIn ? API.get('/cart') : Promise.resolve({ value: { data: [] } }),
-                    isLoggedIn ? API.get(`/reviews/can-review/${id}`) : Promise.resolve({ value: { data: { canReview: false } } })
+                    isLoggedIn ? API.get('/wishlist') : Promise.resolve({ data: [] }),
+                    isLoggedIn ? API.get('/cart') : Promise.resolve({ data: { items: [] } }),
+                    isLoggedIn ? API.get(`/reviews/can-review/${id}`) : Promise.resolve({ data: { canReview: false } })
                 ]);
 
                 if (results[0].status === 'fulfilled') setProduct(results[0].value.data);
@@ -86,15 +87,24 @@ const Productview = () => {
                     }
                 }
 
-                if (results[3]?.status === 'fulfilled' && results[3].value?.data) {
-                    const wData = Array.isArray(results[3].value.data) ? results[3].value.data : [];
-                    const ids = wData.map(i => i.productId?._id).filter(Boolean);
-                    setIsInWishlist(ids.includes(id));
-                }
+                if (isLoggedIn) {
+                    if (results[3]?.status === 'fulfilled' && results[3].value?.data) {
+                        const wData = Array.isArray(results[3].value.data) ? results[3].value.data : [];
+                        const ids = wData.map(i => i.productId?._id).filter(Boolean);
+                        setIsInWishlist(ids.includes(id));
+                    }
 
-                if (results[4]?.status === 'fulfilled' && results[4].value?.data) {
-                    const cItems = results[4].value.data.items || [];
-                    setIsInCart(cItems.some(i => (i.productId?._id || i.productId) === id));
+                    if (results[4]?.status === 'fulfilled' && results[4].value?.data) {
+                        const cItems = results[4].value.data.items || [];
+                        setIsInCart(cItems.some(i => (i.productId?._id || i.productId) === id));
+                    }
+                } else {
+                    const localWish = getLocalWishlist();
+                    const ids = localWish.map(i => i.productId?._id || i.productId).filter(Boolean);
+                    setIsInWishlist(ids.includes(id));
+
+                    const localCart = getLocalCart();
+                    setIsInCart(localCart.some(i => (i.productId?._id || i.productId) === id));
                 }
 
                 if (results[5]?.status === 'fulfilled' && results[5].value?.data) {
@@ -118,27 +128,53 @@ const Productview = () => {
     }, [product, quantity]);
 
     const addToCartAction = useCallback(async (isBuyNow = false) => {
-        if (!isLoggedIn) return navigate('/Login');
         if (isBuyNow) {
+            if (!isLoggedIn) {
+                try {
+                    addToLocalCart(product, quantity);
+                } catch (err) {
+                    alert(err.message || 'Failed to add to cart.');
+                    return;
+                }
+                navigate('/Login?redirect=/checkout');
+                return;
+            }
             navigate('/checkout', { state: { product, quantity } });
             return;
         }
+
         if (isInCart) return navigate('/Cart');
+
         try {
+            if (!isLoggedIn) {
+                addToLocalCart(product, quantity);
+                setIsInCart(true);
+                return;
+            }
             await API.post('/cart/add', { productId: product._id, quantity });
             setIsInCart(true);
             window.dispatchEvent(new Event('cartUpdated'));
         } catch (e) {
             console.error(e);
-            alert('Failed to add to cart.');
+            alert(e.message || 'Failed to add to cart.');
         }
     }, [isLoggedIn, isInCart, product, quantity, navigate]);
 
     const toggleWishlist = useCallback(async () => {
-        if (!isLoggedIn) return navigate('/Login');
         if (togglingWishlist) return;
         setTogglingWishlist(true);
         try {
+            if (!isLoggedIn) {
+                if (isInWishlist) {
+                    removeFromLocalWishlist(id);
+                    setIsInWishlist(false);
+                } else {
+                    addToLocalWishlist(product);
+                    setIsInWishlist(true);
+                }
+                return;
+            }
+
             if (isInWishlist) {
                 await API.delete(`/wishlist/remove/${id}`);
                 setIsInWishlist(false);
@@ -151,7 +187,7 @@ const Productview = () => {
         } finally {
             setTogglingWishlist(false);
         }
-    }, [isLoggedIn, isInWishlist, id, navigate, togglingWishlist]);
+    }, [isLoggedIn, isInWishlist, id, product, togglingWishlist]);
 
     const handleAddReview = async () => {
         if (!isLoggedIn) return navigate('/Login');

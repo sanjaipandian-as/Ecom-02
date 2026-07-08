@@ -16,6 +16,7 @@ import {
 } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import API from '../../../api';
+import { syncLocalDataWithServer } from '../../utils/localCart';
 
 export default function AuthModal() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -224,6 +225,9 @@ export default function AuthModal() {
                 storage.setItem('userRole', 'customer');
                 storage.setItem('loginTime', new Date().getTime().toString());
 
+                // Sync guest cart & wishlist with DB
+                await syncLocalDataWithServer();
+
                 toast.success('Login successful!');
                 closeModal();
 
@@ -339,6 +343,9 @@ export default function AuthModal() {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 localStorage.setItem('userRole', 'customer');
                 localStorage.setItem('loginTime', new Date().getTime().toString());
+
+                // Sync guest cart & wishlist with DB
+                await syncLocalDataWithServer();
 
                 toast.success('Email verified successfully! Logging you in...');
                 closeModal();

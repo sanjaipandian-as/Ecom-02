@@ -7,6 +7,7 @@ import Footer from '../Footer';
 import { FaArrowLeft, FaShoppingCart, FaStar, FaHeart, FaCheckCircle } from 'react-icons/fa';
 import { BsFillBagHeartFill } from 'react-icons/bs';
 import placeholderImg from "../../../assets/Placeholder.png";
+import { getLocalCart, addToLocalCart, getLocalWishlist, addToLocalWishlist, removeFromLocalWishlist } from '../../../utils/localCart';
 
 // Memoized Product Card Component for better performance
 const ProductCard = React.memo(({
@@ -97,7 +98,7 @@ const ProductCard = React.memo(({
 
                 {/* Rating */}
                 <div className="flex items-center gap-1 mb-3">
-                    <FaStar className="w-4 h-4 text-secondary" />
+                    <FaStar className="w-4 h-4 text-[#F5A623]" />
                     <span className="text-base font-semibold text-gray-700">4.2</span>
                 </div>
 
@@ -122,7 +123,7 @@ const ProductCard = React.memo(({
                             (product.stock || 0) <= 0
                         }
                         className={`px-4 py-2 rounded-lg font-semibold text-sm flex items-center gap-2 transition-all ${(product.stock || 0) <= 0
-                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            ? 'bg-gray-200 text-gray-450 cursor-not-allowed'
                             : inCart
                                 ? 'bg-primary text-white hover:bg-primary/90'
                                 : 'bg-primary text-white hover:bg-primary/90'
@@ -219,7 +220,11 @@ const CategoriesSpecificpage = () => {
     const fetchCart = async () => {
         try {
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-            if (!token) return;
+            if (!token) {
+                const localItems = getLocalCart();
+                setCartItems(localItems);
+                return;
+            }
 
             const response = await API.get('/cart');
             setCartItems(response.data.items || []);
@@ -232,7 +237,11 @@ const CategoriesSpecificpage = () => {
     const fetchWishlist = async () => {
         try {
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-            if (!token) return;
+            if (!token) {
+                const localWish = getLocalWishlist();
+                setWishlistItems(localWish);
+                return;
+            }
 
             const response = await API.get('/wishlist');
             setWishlistItems(Array.isArray(response.data) ? response.data : []);
@@ -349,12 +358,6 @@ const CategoriesSpecificpage = () => {
     }, []);
 
     const addToCart = useCallback(async (product) => {
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (!token) {
-            navigate('/Login');
-            return;
-        }
-
         // Check if product is already in cart
         const isInCart = cartItems.some(item =>
             (item.productId?._id || item.productId) === product._id
@@ -367,6 +370,13 @@ const CategoriesSpecificpage = () => {
 
         setAddingToCart(product._id);
         try {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (!token) {
+                addToLocalCart(product, 1);
+                fetchCart(); // Refresh cart items
+                return;
+            }
+
             await API.post('/cart/add', {
                 productId: product._id,
                 quantity: 1
@@ -380,27 +390,31 @@ const CategoriesSpecificpage = () => {
     }, [cartItems, navigate]);
 
     const addToWishlist = useCallback(async (product) => {
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (!token) {
-            navigate('/Login');
-            return;
-        }
-
         // Check if product is already in wishlist
         const isInWishlist = wishlistItems.some(item =>
-            item.productId?._id === product._id
+            (item.productId?._id || item.productId) === product._id
         );
-
-        if (isInWishlist) {
-            navigate('/Wishlist');
-            return;
-        }
 
         setAddingToWishlist(product._id);
         try {
-            await API.post('/wishlist/add', {
-                productId: product._id
-            });
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (!token) {
+                if (isInWishlist) {
+                    removeFromLocalWishlist(product._id);
+                } else {
+                    addToLocalWishlist(product);
+                }
+                fetchWishlist(); // Refresh wishlist items
+                return;
+            }
+
+            if (isInWishlist) {
+                await API.delete(`/wishlist/remove/${product._id}`);
+            } else {
+                await API.post('/wishlist/add', {
+                    productId: product._id
+                });
+            }
             fetchWishlist(); // Refresh wishlist items
         } catch (error) {
             console.error('Add to wishlist error:', error);
@@ -418,7 +432,7 @@ const CategoriesSpecificpage = () => {
 
     const isInWishlist = useCallback((productId) => {
         return wishlistItems.some(item =>
-            item.productId?._id === productId
+            (item.productId?._id || item.productId || item) === productId
         );
     }, [wishlistItems]);
 

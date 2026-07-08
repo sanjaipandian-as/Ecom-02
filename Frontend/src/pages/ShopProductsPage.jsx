@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import API from '../../api';
+import { getLocalCart, addToLocalCart, getLocalWishlist, addToLocalWishlist, removeFromLocalWishlist } from '../utils/localCart';
 import Skeleton from '../components/Common/Skeleton';
 
 import Topbar from '../components/Customer/Topbar';
@@ -74,6 +75,9 @@ const ShopProductsPage = () => {
             if (token) {
                 const response = await API.get('/cart');
                 setCartItems(response.data.items || []);
+            } else {
+                const localItems = getLocalCart();
+                setCartItems(localItems);
             }
         } catch (error) {
             console.error('Error fetching cart:', error);
@@ -88,6 +92,9 @@ const ShopProductsPage = () => {
                 const items = Array.isArray(response.data.items) ? response.data.items :
                     (Array.isArray(response.data) ? response.data : []);
                 setWishlistItems(items);
+            } else {
+                const localWish = getLocalWishlist();
+                setWishlistItems(localWish);
             }
         } catch (error) {
             console.error('Error fetching wishlist:', error);
@@ -95,12 +102,6 @@ const ShopProductsPage = () => {
     };
 
     const addToCart = async (product) => {
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (!token) {
-            navigate('/Login');
-            return;
-        }
-
         const inCart = cartItems.some(item =>
             (item.productId?._id || item.productId) === product._id
         );
@@ -112,6 +113,13 @@ const ShopProductsPage = () => {
 
         setAddingToCart(product._id);
         try {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (!token) {
+                addToLocalCart(product, 1);
+                fetchCart();
+                return;
+            }
+
             await API.post('/cart/add', {
                 productId: product._id,
                 quantity: 1
@@ -125,18 +133,23 @@ const ShopProductsPage = () => {
     };
 
     const addToWishlist = async (product) => {
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (!token) {
-            navigate('/Login');
-            return;
-        }
-
         const isFav = wishlistItems.some(item =>
             (item.productId?._id || item.productId) === product._id
         );
 
         setAddingToWishlist(product._id);
         try {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (!token) {
+                if (isFav) {
+                    removeFromLocalWishlist(product._id);
+                } else {
+                    addToLocalWishlist(product);
+                }
+                fetchWishlist();
+                return;
+            }
+
             if (isFav) {
                 await API.delete(`/wishlist/remove/${product._id}`);
                 fetchWishlist();

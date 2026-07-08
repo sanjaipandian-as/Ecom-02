@@ -64,3 +64,34 @@ export const getWishlist = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Sync Local Wishlist with Database Wishlist
+export const syncWishlist = async (req, res) => {
+  try {
+    const customerId = req.user._id;
+    const { productIds } = req.body; // Array of productIds
+
+    if (!productIds || !Array.isArray(productIds)) {
+      return res.status(400).json({ message: "ProductIds must be an array." });
+    }
+
+    const addedItems = [];
+    for (const productId of productIds) {
+      if (!productId) continue;
+
+      const product = await Product.findOne({ _id: productId, is_deleted: { $ne: true } });
+      if (!product) continue;
+
+      // Check if already in wishlist
+      const exists = await Wishlist.findOne({ customerId, productId });
+      if (!exists) {
+        const item = await Wishlist.create({ customerId, productId });
+        addedItems.push(item);
+      }
+    }
+
+    return res.json({ message: "Wishlist synced successfully", addedItems });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
