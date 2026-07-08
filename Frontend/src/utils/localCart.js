@@ -159,16 +159,26 @@ export const syncLocalDataWithServer = async () => {
                 productId: item.productId?._id || item.productId,
                 quantity: item.quantity
             }));
-            await API.post('/cart/sync', { items: itemsToSync });
-            clearLocalCart();
+            console.log("Syncing cart items:", itemsToSync);
+            try {
+                await API.post('/cart/sync', { items: itemsToSync });
+                console.log("Cart synced successfully, clearing local cart");
+                clearLocalCart();
+            } catch (cartErr) {
+                console.error("Cart sync failed:", cartErr);
+            }
         }
 
         // Sync Wishlist items
         const localWishlist = getLocalWishlist();
         if (localWishlist.length > 0) {
             const productIdsToSync = localWishlist.map(item => item.productId?._id || item.productId);
-            await API.post('/wishlist/sync', { productIds: productIdsToSync });
-            clearLocalWishlist();
+            try {
+                await API.post('/wishlist/sync', { productIds: productIdsToSync });
+                clearLocalWishlist();
+            } catch (wishErr) {
+                console.error("Wishlist sync failed:", wishErr);
+            }
         }
 
         // Dispatch final update event

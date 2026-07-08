@@ -141,6 +141,7 @@ export const syncCart = async (req, res) => {
   try {
     const customerId = req.user._id;
     const { items } = req.body; // Array of { productId, quantity }
+    console.log("SyncCart called by user:", customerId, "Items:", JSON.stringify(items));
 
     if (!items || !Array.isArray(items)) {
       return res.status(400).json({ message: "Items must be an array." });
@@ -160,23 +161,28 @@ export const syncCart = async (req, res) => {
       if (!product) continue;
 
       const itemIndex = cart.items.findIndex(
-        (i) => i.productId.toString() === productId
+        (i) => i.productId && i.productId.toString() === productId
       );
 
       if (itemIndex >= 0) {
         // Merge quantities, capping at available stock
         const mergedQty = cart.items[itemIndex].quantity + qty;
-        cart.items[itemIndex].quantity = Math.min(mergedQty, product.stock || 0);
+        const finalQty = Math.max(1, Math.min(mergedQty, product.stock || 0));
+        cart.items[itemIndex].quantity = finalQty;
       } else {
         // Add new item, capping at available stock
+        const finalQty = Math.max(1, Math.min(qty, product.stock || 0));
         cart.items.push({
           productId,
-          quantity: Math.min(qty, product.stock || 0)
+          quantity: finalQty
         });
       }
     }
 
+    cart.markModified('items');
     await cart.save();
+    
+    console.log("Cart after sync saved with", cart.items.length, "items");
     return res.json({ message: "Cart synced successfully", cart });
   } catch (err) {
     return res.status(500).json({ error: err.message });
