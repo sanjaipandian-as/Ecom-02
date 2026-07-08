@@ -130,8 +130,8 @@ const BrandStory = () => {
                 <div className="relative max-w-[1320px] mx-auto px-6 sm:px-10 lg:px-16">
                     <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
                         
-                        {/* Left: Founder Image (Larger) */}
-                        <div className="w-full lg:w-[48%] relative rounded-[24px] overflow-hidden aspect-[4/5] sm:aspect-[4/3] lg:aspect-[16/11] shadow-2xl flex-shrink-0">
+                        {/* Left: Founder Image (Matches text height on desktop) */}
+                        <div className="w-full lg:w-[48%] relative rounded-[24px] overflow-hidden aspect-[4/5] sm:aspect-[4/3] lg:aspect-auto lg:self-stretch shadow-2xl flex-shrink-0">
                             <img 
                                 src="/PlenoraFounder.jpeg" 
                                 alt="Founder" 
