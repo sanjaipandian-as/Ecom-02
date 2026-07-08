@@ -20,6 +20,17 @@ import {
 } from 'react-icons/md';
 import API from '../../../../api';
 
+const statusLabels = {
+    'cancellation_requested': 'Cancel Requested',
+    'return_requested': 'Return Requested',
+    'return_approved': 'Refund Initiated (3-5 Days) — You will receive the payment',
+    'return_rejected': 'Return Rejected',
+    'returned': 'Returned',
+    'refund_initiated': 'Refund Processing (3-5 Days)',
+    'refunded': 'Refund Completed',
+    'cancelled': 'Cancelled'
+};
+
 const AdminRefundsManagement = ({ refreshId }) => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -27,6 +38,8 @@ const AdminRefundsManagement = ({ refreshId }) => {
     const [selectedOrderId, setSelectedOrderId] = useState(null);
     const [actionLoading, setActionLoading] = useState(false);
     const [activeTab, setActiveTab] = useState('requests'); // requests, processing, historical
+    const [rejectingOrderId, setRejectingOrderId] = useState(null);
+    const [rejectReason, setRejectReason] = useState('');
 
     useEffect(() => {
         fetchSpecialOrders();
@@ -47,12 +60,14 @@ const AdminRefundsManagement = ({ refreshId }) => {
         }
     };
 
-    const handleUpdateStatus = async (orderId, status) => {
+    const handleUpdateStatus = async (orderId, status, rejectReasonText = '') => {
         try {
             setActionLoading(true);
-            await API.put(`/admin/orders/${orderId}`, { status });
+            await API.put(`/admin/orders/${orderId}`, { status, rejectReason: rejectReasonText });
             await fetchSpecialOrders();
             setSelectedOrderId(null);
+            setRejectingOrderId(null);
+            setRejectReason('');
         } catch (error) {
             console.error('Error updating status:', error);
             alert('Failed to update status');
@@ -88,12 +103,13 @@ const AdminRefundsManagement = ({ refreshId }) => {
         }
     };
 
-    const OrderCard = ({ order, isExpanded, onToggle }) => {
+    const renderOrderCard = (order, isExpanded, onToggle) => {
         const isPending = ['cancellation_requested', 'return_requested'].includes(order.status);
         const orderID = order._id.slice(-8).toUpperCase();
 
         return (
             <div
+                key={order._id}
                 onClick={() => !isExpanded && onToggle(order._id)}
                 className={`group bg-white rounded-none border transition-all duration-300 relative overflow-hidden flex flex-col ${isExpanded
                     ? 'lg:col-span-2 border-slate-950 shadow-md p-0 animate-fadeIn'
@@ -112,36 +128,52 @@ const AdminRefundsManagement = ({ refreshId }) => {
 
                 {isExpanded ? (
                     <div className="flex flex-col md:flex-row h-full">
-                        {/* 📸 Photos Section */}
-                        <div className="md:w-1/2 bg-slate-50 p-8 border-b md:border-b-0 md:border-r border-slate-200">
-                            <div className="flex items-center gap-3 mb-8">
-                                <div className="p-2 bg-white rounded-none border border-slate-200 text-indigo-650">
-                                    <MdVisibility size={22} />
+                        {/* 📸 Photos & Videos Section */}
+                        <div className="md:w-1/2 bg-slate-50 p-8 border-b md:border-b-0 md:border-r border-slate-200 space-y-8">
+                            <div>
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="p-2 bg-white rounded-none border border-slate-200 text-indigo-650">
+                                        <MdVisibility size={22} />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-slate-900 tracking-tight font-hero">Request Photos</h3>
                                 </div>
-                                <h3 className="text-lg font-bold text-slate-900 tracking-tight font-hero">Request Photos</h3>
+
+                                {order.returnImages && order.returnImages.length > 0 ? (
+                                    <div className="space-y-6">
+                                        <div className="aspect-square rounded-none overflow-hidden border border-slate-200 bg-white group/img cursor-pointer" onClick={() => window.open(order.returnImages[0], '_blank')}>
+                                            <img
+                                                src={order.returnImages[0]}
+                                                alt="Return"
+                                                className="w-full h-full object-cover group-hover/img:scale-102 transition-transform duration-300"
+                                            />
+                                        </div>
+                                        <div className="grid grid-cols-4 gap-4">
+                                            {order.returnImages.map((img, i) => (
+                                                <div key={i} className="aspect-square rounded-none overflow-hidden border border-slate-200 cursor-pointer hover:border-indigo-500 transition-all" onClick={() => window.open(img, '_blank')}>
+                                                    <img src={img} alt="" className="w-full h-full object-cover" />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="h-48 flex flex-col items-center justify-center text-center bg-white/50 rounded-none border border-dashed border-slate-300">
+                                        <MdCloudUpload size={32} className="text-slate-300 mb-2" />
+                                        <p className="text-xs font-semibold text-slate-500 font-hero">No images provided by customer</p>
+                                    </div>
+                                )}
                             </div>
 
-                            {order.returnImages && order.returnImages.length > 0 ? (
-                                <div className="space-y-6">
-                                    <div className="aspect-square rounded-none overflow-hidden border border-slate-200 bg-white group/img cursor-pointer" onClick={() => window.open(order.returnImages[0], '_blank')}>
-                                        <img
-                                            src={order.returnImages[0]}
-                                            alt="Return"
-                                            className="w-full h-full object-cover group-hover/img:scale-102 transition-transform duration-300"
-                                        />
+                            {order.returnVideo && (
+                                <div>
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="p-2 bg-white rounded-none border border-slate-200 text-emerald-600">
+                                            <MdVisibility size={22} />
+                                        </div>
+                                        <h3 className="text-lg font-bold text-slate-900 tracking-tight font-hero">Verification Video</h3>
                                     </div>
-                                    <div className="grid grid-cols-4 gap-4">
-                                        {order.returnImages.map((img, i) => (
-                                            <div key={i} className="aspect-square rounded-none overflow-hidden border border-slate-200 cursor-pointer hover:border-indigo-500 transition-all" onClick={() => window.open(img, '_blank')}>
-                                                <img src={img} alt="" className="w-full h-full object-cover" />
-                                            </div>
-                                        ))}
+                                    <div className="aspect-video rounded-none overflow-hidden border border-slate-200 bg-white shadow-sm">
+                                        <video src={order.returnVideo} className="w-full h-full object-cover" controls />
                                     </div>
-                                </div>
-                            ) : (
-                                <div className="h-64 flex flex-col items-center justify-center text-center bg-white/50 rounded-none border border-dashed border-slate-300">
-                                    <MdCloudUpload size={40} className="text-slate-300 mb-2" />
-                                    <p className="text-sm font-semibold text-slate-500 font-hero">No images provided by customer</p>
                                 </div>
                             )}
                         </div>
@@ -171,6 +203,15 @@ const AdminRefundsManagement = ({ refreshId }) => {
                                         "{order.cancelReason || order.returnReason || 'No reason provided.'}"
                                     </p>
                                 </div>
+
+                                {order.status === 'return_rejected' && order.returnRejectReason && (
+                                    <div className="bg-rose-50/50 p-6 rounded-none border border-rose-200">
+                                        <p className="text-[10px] font-bold text-rose-500 uppercase tracking-widest mb-3 font-hero">Rejection Reason</p>
+                                        <p className="text-rose-950 font-bold leading-relaxed italic">
+                                            "{order.returnRejectReason}"
+                                        </p>
+                                    </div>
+                                )}
 
                                 {/* Financial Settlement */}
                                 <div className="space-y-4">
@@ -240,18 +281,58 @@ const AdminRefundsManagement = ({ refreshId }) => {
 
                                     {order.status === 'return_requested' && (
                                         <>
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, 'return_approved'); }}
-                                                className="w-full py-4 bg-amber-500 border border-amber-500 text-white font-bold rounded-none hover:bg-amber-600 transition-all shadow-sm active:scale-[0.98] flex items-center justify-center gap-2 uppercase tracking-wider text-xs"
-                                            >
-                                                Approve Return <MdAssignmentReturn size={18} />
-                                            </button>
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, 'delivered'); }}
-                                                className="w-full py-4 bg-slate-100 border border-slate-200 text-slate-650 font-bold rounded-none hover:bg-slate-250 transition-all active:scale-[0.98] uppercase tracking-wider text-xs"
-                                            >
-                                                Reject Return
-                                            </button>
+                                            {rejectingOrderId === order._id ? (
+                                                <div className="space-y-3 p-4 border border-rose-200 bg-rose-50/30 rounded-none animate-fadeIn">
+                                                    <p className="text-[10px] font-bold text-rose-600 uppercase tracking-widest">Reason for Rejection</p>
+                                                    <textarea
+                                                        value={rejectReason}
+                                                        onChange={(e) => setRejectReason(e.target.value)}
+                                                        placeholder="Enter the reason why this return is being rejected..."
+                                                        className="w-full h-24 p-3 bg-white border border-slate-200 rounded-none focus:outline-none focus:border-rose-500 text-xs font-medium text-slate-700"
+                                                    />
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            disabled={actionLoading}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                if (!rejectReason.trim()) {
+                                                                    alert('Please enter a rejection reason');
+                                                                    return;
+                                                                }
+                                                                handleUpdateStatus(order._id, 'return_rejected', rejectReason);
+                                                            }}
+                                                            className="flex-1 py-2 bg-rose-600 text-white text-[10px] font-bold uppercase tracking-wider border border-rose-600 hover:bg-rose-700"
+                                                        >
+                                                            Confirm Reject
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setRejectingOrderId(null);
+                                                                setRejectReason('');
+                                                            }}
+                                                            className="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold uppercase tracking-wider hover:bg-slate-100"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, 'return_approved'); }}
+                                                        className="w-full py-4 bg-amber-500 border border-amber-500 text-white font-bold rounded-none hover:bg-amber-600 transition-all shadow-sm active:scale-[0.98] flex items-center justify-center gap-2 uppercase tracking-wider text-xs"
+                                                    >
+                                                        Approve Return <MdAssignmentReturn size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); setRejectingOrderId(order._id); }}
+                                                        className="w-full py-4 bg-slate-100 border border-slate-200 text-slate-650 font-bold rounded-none hover:bg-slate-250 transition-all active:scale-[0.98] uppercase tracking-wider text-xs"
+                                                    >
+                                                        Reject Return
+                                                    </button>
+                                                </>
+                                            )}
                                         </>
                                     )}
 
@@ -280,7 +361,7 @@ const AdminRefundsManagement = ({ refreshId }) => {
                                 </div>
                             </div>
                             <div className={`px-3 py-1 rounded-none text-[9px] font-bold uppercase tracking-wider border ${isPending ? 'bg-amber-50 text-amber-750 border-amber-100 animate-pulse' : 'bg-slate-50 text-slate-500 border-slate-200'}`}>
-                                {order.status.replace('_', ' ')}
+                                {statusLabels[order.status] || order.status.replace('_', ' ')}
                             </div>
                         </div>
 
@@ -378,12 +459,11 @@ const AdminRefundsManagement = ({ refreshId }) => {
                     </div>
                 ) : (
                     getActiveOrders().map(order => (
-                        <OrderCard
-                            key={order._id}
-                            order={order}
-                            isExpanded={selectedOrderId === order._id}
-                            onToggle={(id) => setSelectedOrderId(id)}
-                        />
+                        renderOrderCard(
+                            order,
+                            selectedOrderId === order._id,
+                            (id) => setSelectedOrderId(id)
+                        )
                     ))
                 )}
             </div>

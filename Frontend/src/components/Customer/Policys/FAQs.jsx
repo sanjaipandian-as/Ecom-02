@@ -11,7 +11,6 @@ const FAQs = () => {
         { id: 'orders', name: 'Orders & Payment' },
         { id: 'shipping', name: 'Shipping & Delivery' },
         { id: 'returns', name: 'Returns & Refunds' },
-        { id: 'products', name: 'Products & Safety' },
         { id: 'account', name: 'Account & Support' }
     ];
 
@@ -39,7 +38,7 @@ const FAQs = () => {
         {
             category: 'shipping',
             question: 'What are the delivery charges?',
-            answer: 'Shipping is FREE on orders above ₹999. For orders below ₹999, a shipping charge of ₹99 applies. Express shipping is available in select cities for ₹199.'
+            answer: 'Prepaid: ₹85 shipping charge COD: ₹100 shipping charge'
         },
         {
             category: 'shipping',
@@ -59,12 +58,12 @@ const FAQs = () => {
         {
             category: 'returns',
             question: 'What is your return policy?',
-            answer: 'Returns are accepted within 48 hours for damaged, defective, or wrong items. Due to safety regulations, opened or used crackers cannot be returned.'
+            answer: 'Returns are accepted within 48 hours for damaged, defective, or wrong items. Proper unboxing video is mandatory for the returns.'
         },
         {
             category: 'returns',
             question: 'How do I return a product?',
-            answer: 'Contact our support team within 48 hours with photos/videos of the issue. Once approved, we\'ll arrange pickup and process your refund within 5-7 business days.'
+            answer: 'Contact our support team within 48 hours with photos/videos of the issue. Once approved, You can return the product to the address provided and we will process your refund within 5-7 business days.'
         },
         {
             category: 'returns',
@@ -75,26 +74,6 @@ const FAQs = () => {
             category: 'returns',
             question: 'Can I exchange a product?',
             answer: 'Yes, you can request a replacement for damaged or defective items. We\'ll send a replacement of the same product subject to availability.'
-        },
-        {
-            category: 'products',
-            question: 'Are your crackers safe and certified?',
-            answer: 'Yes, all our products are BIS certified and PESO approved. We only sell crackers that meet all safety standards and regulations.'
-        },
-        {
-            category: 'products',
-            question: 'How should I store crackers?',
-            answer: 'Store in a cool, dry place away from heat, moisture, and direct sunlight. Keep away from children and flammable materials. Follow all safety instructions on the package.'
-        },
-        {
-            category: 'products',
-            question: 'What safety precautions should I follow?',
-            answer: 'Always light crackers in open spaces, maintain safe distance, keep water/sand nearby, never hold lit crackers, supervise children, and follow all instructions on the package.'
-        },
-        {
-            category: 'products',
-            question: 'Do you sell eco-friendly crackers?',
-            answer: 'Yes, we have a dedicated section for green crackers that produce less smoke and noise. Look for the "Eco-Friendly" tag on product pages.'
         },
         {
             category: 'account',
@@ -109,7 +88,7 @@ const FAQs = () => {
         {
             category: 'account',
             question: 'How do I contact customer support?',
-            answer: 'Email us at support@apkcrackers.com, call +91 98765 43210 (Mon-Sat, 9 AM - 6 PM), or use the contact form on our Support page.'
+            answer: 'Email us at plenorascientificskin@gmail.com, call +91-7448833345 (8:00AM – 10:00PM – Monday – Sunday), or use the contact form on our Support page.'
         },
         {
             category: 'account',
@@ -219,7 +198,7 @@ const FAQs = () => {
                             Contact Support
                         </a>
                         <a
-                            href="mailto:support@apkcrackers.com"
+                            href="mailto:plenorascientificskin@gmail.com"
                             className="border-2 border-white hover:bg-white hover:text-primary text-white font-semibold px-6 py-3 rounded-lg transition-colors"
                         >
                             Email Us

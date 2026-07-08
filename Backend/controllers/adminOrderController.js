@@ -4,11 +4,47 @@ import { createNotification } from "./notificationController.js";
 import { decrypt } from "../utils/cryptoUtils.js";
 import razorpayInstance from "../config/razorpay.js";
 
+// Helper to check and update order status from Razorpay for pending refunds
+const syncPendingRefunds = async (orders) => {
+  if (!razorpayInstance) return;
+
+  const pendingRefundOrders = orders.filter(o => 
+    ['return_approved', 'refund_initiated'].includes(o.status) && 
+    o.refundDetails && 
+    o.refundDetails.refundId && 
+    o.refundDetails.refundStatus !== 'processed'
+  );
+
+  if (pendingRefundOrders.length === 0) return;
+
+  for (const order of pendingRefundOrders) {
+    try {
+      console.log(`[REFUND SYNC] Fetching status for Refund ID: ${order.refundDetails.refundId}`);
+      const refund = await razorpayInstance.refunds.fetch(order.refundDetails.refundId);
+      
+      console.log(`[REFUND SYNC] Refund status on Razorpay: ${refund.status}`);
+      if (refund.status === 'processed') {
+        order.status = 'refunded';
+        order.paymentStatus = 'refunded';
+        order.refundDetails.refundStatus = 'processed';
+        order.refundDetails.notes = `Automatic refund processed via Razorpay. Refund ID: ${refund.id}`;
+        await order.save();
+        console.log(`[REFUND SYNC SUCCESS] Order ${order._id} auto-updated to 'refunded'`);
+      }
+    } catch (err) {
+      console.error(`[REFUND SYNC FAILED] Error syncing refund for Order ${order._id}:`, err.message);
+    }
+  }
+};
+
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
       .populate("customerId")
       .populate("items.productId");
+
+    // Sync any pending refunds from Razorpay
+    await syncPendingRefunds(orders);
 
     // ⭐ Decrypt Sensitive Bank/UPI Details for Admin View
     const decryptedOrders = orders.map(order => {
@@ -52,7 +88,7 @@ export const adminUpdateOrderStatus = async (req, res) => {
   try {
     const { orderId, id } = req.params; // Accept both parameter names
     const orderIdToUse = orderId || id; // Use whichever is provided
-    const { status } = req.body;
+    const { status, rejectReason } = req.body;
 
     const allowedStatus = [
       "pending_payment",
@@ -103,8 +139,8 @@ export const adminUpdateOrderStatus = async (req, res) => {
       order.deliveredAt = new Date();
     }
 
-    // ⭐ AUTOMATIC REFUND VIA RAZORPAY: If order is online, paid, has payment ID, and status transitions to cancelled or refunded
-    if (['cancelled', 'refunded'].includes(status) && order.paymentMethod === 'online' && previousPaymentStatus === 'success' && order.razorpayPaymentId) {
+    // ⭐ AUTOMATIC REFUND VIA RAZORPAY: If order is online, paid, has payment ID, and status transitions to cancelled, refunded, or return_approved
+    if (['cancelled', 'refunded', 'return_approved'].includes(status) && order.paymentMethod === 'online' && previousPaymentStatus === 'success' && order.razorpayPaymentId) {
       if (razorpayInstance) {
         try {
           console.log(`[AUTOMATIC REFUND] Initiating Razorpay refund for Order ${order._id}, Payment ID: ${order.razorpayPaymentId}`);
@@ -118,13 +154,17 @@ export const adminUpdateOrderStatus = async (req, res) => {
           console.log(`[AUTOMATIC REFUND SUCCESS] Razorpay refund successful for Order ${order._id}. Refund ID: ${refundResult.id}`);
           
           order.paymentStatus = 'refunded';
+          const refundIsProcessed = refundResult.status === 'processed';
           order.refundDetails = {
             refundId: refundResult.id,
             refundAmount: order.totalAmount || 0,
-            refundStatus: 'processed',
+            refundStatus: refundIsProcessed ? 'processed' : 'pending',
             refundedAt: new Date(),
-            notes: `Automatic refund processed via Razorpay. Refund ID: ${refundResult.id}`
+            notes: `Automatic refund initiated via Razorpay. Refund ID: ${refundResult.id}`
           };
+          if (refundIsProcessed) {
+            order.status = 'refunded';
+          }
         } catch (refErr) {
           const refundError = refErr.error?.description || refErr.description || refErr.message || JSON.stringify(refErr);
           console.error(`[AUTOMATIC REFUND FAILED] Razorpay refund failed for Order ${order._id}:`, refundError);
@@ -171,6 +211,9 @@ export const adminUpdateOrderStatus = async (req, res) => {
 
     // Update status
     order.status = status;
+    if (status === 'return_rejected') {
+      order.returnRejectReason = rejectReason || "Rejected by admin";
+    }
     await order.save();
 
     // ⭐ MED-1: Context-aware notification messages
@@ -178,7 +221,7 @@ export const adminUpdateOrderStatus = async (req, res) => {
       cancelled: { title: "Order Cancelled", message: `Your order #${order._id.toString().slice(-6)} has been cancelled by the admin.` },
       refunded: { title: "Refund Processed", message: `Your refund of ₹${order.totalAmount} for order #${order._id.toString().slice(-6)} has been processed.` },
       return_approved: { title: "Return Approved", message: `Your return request for order #${order._id.toString().slice(-6)} has been approved. Please ship the item back.` },
-      return_rejected: { title: "Return Rejected", message: `Your return request for order #${order._id.toString().slice(-6)} has been reviewed and was not approved.` },
+      return_rejected: { title: "Return Rejected", message: `Your return request for order #${order._id.toString().slice(-6)} has been reviewed and was not approved.${rejectReason ? ` Reason: ${rejectReason}` : ''}` },
       refund_initiated: { title: "Refund Initiated", message: `A refund has been initiated for your order #${order._id.toString().slice(-6)}. It will be processed shortly.` },
       shipped: { title: "Order Shipped", message: `Your order #${order._id.toString().slice(-6)} has been shipped!` },
       delivered: { title: "Order Delivered", message: `Your order #${order._id.toString().slice(-6)} has been delivered!` },
@@ -260,6 +303,7 @@ export const cancelOrder = async (req, res) => {
     } else {
       order.paymentStatus = "failed";
     }
+    order.status = "cancelled";
     await order.save();
 
     // ⭐ SECURITY FIX (VULN-11 + VULN-5): Restore stock when admin confirms cancellation

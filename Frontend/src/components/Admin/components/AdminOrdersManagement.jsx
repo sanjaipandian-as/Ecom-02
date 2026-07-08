@@ -101,18 +101,18 @@ const AdminOrders = ({ refreshId, triggerGlobalRefresh }) => {
     const statusLabels = {
         'all': 'All Orders',
         'pending_payment': 'Pending Payment',
-        'paid': 'Processing',
+        'paid': 'Paid — Order Confirmed',
         'packed': 'Packed',
         'shipped': 'Shipped',
         'delivered': 'Delivered',
         'cancellation_requested': 'Cancel Requested',
         'cancelled': 'Cancelled',
         'return_requested': 'Return Requested',
-        'return_approved': 'Return Approved',
+        'return_approved': 'Refund Initiated (3-5 Days) — You will receive the payment',
         'return_rejected': 'Return Rejected',
         'returned': 'Returned',
-        'refund_initiated': 'Refund Pending',
-        'refunded': 'Refunded'
+        'refund_initiated': 'Refund Processing (3-5 Days)',
+        'refunded': 'Refund Completed'
     };
 
 

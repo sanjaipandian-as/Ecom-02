@@ -16,7 +16,8 @@ import {
     FaGem,
     FaGift,
     FaChevronDown,
-    FaChevronUp
+    FaChevronUp,
+    FaWhatsapp
 } from 'react-icons/fa';
 
 const categoryNameMap = {
@@ -109,7 +110,6 @@ const Footer = () => {
             { name: 'Returns & Exchanges', path: '/returns' },
             { name: 'Privacy Policy', path: '/privacy-policy' },
             { name: 'Terms & Conditions', path: '/terms-and-conditions' },
-            { name: 'Lifetime Warranty Info', path: '/warranty' },
             { name: 'Track Order', path: '/track-order' }
         ],
         brand: [
@@ -126,29 +126,7 @@ const Footer = () => {
             {/* Ambient luxury background glow */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(197,168,128,0.03),transparent_40%)] pointer-events-none" />
 
-            {/* Premium Features Bar */}
-            <div className="hidden lg:block border-b border-gold-champagne/10 bg-emerald-dark">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {[
-                            { icon: FaGem, title: 'Lifetime Anti-Tarnish', desc: 'Crafted with premium durable alloys' },
-                            { icon: FaTruck, title: 'Fully Insured Shipping', desc: 'Complimentary delivery on all orders' },
-                            { icon: FaGift, title: 'Signature Packaging', desc: 'Arrives in our custom velvet box' },
-                            { icon: FaShieldAlt, title: 'Secure Checkouts', desc: 'Fully encrypted payment processing' }
-                        ].map((feature, index) => (
-                            <div key={index} className="flex items-center gap-4 group">
-                                <div className="w-12 h-12 rounded-full bg-gold-champagne/10 flex items-center justify-center flex-shrink-0 border border-gold-champagne/20 transition-all duration-300 group-hover:bg-gold-champagne/20">
-                                    <feature.icon className="w-5 h-5 text-gold-champagne" />
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-xs text-white tracking-widest uppercase">{feature.title}</p>
-                                    <p className="text-2xs text-[#a3b3ac] mt-0.5">{feature.desc}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+            {/* Features Bar Removed */}
 
             {/* Main Footer Links */}
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
@@ -174,19 +152,20 @@ const Footer = () => {
                             <h4 className="text-xs font-bold uppercase tracking-[0.25em] mb-4 text-gold-champagne">Follow PLENORA</h4>
                             <div className="flex gap-3">
                                 {[
-                                    { icon: FaFacebookF, color: 'hover:bg-blue-600 hover:text-white', label: 'Facebook' },
-                                    { icon: FaTwitter, color: 'hover:bg-sky-500 hover:text-white', label: 'Twitter' },
-                                    { icon: FaInstagram, color: 'hover:bg-gradient-to-tr hover:from-yellow-500 hover:to-purple-600 hover:text-white', label: 'Instagram' },
-                                    { icon: FaYoutube, color: 'hover:bg-red-600 hover:text-white', label: 'YouTube' },
-                                    { icon: FaLinkedinIn, color: 'hover:bg-blue-700 hover:text-white', label: 'LinkedIn' }
+                                    { icon: FaFacebookF, color: 'hover:bg-blue-600 hover:text-white', label: 'Facebook', url: 'https://www.facebook.com/share/1BT5As9w1w/' },
+                                    { icon: FaInstagram, color: 'hover:bg-gradient-to-tr hover:from-yellow-500 hover:to-purple-600 hover:text-white', label: 'Instagram', url: 'https://www.instagram.com/plenorascientificskin?igsh=MTMwbG43Ynl2cGN5dQ==' },
+                                    { icon: FaWhatsapp, color: 'hover:bg-green-500 hover:text-white', label: 'WhatsApp', url: 'https://wa.me/917448833345' }
                                 ].map((social, index) => (
-                                    <button
+                                    <a
                                         key={index}
+                                        href={social.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                         aria-label={social.label}
                                         className={`w-9 h-9 rounded-full bg-transparent text-[#a3b3ac] border border-gold-champagne/20 flex items-center justify-center transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-1 focus:ring-gold-champagne ${social.color}`}
                                     >
                                         <social.icon className="w-3.5 h-3.5" />
-                                    </button>
+                                    </a>
                                 ))}
                             </div>
                         </div>
@@ -266,27 +245,27 @@ const Footer = () => {
                             <li className="flex items-start gap-3">
                                 <FaMapMarkerAlt className="w-4 h-4 text-gold-champagne mt-1 flex-shrink-0" />
                                 <span className="text-[#a3b3ac] text-xs leading-relaxed uppercase tracking-[0.05em]">
-                                    45 Grand Avenue,<br />
-                                    Luxury District, Chennai,<br />
-                                    Tamil Nadu, India - 600002
+                                    Flat 407, Manchester Apartment,<br />
+                                    Chelliamman Koil Street, Athipet,<br />
+                                    Ambattur, Chennai 600058
                                 </span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <FaPhone className="w-4 h-4 text-gold-champagne flex-shrink-0" />
                                 <a
-                                    href="tel:+919876543210"
+                                    href="tel:+917448833345"
                                     className="text-[#a3b3ac] hover:text-gold-lustrous text-xs uppercase tracking-[0.05em] transition-colors focus:outline-none"
                                 >
-                                    +91 98765 43210
+                                    +91 74488 33345
                                 </a>
                             </li>
                             <li className="flex items-center gap-3">
                                 <FaEnvelope className="w-4 h-4 text-gold-champagne flex-shrink-0" />
                                 <a
-                                    href="mailto:concierge@plenora.com"
+                                    href="mailto:plenorascientificskin@gmail.com"
                                     className="text-[#a3b3ac] hover:text-gold-lustrous text-xs uppercase tracking-[0.05em] transition-colors focus:outline-none"
                                 >
-                                    concierge@plenora.com
+                                    plenorascientificskin@gmail.com
                                 </a>
                             </li>
                         </ul>
@@ -308,7 +287,7 @@ const Footer = () => {
                             </div>
                         </div>
                         <p className="text-[10px] text-[#a3b3ac]/50 uppercase tracking-widest text-center md:text-right">
-                            Handcrafted Luxury | Made with ❤️ in India
+                            Glow with Confidence
                         </p>
                     </div>
                 </div>

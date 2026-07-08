@@ -17,8 +17,8 @@ const Shipping = () => {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
                         <div>
                             <FiTruck className="w-10 h-10 mx-auto mb-3" />
-                            <div className="text-3xl font-bold mb-1">FREE</div>
-                            <p className="text-primary-foreground/80">On orders ₹999+</p>
+                            <div className="text-3xl font-bold mb-1">Affordable</div>
+                            <p className="text-primary-foreground/80">Flat shipping rates</p>
                         </div>
                         <div>
                             <FiClock className="w-10 h-10 mx-auto mb-3" />
@@ -106,11 +106,11 @@ const Shipping = () => {
                             <ul className="space-y-3 text-gray-600">
                                 <li className="flex items-start gap-2">
                                     <span className="text-primary font-bold">•</span>
-                                    <span>Orders below ₹999: <strong>₹99</strong> shipping charge</span>
+                                    <span>Prepaid: <strong>₹85</strong> shipping charge</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <span className="text-primary font-bold">•</span>
-                                    <span>Orders ₹999 and above: <strong className="text-green-600">FREE</strong> shipping</span>
+                                    <span>COD: <strong>₹100</strong> shipping charge</span>
                                 </li>
                             </ul>
                         </div>
@@ -232,15 +232,15 @@ const Shipping = () => {
                     <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">
                         <div>
                             <p className="font-bold text-gray-900 mb-1">Email</p>
-                            <p className="text-gray-600">shipping@apkcrackers.com</p>
+                            <p className="text-gray-600">plenorascientificskin@gmail.com</p>
                         </div>
                         <div>
                             <p className="font-bold text-gray-900 mb-1">Phone</p>
-                            <p className="text-gray-600">+91 98765 43210</p>
+                            <p className="text-gray-600">+91 74488 33345</p>
                         </div>
                         <div>
                             <p className="font-bold text-gray-900 mb-1">Hours</p>
-                            <p className="text-gray-600">Mon-Sat, 9 AM - 6 PM</p>
+                            <p className="text-gray-600">8:00 AM - 10:00 PM (Mon-Sun)</p>
                         </div>
                     </div>
                 </div>

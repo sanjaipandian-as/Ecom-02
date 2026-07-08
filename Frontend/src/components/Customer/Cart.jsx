@@ -139,8 +139,9 @@ const Cart = () => {
         selectedCartItems.reduce((total, item) => total + ((item.productId.pricing?.selling_price || item.productId.price || 0) * item.quantity), 0), [selectedCartItems]
     );
 
-    const tax = useMemo(() => subtotal * 0.18, [subtotal]);
-    const total = useMemo(() => subtotal + tax, [subtotal, tax]);
+    const tax = 0; // Tax is included in MRP
+    const shipping = useMemo(() => subtotal >= 999 ? 0 : 85, [subtotal]);
+    const total = useMemo(() => subtotal + shipping, [subtotal, shipping]);
 
     const savings = useMemo(() =>
         selectedCartItems.reduce((total, item) => {
@@ -449,11 +450,13 @@ const Cart = () => {
                                         </div>
                                         <div className="flex justify-between text-sm">
                                             <span className="text-gray-500">Estimated Tax</span>
-                                            <span className="font-semibold text-gray-900">₹{tax.toFixed(2)}</span>
+                                            <span className="font-medium text-gray-500">Included</span>
                                         </div>
                                         <div className="flex justify-between text-sm">
                                             <span className="text-gray-500">Shipping</span>
-                                            <span className="font-bold text-green-600 uppercase tracking-tighter">Free</span>
+                                            <span className={shipping === 0 ? "font-bold text-green-600 uppercase tracking-tighter" : "font-semibold text-gray-900"}>
+                                                {shipping === 0 ? 'Free' : `₹${shipping.toFixed(2)}`}
+                                            </span>
                                         </div>
 
                                         {savings > 0 && (

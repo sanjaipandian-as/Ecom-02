@@ -46,7 +46,7 @@ const Returns = () => {
                         <h2 className="text-2xl font-bold text-gray-900 mb-4">Important: Safety First</h2>
                         <p className="text-lg text-gray-700">
                             Due to safety regulations, returns are only accepted for damaged, defective, or wrong items.
-                            Opened or used crackers cannot be returned for safety and legal reasons.
+                            Proper unboxing video is mandatory for the returns.
                         </p>
                     </div>
                 </div>
@@ -106,8 +106,8 @@ const Returns = () => {
                         </div>
                         <div className="bg-white border border-gray-200 rounded-lg p-8">
                             <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xl mb-4">3</div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">Approval & Pickup</h3>
-                            <p className="text-gray-600">Once approved, we arrange pickup from your address</p>
+                            <h3 className="text-xl font-bold text-gray-900 mb-3">Approval & Return</h3>
+                            <p className="text-gray-600">Once approved, you can return the product to the address provided</p>
                         </div>
                         <div className="bg-white border border-gray-200 rounded-lg p-8">
                             <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xl mb-4">4</div>
@@ -224,15 +224,15 @@ const Returns = () => {
                     <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">
                         <div>
                             <p className="font-bold text-gray-900 mb-1">Email</p>
-                            <p className="text-gray-600">returns@apkcrackers.com</p>
+                            <p className="text-gray-600">plenorascientificskin@gmail.com</p>
                         </div>
                         <div>
                             <p className="font-bold text-gray-900 mb-1">Phone</p>
-                            <p className="text-gray-600">+91 98765 43210</p>
+                            <p className="text-gray-600">+91 74488 33345</p>
                         </div>
                         <div>
                             <p className="font-bold text-gray-900 mb-1">Hours</p>
-                            <p className="text-gray-600">Mon-Sat, 9 AM - 6 PM</p>
+                            <p className="text-gray-600">8:00 AM - 10:00 PM (Mon-Sun)</p>
                         </div>
                     </div>
                 </div>

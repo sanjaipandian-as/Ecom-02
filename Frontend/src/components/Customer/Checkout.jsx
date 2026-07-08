@@ -423,13 +423,16 @@ const Checkout = () => {
 
     const calculateTotal = () => {
         if (order) return order.totalAmount || 0;
-        return cartItems.reduce((sum, item) => {
+        const subtotal = cartItems.reduce((sum, item) => {
             const itemPrice = item.price || item.productId?.pricing?.selling_price || item.productId?.price || 0;
             return sum + (itemPrice * (item.quantity || 1));
         }, 0);
+        return subtotal;
     };
 
-    const total = calculateTotal();
+    const subtotal = calculateTotal();
+    const shippingFee = 0; // ⚠️ TEMP: Set to 0 for testing. Restore to: subtotal > 999 ? 0 : 99
+    const total = subtotal + shippingFee;
 
     // ---- Loading State ----
     if (loading) {
@@ -1003,11 +1006,13 @@ const Checkout = () => {
                             <div className="px-6 py-5 space-y-4">
                                 <div className="flex justify-between items-center">
                                     <span className="text-sm text-slate-500 font-medium">Item Total</span>
-                                    <span className="text-sm font-bold text-slate-900">Rs.{total.toLocaleString()}</span>
+                                    <span className="text-sm font-bold text-slate-900">Rs.{subtotal.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-sm text-slate-500 font-medium">Delivery</span>
-                                    <span className="text-sm font-bold text-[#6d9b7a]">FREE</span>
+                                    <span className="text-sm text-slate-500 font-medium">Shipping</span>
+                                    <span className={shippingFee === 0 ? "text-sm font-bold text-[#6d9b7a]" : "text-sm font-bold text-slate-900"}>
+                                        {shippingFee === 0 ? 'FREE' : `Rs.${shippingFee.toLocaleString()}`}
+                                    </span>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <span className="text-sm text-slate-500 font-medium">Taxes</span>

@@ -4,6 +4,7 @@ import Searchbar from '../components/Customer/Topbar';
 import LandingPage from '../components/Customer/LandingPage';
 import Footer from '../components/Customer/Footer';
 import HomepageProductSections from '../components/Customer/HomepageProductSections';
+import BrandStory from '../components/Customer/Landing/BrandStory';
 
 const Homepage = () => {
     const [filters, setFilters] = useState({
@@ -24,6 +25,7 @@ const Homepage = () => {
             <div className="flex-1 w-full">
                 <LandingPage />
                 <HomepageProductSections hideTopSelling={true} />
+                <BrandStory />
                 <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 mt-12 mb-6">
                     <div className="flex flex-col gap-2">
                         <p className="text-[11px] font-black uppercase tracking-[0.26em] text-slate-400">

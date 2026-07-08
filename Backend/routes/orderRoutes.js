@@ -15,6 +15,6 @@ router.get("/", authenticate, getMyOrders);
 router.post("/cancel/:id", authenticate, upload.none(), cancelOrder);
 
 // Return order
-router.post("/return/:id", authenticate, upload.array('images', 5), returnOrder);
+router.post("/return/:id", authenticate, upload.fields([{ name: 'images', maxCount: 5 }, { name: 'video', maxCount: 1 }]), returnOrder);
 
 export default router;

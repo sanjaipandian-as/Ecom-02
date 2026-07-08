@@ -314,9 +314,9 @@ const generateInvoiceHTML = (order) => {
                     <div>
                         <h1 class="brand">PLENORA<span>.</span></h1>
                         <div class="store-details">
-                            <div>Nexen Ecom PVT LTD.</div>
-                            <div>support@nexenecom.com</div>
-                            <div>+91 88888 99999</div>
+                            <div>Plenora Scientific Skin</div>
+                            <div>plenorascientificskin@gmail.com</div>
+                            <div>+91-7448833345</div>
                         </div>
                     </div>
                     <div class="invoice-title">
@@ -392,7 +392,7 @@ const generateInvoiceHTML = (order) => {
 
                 <div class="footer">
                     <div style="font-weight: 700; color: #64748b; margin-bottom: 5px;">Thank you for shopping with PLENORA!</div>
-                    <div>This is a computer-generated tax invoice. For returns or support, contact support@nexenecom.com.</div>
+                    <div>This is a computer-generated tax invoice. For returns or support, contact plenorascientificskin@gmail.com.</div>
                 </div>
             </div>
         </body>

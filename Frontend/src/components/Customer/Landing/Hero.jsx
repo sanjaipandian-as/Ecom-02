@@ -57,7 +57,7 @@ const Hero = () => {
                 className="w-full relative h-[250px] sm:h-[350px] md:h-[450px] lg:h-[600px] flex transition-transform duration-700 ease-in-out" 
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
-                {slides.map((slide) => (
+                {slides.map((slide, index) => (
                     <div 
                         key={slide._id} 
                         className="w-full h-full flex-shrink-0 cursor-pointer relative"
@@ -67,6 +67,8 @@ const Hero = () => {
                             src={slide.image} 
                             alt="Hero Banner" 
                             className="w-full h-full object-cover"
+                            loading={index === 0 ? "eager" : "lazy"}
+                            fetchPriority={index === 0 ? "high" : "low"}
                         />
                         {/* Interactive overlay on hover */}
                         <div className="absolute inset-0 bg-black/0 hover:bg-black/5 transition-colors duration-300 pointer-events-none"></div>

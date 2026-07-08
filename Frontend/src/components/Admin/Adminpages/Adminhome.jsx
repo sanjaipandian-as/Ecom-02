@@ -13,6 +13,7 @@ import ProductUploadModal from '../components/ProductUploadModal';
 import AdminTopSellingProducts from '../components/AdminTopSellingProducts';
 import AdminViralProducts from '../components/AdminViralProducts';
 import AdminAnnouncementManagement from '../components/AdminAnnouncementManagement';
+import AdminBestSellerCategories from '../components/AdminBestSellerCategories';
 import Logo from '../../Common/Logo';
 
 const Adminhome = () => {
@@ -56,6 +57,8 @@ const Adminhome = () => {
                 return <AdminTopSellingProducts refreshId={refreshId} />;
             case 'Viral Products':
                 return <AdminViralProducts refreshId={refreshId} />;
+            case 'Best Seller Categories':
+                return <AdminBestSellerCategories />;
             case 'Finance':
                 return <AdminFinance refreshId={refreshId} />;
             case 'Settings':

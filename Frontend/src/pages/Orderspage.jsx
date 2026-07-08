@@ -32,6 +32,7 @@ const getStatusColor = (status) => {
         return_approved: 'bg-teal-50 text-teal-600 border-teal-100',
         returning: 'bg-cyan-50 text-cyan-600 border-cyan-100',
         returned: 'bg-slate-50 text-slate-600 border-slate-200',
+        refund_initiated: 'bg-teal-50 text-teal-650 border-teal-150',
         refunded: 'bg-green-50 text-green-700 border-green-100'
     };
     return colors[status] || 'bg-slate-50 text-slate-500 border-slate-100';
@@ -40,17 +41,18 @@ const getStatusColor = (status) => {
 const getStatusLabel = (status) => {
     const labels = {
         pending_payment: 'Pending Payment',
-        paid: 'Processing',
+        paid: 'Paid — Order Confirmed',
         packed: 'Packed',
         shipped: 'Shipped',
         delivered: 'Delivered',
         cancelled: 'Cancelled',
         cancellation_requested: 'Cancellation Requested',
         return_requested: 'Return Requested',
-        return_approved: 'Return Approved',
+        return_approved: 'Refund Initiated (3-5 Days) — You will receive the payment',
         returning: 'Returning',
         returned: 'Returned',
-        refunded: 'Refunded'
+        refund_initiated: 'Refund Processing (3-5 Days)',
+        refunded: 'Refund Completed'
     };
     return labels[status] || status || 'Unknown';
 };
@@ -103,6 +105,7 @@ const OrdersPage = () => {
         beneficiaryName: ''
     });
     const [returnImages, setReturnImages] = useState([]); // 📸 NEW: Image upload state
+    const [returnVideo, setReturnVideo] = useState(null); // 🎥 NEW: Video upload state
     const [useManualRefund, setUseManualRefund] = useState(false); // ⭐ NEW: Toggle for manual refund on online payments
 
     useEffect(() => {
@@ -180,6 +183,11 @@ const OrdersPage = () => {
                 });
             }
 
+            // Append return video
+            if (actionType === 'return' && returnVideo) {
+                formData.append('video', returnVideo);
+            }
+
             await API.post(endpoint, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -209,6 +217,7 @@ const OrdersPage = () => {
             beneficiaryName: ''
         });
         setReturnImages([]);
+        setReturnVideo(null);
         setUseManualRefund(false);
     };
 
@@ -405,7 +414,7 @@ const OrdersPage = () => {
                             >
                                 <option value="all">All Statuses</option>
                                 <option value="pending_payment">Pending Payment</option>
-                                <option value="paid">Processing</option>
+                                <option value="paid">Paid — Order Confirmed</option>
                                 <option value="shipped">Shipped</option>
                                 <option value="delivered">Delivered</option>
                                 <option value="cancelled">Cancelled</option>
@@ -493,9 +502,8 @@ const OrdersPage = () => {
                             </div>
                         </div>
                     )}
-
                     {/* 2. PENDING SETTLEMENT: Pending Payment, Requested Actions */}
-                    {paginatedOrders.filter(o => ['pending_payment', 'cancellation_requested', 'return_requested'].includes(o.status)).length > 0 && (
+                    {paginatedOrders.filter(o => ['pending_payment', 'cancellation_requested', 'return_requested', 'refund_initiated'].includes(o.status)).length > 0 && (
                         <div className="space-y-6">
                             <div className="flex items-center gap-6 px-2">
                                 <h2 className="text-xs font-black text-slate-900 uppercase tracking-[0.4em]">Pending Settlement</h2>
@@ -504,14 +512,14 @@ const OrdersPage = () => {
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {paginatedOrders
-                                    .filter(o => ['pending_payment', 'cancellation_requested', 'return_requested'].includes(o.status))
+                                    .filter(o => ['pending_payment', 'cancellation_requested', 'return_requested', 'refund_initiated'].includes(o.status))
                                     .map((order, idx) => renderOrderCard(order, idx))}
                             </div>
                         </div>
                     )}
-
+ 
                     {/* 3. REGISTRY ARCHIVE: Delivered, Returned, Cancelled */}
-                    {paginatedOrders.filter(o => ['delivered', 'returned', 'refunded', 'cancelled', 'return_approved'].includes(o.status)).length > 0 && (
+                    {paginatedOrders.filter(o => ['delivered', 'returned', 'refunded', 'cancelled', 'return_approved', 'return_rejected'].includes(o.status)).length > 0 && (
                         <div className="space-y-6">
                             <div className="flex items-center gap-6 px-2">
                                 <h2 className="text-xs font-black text-slate-900 uppercase tracking-[0.4em]">Registry Archive</h2>
@@ -520,7 +528,7 @@ const OrdersPage = () => {
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {paginatedOrders
-                                    .filter(o => ['delivered', 'returned', 'refunded', 'cancelled', 'return_approved'].includes(o.status))
+                                    .filter(o => ['delivered', 'returned', 'refunded', 'cancelled', 'return_approved', 'return_rejected'].includes(o.status))
                                     .map((order, idx) => renderOrderCard(order, idx))}
                             </div>
                         </div>
@@ -646,7 +654,7 @@ const OrdersPage = () => {
                                     <div
                                         className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#81C784] rounded-full z-0 transition-all duration-500"
                                         style={{
-                                            width: selectedOrder.status === 'delivered' ? '100%' :
+                                            width: ['delivered', 'return_rejected'].includes(selectedOrder.status) ? '100%' :
                                                    ['shipped', 'returning', 'returned'].includes(selectedOrder.status) ? '66%' :
                                                    ['paid', 'packed'].includes(selectedOrder.status) ? '33%' : '0%'
                                         }}
@@ -660,9 +668,9 @@ const OrdersPage = () => {
                                         { key: 'delivered', label: 'Delivered', icon: FaCheckCircle }
                                     ].map((step, idx) => {
                                         const isCompleted = idx === 0 || 
-                                            (idx === 1 && ['paid', 'packed', 'shipped', 'delivered'].includes(selectedOrder.status)) ||
-                                            (idx === 2 && ['shipped', 'delivered'].includes(selectedOrder.status)) ||
-                                            (idx === 3 && selectedOrder.status === 'delivered');
+                                            (idx === 1 && ['paid', 'packed', 'shipped', 'delivered', 'return_rejected'].includes(selectedOrder.status)) ||
+                                            (idx === 2 && ['shipped', 'delivered', 'return_rejected'].includes(selectedOrder.status)) ||
+                                            (idx === 3 && ['delivered', 'return_rejected'].includes(selectedOrder.status));
                                         const StepIcon = step.icon;
 
                                         return (
@@ -711,6 +719,16 @@ const OrdersPage = () => {
 
                             {/* Delivery & Payment Details */}
                             <div className="grid grid-cols-1 gap-4">
+                                {selectedOrder.status === 'return_rejected' && selectedOrder.returnRejectReason && (
+                                    <div className="p-5 bg-rose-50 rounded-3xl border border-rose-100/50">
+                                        <h4 className="text-[10px] font-bold text-rose-600 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                            <FaTimesCircle className="text-rose-500" /> Return Rejected Reason
+                                        </h4>
+                                        <div className="text-xs text-rose-800 font-bold leading-relaxed italic">
+                                            "{selectedOrder.returnRejectReason}"
+                                        </div>
+                                    </div>
+                                )}
                                 <div className="p-5 bg-slate-50 rounded-3xl border border-slate-100/50">
                                     <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
                                         <FaMapMarkerAlt /> Shipping Address
@@ -754,7 +772,7 @@ const OrdersPage = () => {
                                         Terminate Order
                                     </button>
                                 )}
-                                {selectedOrder.status === 'delivered' && (
+                                {['delivered', 'return_rejected'].includes(selectedOrder.status) && (
                                     <button
                                         onClick={(e) => { 
                                             e.stopPropagation(); 
@@ -779,92 +797,139 @@ const OrdersPage = () => {
             )}
 
             {actionOrderId && (
-                <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 sm:p-6 animate-fadeIn">
-                    <div className="bg-white rounded-[3rem] w-full max-w-xl overflow-hidden shadow-2xl border border-slate-100 animate-slideUp">
+                <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+                    <div className="bg-white rounded-3xl w-full max-w-xl overflow-hidden shadow-2xl border border-slate-100 animate-slideUp">
                         {/* Header */}
-                        <div className={`relative px-8 py-10 text-white overflow-hidden ${actionType === 'cancel'
-                            ? 'bg-gradient-to-br from-rose-600 via-rose-500 to-pink-600'
-                            : 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900'
+                        <div className={`relative px-8 py-8 text-white overflow-hidden ${actionType === 'cancel'
+                            ? 'bg-gradient-to-br from-rose-600 to-pink-600'
+                            : 'bg-gradient-to-br from-[#1f3b2d] via-[#172d22] to-[#1f3b2d]'
                             }`}>
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl" />
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl" />
                             <button
                                 onClick={resetActionState}
-                                className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-all text-white backdrop-blur-sm"
+                                className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-all text-white backdrop-blur-sm"
                             >
                                 <MdClose className="text-xl" />
                             </button>
 
                             <div className="relative z-10">
-                                <span className="inline-block px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider mb-4 backdrop-blur-md">
+                                <span className="inline-block px-3 py-1 bg-white/10 rounded-full text-[9px] font-bold uppercase tracking-wider mb-3 backdrop-blur-md">
                                     Secure Refund Process
                                 </span>
-                                <h3 className="text-3xl font-bold tracking-tight mb-2 flex items-center gap-3">
+                                <h3 className="text-2xl font-bold tracking-tight mb-1 flex items-center gap-2">
                                     {actionType === 'cancel' ? <MdErrorOutline className="text-white/80" /> : <FaHistory className="text-white/80" />}
                                     {actionType === 'cancel' ? 'Cancel Order' : 'Return Order'}
                                 </h3>
-                                <p className="text-white/70 font-medium text-sm max-w-md">
+                                <p className="text-white/70 font-medium text-xs max-w-md">
                                     {actionType === 'cancel'
                                         ? 'Please provide a reason for cancelling your order.'
-                                        : 'Tell us why you want to return this product and upload any photos if necessary.'}
+                                        : 'Tell us why you want to return this product and upload verification files.'}
                                 </p>
                             </div>
                         </div>
 
                         {/* Body */}
-                        <div className="px-8 py-10 max-h-[70vh] overflow-y-auto custom-scrollbar">
-                            <div className="space-y-10">
+                        <div className="px-8 py-8 max-h-[65vh] overflow-y-auto custom-scrollbar">
+                            <div className="space-y-8">
                                 {/* Reason Segment */}
                                 <div>
-                                    <h4 className="flex items-center gap-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                                    <h4 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3 font-sans">
                                         1. Reason for Request
                                     </h4>
                                     <textarea
                                         value={reason}
                                         onChange={(e) => setReason(e.target.value)}
                                         placeholder={`Describe the reason for this ${actionType}...`}
-                                        className="w-full h-32 px-6 py-5 bg-slate-50 border-2 border-slate-100 rounded-3xl focus:bg-white focus:border-rose-200 focus:outline-none transition-all font-medium text-slate-700 placeholder:text-slate-300 shadow-inner"
+                                        className="w-full h-28 px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10 focus:outline-none transition-all font-medium text-slate-700 placeholder:text-slate-350 shadow-sm"
                                     />
                                 </div>
 
-                                {/* Upload Photos (Return Only) */}
+                                {/* Upload Photos & Video (Return Only) */}
                                 {actionType === 'return' && (
-                                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                        <h4 className="flex items-center gap-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                                            2. Upload Photos
-                                        </h4>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            <label className="relative flex flex-col items-center justify-center p-8 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2rem] hover:bg-slate-100/50 hover:border-amber-300 transition-all group cursor-pointer">
-                                                <input
-                                                    type="file"
-                                                    multiple
-                                                    accept="image/*"
-                                                    onChange={(e) => {
-                                                        const files = Array.from(e.target.files);
-                                                        setReturnImages(prev => [...prev, ...files].slice(0, 5));
-                                                    }}
-                                                    className="hidden"
-                                                />
-                                                <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-slate-400 group-hover:text-amber-500 transition-all">
-                                                    <MdCloudUpload className="text-2xl" />
-                                                </div>
-                                                <p className="mt-4 text-[10px] font-bold text-slate-900 tracking-widest uppercase">Select Images</p>
-                                                <p className="mt-1 text-[8px] font-bold text-slate-400">(Max 5 images)</p>
-                                            </label>
-
-                                            <div className="grid grid-cols-2 gap-2">
-                                                {returnImages.map((img, i) => (
-                                                    <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border-2 border-white shadow-sm bg-slate-100">
-                                                        <img src={URL.createObjectURL(img)} alt="" className="w-full h-full object-cover" />
-                                                        <button
-                                                            onClick={() => setReturnImages(prev => prev.filter((_, idx) => idx !== i))}
-                                                            className="absolute inset-0 bg-rose-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                        >
-                                                            <MdClose className="text-lg" />
-                                                        </button>
+                                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
+                                        <div>
+                                            <h4 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3 font-sans">
+                                                2. Upload Photos
+                                            </h4>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                <label className="relative flex flex-col items-center justify-center p-6 bg-slate-50/50 border border-dashed border-slate-250 rounded-2xl hover:bg-slate-100/50 hover:border-[#1f3b2d]/40 transition-all group cursor-pointer">
+                                                    <input
+                                                        type="file"
+                                                        multiple
+                                                        accept="image/*"
+                                                        onChange={(e) => {
+                                                            const files = Array.from(e.target.files);
+                                                            setReturnImages(prev => [...prev, ...files].slice(0, 5));
+                                                        }}
+                                                        className="hidden"
+                                                    />
+                                                    <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-400 group-hover:text-[#1f3b2d] transition-all">
+                                                        <MdCloudUpload className="text-xl" />
                                                     </div>
-                                                ))}
+                                                    <p className="mt-3 text-[10px] font-bold text-slate-700 tracking-wider uppercase">Select Images</p>
+                                                    <p className="mt-0.5 text-[8px] font-bold text-slate-400">(Max 5 images)</p>
+                                                </label>
+
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    {returnImages.map((img, i) => (
+                                                        <div key={i} className="group relative aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+                                                            <img src={URL.createObjectURL(img)} alt="" className="w-full h-full object-cover" />
+                                                            <button
+                                                                onClick={() => setReturnImages(prev => prev.filter((_, idx) => idx !== i))}
+                                                                className="absolute inset-0 bg-rose-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                            >
+                                                                <MdClose className="text-lg" />
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <h4 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3 font-sans">
+                                                3. Upload Verification Video (Mandatory)
+                                            </h4>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                <label className="relative flex flex-col items-center justify-center p-6 bg-slate-50/50 border border-dashed border-slate-250 rounded-2xl hover:bg-slate-100/50 hover:border-[#1f3b2d]/40 transition-all group cursor-pointer">
+                                                    <input
+                                                        type="file"
+                                                        accept="video/*"
+                                                        onChange={(e) => {
+                                                            const file = e.target.files[0];
+                                                            if (!file) return;
+                                                            if (file.size > 30 * 1024 * 1024) {
+                                                                alert('Video size must be below 30MB');
+                                                                return;
+                                                            }
+                                                            setReturnVideo(file);
+                                                        }}
+                                                        className="hidden"
+                                                    />
+                                                    <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-400 group-hover:text-[#1f3b2d] transition-all">
+                                                        <MdCloudUpload className="text-xl" />
+                                                    </div>
+                                                    <p className="mt-3 text-[10px] font-bold text-slate-700 tracking-wider uppercase">Select Video</p>
+                                                    <p className="mt-0.5 text-[8px] font-bold text-slate-400">(Max 30MB)</p>
+                                                </label>
+
+                                                <div className="flex items-center justify-center">
+                                                    {returnVideo ? (
+                                                        <div className="group relative w-full aspect-video rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+                                                            <video src={URL.createObjectURL(returnVideo)} className="w-full h-full object-cover" controls />
+                                                            <button
+                                                                onClick={() => setReturnVideo(null)}
+                                                                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-rose-500/80 text-white flex items-center justify-center hover:bg-rose-600 transition-all shadow"
+                                                            >
+                                                                <MdClose className="text-sm" />
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="w-full h-28 flex flex-col items-center justify-center text-center bg-slate-50/30 rounded-2xl border border-dashed border-slate-200">
+                                                            <p className="text-[9px] font-bold text-slate-450 uppercase tracking-wider">No video selected</p>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -872,28 +937,27 @@ const OrdersPage = () => {
 
                                 {/* Refund Details */}
                                 <div>
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h4 className="flex items-center gap-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                                            {actionType === 'return' ? '3.' : '2.'} Refund Method
+                                    <div className="flex items-center justify-between mb-3">
+                                        <h4 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider font-sans">
+                                            {actionType === 'return' ? '4.' : '2.'} Refund Method
                                         </h4>
-                                        <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 rounded-full border border-emerald-100">
-                                            <span className="text-[8px] font-bold text-emerald-600 uppercase tracking-widest">Secure Transfer</span>
+                                        <div className="flex items-center gap-2 px-2.5 py-0.5 bg-emerald-50 rounded-full border border-emerald-100">
+                                            <span className="text-[8px] font-bold text-emerald-700 uppercase tracking-wider">Secure Transfer</span>
                                         </div>
                                     </div>
 
                                     {(orders.find(o => o._id === actionOrderId)?.paymentMethod === 'cod' || useManualRefund) ? (
-                                        <div className="bg-slate-50 rounded-[2.5rem] p-6 border border-slate-100">
-                                            <div className="flex gap-2 p-1.5 bg-white rounded-2xl border border-slate-100 mb-6">
+                                        <div className="bg-slate-50 rounded-2xl p-5 border border-slate-150">
+                                            <div className="flex gap-2 p-1 bg-white rounded-xl border border-slate-150 mb-4">
                                                 <button
                                                     onClick={() => setRefundType('upi')}
-                                                    className={`flex-1 py-3 rounded-xl transition-all text-[10px] font-bold uppercase tracking-widest ${refundType === 'upi' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400'}`}
+                                                    className={`flex-1 py-2 rounded-lg transition-all text-[9px] font-bold uppercase tracking-wider ${refundType === 'upi' ? 'bg-[#1f3b2d] text-white shadow' : 'text-slate-400 hover:text-slate-600'}`}
                                                 >
                                                     UPI ID
                                                 </button>
                                                 <button
                                                     onClick={() => setRefundType('bank')}
-                                                    className={`flex-1 py-3 rounded-xl transition-all text-[10px] font-bold uppercase tracking-widest ${refundType === 'bank' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400'}`}
+                                                    className={`flex-1 py-2 rounded-lg transition-all text-[9px] font-bold uppercase tracking-wider ${refundType === 'bank' ? 'bg-[#1f3b2d] text-white shadow' : 'text-slate-400 hover:text-slate-600'}`}
                                                 >
                                                     Bank Account
                                                 </button>
@@ -905,31 +969,31 @@ const OrdersPage = () => {
                                                     placeholder="Enter UPI ID (e.g. name@bank)"
                                                     value={refundUpi}
                                                     onChange={(e) => setRefundUpi(e.target.value)}
-                                                    className="w-full px-6 py-4 bg-white border-2 border-transparent rounded-2xl focus:border-rose-200 focus:outline-none font-bold text-sm text-slate-700 shadow-sm transition-all"
+                                                    className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10 focus:outline-none font-bold text-sm text-slate-700 shadow-sm transition-all"
                                                 />
                                             ) : (
-                                                <div className="space-y-3">
+                                                <div className="space-y-2.5">
                                                     <input
                                                         type="text"
                                                         placeholder="Account Holder Name"
                                                         value={refundAccount.beneficiaryName}
                                                         onChange={(e) => setRefundAccount({ ...refundAccount, beneficiaryName: e.target.value })}
-                                                        className="w-full px-6 py-4 bg-white border-2 border-transparent rounded-2xl focus:border-rose-200 focus:outline-none font-bold text-sm text-slate-700 shadow-sm"
+                                                        className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10 focus:outline-none font-bold text-sm text-slate-700 shadow-sm"
                                                     />
-                                                    <div className="grid grid-cols-2 gap-3">
+                                                    <div className="grid grid-cols-2 gap-2.5">
                                                         <input
                                                             type="text"
                                                             placeholder="Account Number"
                                                             value={refundAccount.accountNumber}
                                                             onChange={(e) => setRefundAccount({ ...refundAccount, accountNumber: e.target.value })}
-                                                            className="w-full px-6 py-4 bg-white border-2 border-transparent rounded-2xl focus:border-rose-200 focus:outline-none font-bold text-sm"
+                                                            className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10 focus:outline-none font-bold text-sm text-slate-700"
                                                         />
                                                         <input
                                                             type="text"
                                                             placeholder="IFSC Code"
                                                             value={refundAccount.ifscCode}
                                                             onChange={(e) => setRefundAccount({ ...refundAccount, ifscCode: e.target.value.toUpperCase() })}
-                                                            className="w-full px-6 py-4 bg-white border-2 border-transparent rounded-2xl focus:border-rose-200 focus:outline-none font-bold text-sm"
+                                                            className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10 focus:outline-none font-bold text-sm text-slate-700"
                                                         />
                                                     </div>
                                                 </div>

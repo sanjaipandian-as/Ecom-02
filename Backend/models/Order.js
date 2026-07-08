@@ -94,6 +94,8 @@ const orderSchema = new mongoose.Schema(
     cancellationDate: { type: Date },
     returnRequestDate: { type: Date },
     returnImages: [{ type: String }],
+    returnVideo: { type: String },
+    returnRejectReason: { type: String },
 
     refundDetails: {
       refundId: { type: String },
@@ -143,7 +145,8 @@ orderSchema.pre("save", async function () {
 
       this.subTotal = calculatedSubTotal;
       this.taxTotal = calculatedTaxTotal;
-      this.totalAmount = calculatedSubTotal + calculatedTaxTotal + (this.shippingFee || 0);
+      // Taxes are INCLUSIVE in selling prices, so totalAmount = itemTotal + shipping (NOT + taxTotal)
+      this.totalAmount = calculatedSubTotal + (this.shippingFee || 0);
     }
   }
 });

@@ -132,19 +132,33 @@ const BestSellers = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchBestSellers = async () => {
+        const fetchData = async () => {
             try {
                 setLoading(true);
-                const response = await API.get('/products/customer/homepage-sections');
-                setProducts(response.data?.topSellingProducts || []);
+                // Fetch products and category config in parallel
+                const [productsRes, configRes] = await Promise.allSettled([
+                    API.get('/products/customer/homepage-sections'),
+                    API.get('/bestseller-config'),
+                ]);
+
+                if (productsRes.status === 'fulfilled') {
+                    setProducts(productsRes.value.data?.topSellingProducts || []);
+                }
+                if (configRes.status === 'fulfilled') {
+                    const cats = configRes.value.data?.categories || [];
+                    if (cats.length > 0) {
+                        setCategories(['All', ...cats]);
+                    }
+                }
             } catch (error) {
-                console.error('Error fetching best sellers:', error);
+                console.error('Error fetching best sellers data:', error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchBestSellers();
+        fetchData();
     }, []);
+
 
     const filteredProducts = products.filter(p => {
         if (activeTab === 'All') return true;

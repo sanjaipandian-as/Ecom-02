@@ -157,7 +157,7 @@ const AboutUs = () => {
                             </div>
                             <div className="bg-white border border-gold-champagne/10 rounded-2xl p-6">
                                 <p className="font-bold text-emerald-deep mb-1 text-sm uppercase tracking-wider">Phone Support</p>
-                                <p className="text-stone-600 text-sm">+91 98765 43210</p>
+                                <p className="text-stone-600 text-sm">+91 74488 33345</p>
                             </div>
                         </div>
                     </div>

@@ -40,6 +40,7 @@ const SectionCard = ({ product, accent = 'from-amber-100 via-white to-rose-100' 
                         src={firstMedia}
                         alt={product.name}
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        loading="lazy"
                         onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = placeholderImg;

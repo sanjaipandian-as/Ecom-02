@@ -106,7 +106,7 @@ const Login = () => {
         }
     };
 
-    const inputClasses = 'w-full rounded-2xl border border-stone-200 bg-white px-4 py-3.5 text-sm text-stone-900 outline-none transition-all placeholder:text-stone-400 focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10';
+    const inputClasses = 'w-full rounded-2xl border border-stone-200 bg-white px-4 py-3.5 text-base text-stone-900 outline-none transition-all placeholder:text-stone-400 focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10';
 
     return (
         <div className="h-screen w-full overflow-hidden bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_45%,#f6fbf7_100%)]">
@@ -115,10 +115,10 @@ const Login = () => {
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.18),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(129,199,132,0.2),transparent_28%)]" />
                     <div className="relative">
 
-                        <h1 className="mt-8 max-w-md text-5xl font-bold leading-[1.02] tracking-tight">
+                        <h1 className="mt-8 max-w-md text-6xl font-bold leading-[1.02] tracking-tight">
                             Sign in to continue your shopping journey.
                         </h1>
-                        <p className="mt-5 max-w-xl text-base leading-7 text-white/78">
+                        <p className="mt-5 max-w-xl text-lg leading-7 text-white/78">
                             Everything important stays in one place, from your cart and order history to product recommendations tailored to what you buy most.
                         </p>
                     </div>
@@ -140,7 +140,7 @@ const Login = () => {
                         <div className="mb-8 flex items-center justify-between">
                             <div>
                                 <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-stone-500">Welcome Back</p>
-                                <h2 className="mt-2 text-3xl font-bold tracking-tight text-stone-950 sm:text-4xl">Customer login</h2>
+                                <h2 className="mt-2 text-4xl font-bold tracking-tight text-stone-950 sm:text-5xl">Customer login</h2>
                             </div>
                             <div className="hidden h-14 w-14 items-center justify-center rounded-full bg-stone-100 text-[#1f3b2d] sm:flex">
                                 <FaUserCircle className="text-2xl" />
@@ -175,7 +175,7 @@ const Login = () => {
 
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <div>
-                                <label htmlFor="email" className="mb-2 block text-sm font-semibold text-stone-700">Email address or Mobile number</label>
+                                <label htmlFor="email" className="mb-2 block text-base font-semibold text-stone-700">Email address or Mobile number</label>
                                 <input
                                     type="text"
                                     id="email"
@@ -194,7 +194,7 @@ const Login = () => {
 
                             <div>
                                 <div className="mb-2 flex items-center justify-between">
-                                    <label htmlFor="password" className="block text-sm font-semibold text-stone-700">Password</label>
+                                    <label htmlFor="password" className="block text-base font-semibold text-stone-700">Password</label>
                                     <a href="#" className="text-xs font-semibold uppercase tracking-[0.18em] text-[#1f3b2d] hover:text-[#315542]">
                                         Forgot password
                                     </a>
@@ -221,7 +221,7 @@ const Login = () => {
                             </div>
 
                             <div className="flex flex-col gap-3 rounded-[24px] border border-stone-200 bg-stone-50 p-4 sm:flex-row sm:items-center sm:justify-between">
-                                <label className="flex items-center gap-3 text-sm font-medium text-stone-700">
+                                <label className="flex items-center gap-3 text-base font-medium text-stone-700">
                                     <input
                                         type="checkbox"
                                         checked={rememberMe}
@@ -235,7 +235,7 @@ const Login = () => {
                                 </span>
                             </div>
 
-                            <label className="flex items-start gap-3 text-sm leading-6 text-stone-600">
+                            <label className="flex items-start gap-3 text-base leading-6 text-stone-600">
                                 <input
                                     type="checkbox"
                                     checked={acceptPolicy}
@@ -259,7 +259,7 @@ const Login = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className={`flex w-full items-center justify-center gap-3 rounded-2xl px-5 py-4 text-sm font-semibold text-white shadow-lg transition-all active:scale-[0.99] ${loading
+                                className={`flex w-full items-center justify-center gap-3 rounded-2xl px-5 py-4 text-base font-semibold text-white shadow-lg transition-all active:scale-[0.99] ${loading
                                     ? 'cursor-not-allowed bg-[#6f8f7a]'
                                     : 'bg-[#1f3b2d] hover:bg-[#315542]'
                                     }`}
@@ -269,7 +269,7 @@ const Login = () => {
                             </button>
                         </form>
 
-                        <p className="mt-7 text-center text-sm text-stone-500">
+                        <p className="mt-7 text-center text-base text-stone-500">
                             New here?{' '}
                             <Link to="/Register" className="font-semibold text-[#1f3b2d] hover:text-[#315542]">
                                 Create an account

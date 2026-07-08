@@ -68,7 +68,7 @@ const Support = () => {
         {
             icon: FiPhone,
             title: 'Phone Support',
-            info: '+91 98765 43210',
+            info: '+91 74488 33345',
             subInfo: 'Available Mon-Sat',
             color: 'primary',
             bgColor: 'bg-primary',
@@ -78,7 +78,7 @@ const Support = () => {
         {
             icon: FiMail,
             title: 'Email Us',
-            info: 'support@apkcrackers.com',
+            info: 'plenorascientificskin@gmail.com',
             subInfo: '24-hour response',
             color: 'blue',
             bgColor: 'bg-blue-500',
@@ -88,8 +88,8 @@ const Support = () => {
         {
             icon: FiMapPin,
             title: 'Visit Us',
-            info: 'Sivakasi, Tamil Nadu',
-            subInfo: 'India - 626123',
+            info: 'Athipet, Ambattur',
+            subInfo: 'Chennai - 600058',
             color: 'green',
             bgColor: 'bg-green-500',
             hoverBorder: 'hover:border-green-500',
