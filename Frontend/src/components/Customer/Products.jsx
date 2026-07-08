@@ -293,18 +293,29 @@ const Products = ({ filters = defaultFilters }) => {
                         ) : null}
                     </div>
 
-                    {/* Product Image */}
+                    {/* Product Image or Video */}
                     <div className="flex-1 w-full h-full z-10 relative">
-                        <img
-                            src={product.images?.find(img => img && img.trim() !== '' && !/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(img)) || product.images?.[0] || placeholderImg}
-                            alt={product.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            loading="lazy"
-                            onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = placeholderImg;
-                            }}
-                        />
+                        {product.images?.[0] && /\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i.test(product.images[0]) ? (
+                            <video
+                                src={product.images[0]}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                            />
+                        ) : (
+                            <img
+                                src={product.images?.[0] || placeholderImg}
+                                alt={product.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                loading="lazy"
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = placeholderImg;
+                                }}
+                            />
+                        )}
                     </div>
 
                     {availablePieces <= 0 && (
