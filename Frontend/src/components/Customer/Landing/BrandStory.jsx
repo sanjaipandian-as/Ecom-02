@@ -50,7 +50,7 @@ const BrandStory = () => {
 
                         {/* Left: Founder Image (Matches text height on desktop) */}
                         {/* Left: Founder Image */}
-                        <div className="w-[90%] sm:w-[60%] md:w-[50%] lg:w-[32%] relative rounded-[24px] overflow-hidden aspect-[4/5] shadow-2xl flex-shrink-0 mx-auto lg:mx-0">
+                        <div className="w-[90%] sm:w-[75%] md:w-[65%] lg:w-[42%] relative rounded-[24px] overflow-hidden aspect-[4/5] shadow-2xl flex-shrink-0 mx-auto lg:mx-0">
                             <img 
                                 src="/PlenoraFounder.jpeg" 
                                 alt="Founder" 
@@ -68,21 +68,21 @@ const BrandStory = () => {
                         </div>
 
                         {/* Right: Content (Skincare story) */}
-                        <div className="w-full lg:w-[68%] flex flex-col justify-center lg:pl-10">
-                            <h2 className="text-[32px] sm:text-[40px] lg:text-[44px] font-bold leading-[1.1] text-[#b38e55] mb-8 tracking-tight font-serif max-w-[500px]">
-                                We Make Skincare That Understands Indian Skin
+                        <div className="w-full lg:w-[58%] flex flex-col justify-center lg:pl-10">
+                            <h2 className="text-[32px] sm:text-[40px] lg:text-[44px] font-bold leading-[1.1] text-[#b38e55] mb-6 tracking-tight font-serif">
+                                The Story Behind Plenora Scientific Skin
                             </h2>
                             
-                            <p className="text-stone-600 text-lg sm:text-[22px] leading-[1.6] font-serif italic mb-10 opacity-90 max-w-[600px]">
-                                Your skin isn't French. Your weather isn't Korean. So why should your skincare be? We make advanced plant-based formulations that understand Indian climate and work on Indian skin. Grounded in Nature, Growing with Science.
-                            </p>
-
-                            <div>
-                                <button className="bg-[#9db564] hover:bg-[#8ca655] text-white px-8 py-4 rounded-xl font-bold font-sans text-sm sm:text-base tracking-wide shadow-md hover:shadow-lg transition-all duration-300">
-                                    Explore Founder's Picks
-                                </button>
+                            <div className="space-y-4 text-stone-600 text-base sm:text-lg leading-[1.7] mb-8 opacity-90 max-w-[700px]">
+                                <p>My passion for skincare began in childhood. I always loved caring for others and helping them achieve healthy, confident skin. That passion eventually became my purpose, leading me to create Plenora Scientific Skin—a brand that combines the power of nature with science to develop skin-friendly, effective skincare solutions.</p>
+                                <p>Our journey has been filled with love and trust from our customers. Our Red Wine Facial Kit became a viral favorite, earning countless positive reviews and heartfelt compliments. Seeing the confidence our products bring to people's lives inspires us to keep innovating.</p>
+                                <p>Skincare is deeply personal to me because I have walked the same path as many of our customers. During my teenage years, I struggled with severe acne, trying countless products without finding lasting results. That experience motivated me to research, formulate, and develop our Acne Clear Kit with the goal of helping others overcome the same challenges.</p>
+                                <p>Today, the overwhelming positive feedback and success stories from our customers remind us why we started. Every product we create is carefully formulated with skin-friendly ingredients, backed by thoughtful research, and made with one mission—to help people feel confident in their own skin.</p>
+                                <p>At Plenora Scientific Skin, we don't just create skincare products; we create solutions inspired by real experiences, driven by science, and made with care.</p>
                             </div>
                         </div>
+
+
 
                     </div>
                 </div>
