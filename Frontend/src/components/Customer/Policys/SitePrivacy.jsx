@@ -44,7 +44,7 @@ const PrivacyPolicy = () => {
                     {/* Introduction */}
                     <div className="space-y-3 text-sm text-gray-700">
                         <p className="leading-relaxed">
-                            We value the trust you place in us and recognize the importance of secure transactions and information privacy. This Privacy Policy describes how Plenora Organic Skincare Private Limited and its affiliates, group companies and related parties (collectively "Plenora, we, our, us") collect, use, share or otherwise process your personal data through the Plenora website www.plenora.com, its mobile application, and m-site (hereinafter referred to as the "Platform").
+                            We value the trust you place in us and recognize the importance of secure transactions and information privacy. This Privacy Policy describes how Plenora Scientific Skin and its affiliates, group companies and related parties (collectively "Plenora, we, our, us") collect, use, share or otherwise process your personal data through the Plenora website www.plenorascientificskin.in, and m-site (hereinafter referred to as the "Platform").
                         </p>
                         <p className="leading-relaxed">
                             While you can browse sections of the Platform without the need of sharing any information with us, please note we do not offer any product or service under this Platform outside India and your personal data will primarily be stored and processed in India. By visiting this Platform, providing your information or availing our product/service, you expressly agree to be bound by the terms and conditions of this Privacy Policy, the Terms of Use and the applicable service/product terms and conditions, and agree to be governed by the laws of India including but not limited to the laws applicable to data protection and privacy. If you do not agree please do not use or access our Platform.
@@ -213,7 +213,7 @@ const PrivacyPolicy = () => {
                             <div className="bg-gray-50 p-4 rounded-lg space-y-1">
                                 <p><strong>Grievance Officer</strong></p>
                                 <p>Plenora Scientific Skin</p>
-                                <p>Flat 407, Manchester Apartment, Chelliamman Koil Street, Athipet, Ambattur, Chennai 600058.</p>
+                                <p>Manchester Apartment, Chelliamman Koil Street, Athipet, Ambattur, Chennai 600058.</p>
                                 <p className="mt-2">Email: <a href="mailto:plenorascientificskin@gmail.com" className="text-primary hover:text-primary/80 underline">plenorascientificskin@gmail.com</a></p>
                                 <p>Phone: <a href="tel:+917448833345" className="text-primary hover:text-primary/80 underline">+91 74488 33345</a></p>
                             </div>
@@ -236,7 +236,7 @@ const PrivacyPolicy = () => {
                     {/* Footer */}
                     <div className="text-center text-xs text-gray-500 pt-6 border-t border-gray-200">
                         <p className="font-semibold">Last Updated: July 2026</p>
-                        <p className="mt-2">© 2026 Plenora Organic Skincare Private Limited. All Rights Reserved.</p>
+                        <p className="mt-2">© 2026 Plenora Scientific Skin. All Rights Reserved.</p>
                     </div>
                 </div>
             </div>

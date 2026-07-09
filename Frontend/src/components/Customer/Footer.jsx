@@ -137,7 +137,10 @@ const Footer = () => {
                     {/* Brand Section */}
                     <div className="lg:col-span-2 pb-6 lg:pb-0 border-b border-gold-champagne/10 lg:border-none">
                         <div className="mb-6">
-                            <div className="mb-4 flex items-center gap-3">
+                            <div 
+                                className="mb-4 flex items-center gap-3 cursor-pointer"
+                                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                            >
                                 <img src="/plenorabg.jpeg" alt="Plenora Logo" className="w-10 h-10 rounded-full object-cover" />
                                 <Logo
                                     className="h-10 w-auto"
@@ -250,7 +253,7 @@ const Footer = () => {
                             <li className="flex items-start gap-3">
                                 <FaMapMarkerAlt className="w-4 h-4 text-gold-champagne mt-1 flex-shrink-0" />
                                 <span className="text-[#a3b3ac] text-xs md:text-sm leading-relaxed uppercase tracking-[0.05em]">
-                                    Flat 407, Manchester Apartment,<br />
+                                    Manchester Apartment,<br />
                                     Chelliamman Koil Street, Athipet,<br />
                                     Ambattur, Chennai 600058
                                 </span>

@@ -86,7 +86,7 @@ const AboutUs = () => {
                                 </p>
 
                                 <p>
-                                    Our journey has been filled with love and trust from our customers. Our <strong className="text-emerald-deep font-bold">Red Wine Facial Kit</strong> became a viral favorite, earning countless positive reviews and heartfelt compliments. Seeing the confidence our products bring to people's lives inspires us to keep innovating.
+                                    Our journey has been filled with love and trust from our customers. Seeing the confidence our products bring to people's lives inspires us to keep innovating.
                                 </p>
 
                                 <p>

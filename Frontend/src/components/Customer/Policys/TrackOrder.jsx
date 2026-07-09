@@ -132,7 +132,7 @@ const TrackOrder = () => {
                                         <h3 className="text-xl font-bold text-gray-900">Delivery Address</h3>
                                     </div>
                                     <p className="text-gray-600">
-                                        Flat 407, Manchester Apartment<br />
+                                        Manchester Apartment<br />
                                         Chelliamman Koil Street, Athipet<br />
                                         Ambattur, Chennai 600058
                                     </p>
