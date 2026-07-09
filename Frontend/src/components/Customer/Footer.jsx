@@ -282,9 +282,9 @@ const Footer = () => {
             <div>
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-4">
                     <div className="max-w-4xl mx-auto flex flex-col items-center">
-                        <h3 className="text-xl md:text-2xl font-serif font-bold text-white mb-3 text-center tracking-wide">Plenora Brand Description</h3>
+                        <h3 className="text-xl md:text-2xl font-serif font-bold text-white mb-3 text-center tracking-wide">Plenora Scientific Skin</h3>
                         <p className="text-base md:text-lg text-[#a3b3ac] leading-relaxed text-center">
-                            Elevating your natural beauty with Plenora's scientific skincare. Our meticulously crafted formulas combine botanical purity with clinical precision for radiant, healthy skin.
+                            Plenora Scientific Skin is a skincare brand dedicated to combining the power of science with the purity of thoughtfully selected ingredients. Our mission is to create effective, high-quality skincare solutions that nourish, protect, and enhance your skin's natural beauty. Every formula is developed with a focus on innovation, safety, and visible results, helping you achieve healthy, radiant skin with confidence.
                         </p>
                     </div>
                 </div>
