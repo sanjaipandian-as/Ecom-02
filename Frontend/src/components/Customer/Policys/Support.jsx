@@ -69,7 +69,7 @@ const Support = () => {
             icon: FiPhone,
             title: 'Phone Support',
             info: '+91 74488 33345',
-            subInfo: 'Available Mon-Sat',
+            subInfo: 'Available Mon-Sun',
             color: 'primary',
             bgColor: 'bg-primary',
             hoverBorder: 'hover:border-primary',
@@ -98,8 +98,8 @@ const Support = () => {
         {
             icon: FiClock,
             title: 'Working Hours',
-            info: '9:00 AM - 6:00 PM',
-            subInfo: 'Monday to Saturday',
+            info: '8:00 AM - 10:00 PM',
+            subInfo: 'Monday to Sunday',
             color: 'purple',
             bgColor: 'bg-purple-500',
             hoverBorder: 'hover:border-purple-500',
@@ -408,16 +408,8 @@ const Support = () => {
                             <h3 className="font-bold mb-6 text-xl">Business Hours</h3>
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center pb-4 border-b-2 border-primary-foreground/20">
-                                    <span className="text-primary-foreground/80 font-medium">Monday - Friday</span>
-                                    <span className="font-bold">9:00 AM - 6:00 PM</span>
-                                </div>
-                                <div className="flex justify-between items-center pb-4 border-b-2 border-primary-foreground/20">
-                                    <span className="text-primary-foreground/80 font-medium">Saturday</span>
-                                    <span className="font-bold">10:00 AM - 4:00 PM</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-primary-foreground/80 font-medium">Sunday</span>
-                                    <span className="font-bold">Closed</span>
+                                    <span className="text-primary-foreground/80 font-medium">Monday - Sunday</span>
+                                    <span className="font-bold">8:00 AM - 10:00 PM</span>
                                 </div>
                             </div>
                             <div className="mt-6 pt-6 border-t-2 border-primary-foreground/20">

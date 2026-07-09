@@ -218,7 +218,7 @@ const Shipping = () => {
                         </div>
                         <div className="flex items-start gap-3">
                             <span className="text-primary font-bold text-xl">•</span>
-                            <p className="text-gray-700">Orders processed Monday to Saturday</p>
+                            <p className="text-gray-700">Orders processed Monday to Sunday</p>
                         </div>
                     </div>
                 </div>

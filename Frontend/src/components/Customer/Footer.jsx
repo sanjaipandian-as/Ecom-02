@@ -107,6 +107,7 @@ const Footer = () => {
 
     const footerLinks = {
         services: [
+            { name: 'About Us', path: '/about' },
             { name: 'Customer Support', path: '/support' },
             { name: 'Shipping & Delivery', path: '/shipping' },
             { name: 'Returns & Exchanges', path: '/returns' },
@@ -144,9 +145,7 @@ const Footer = () => {
                                     secondaryColor="#f7f5f0"
                                 />
                             </div>
-                            <p className="text-[#a3b3ac] text-sm md:text-base leading-relaxed max-w-sm">
-                                Elevating your natural beauty with Plenora's scientific skincare. Our meticulously crafted formulas combine botanical purity with clinical precision for radiant, healthy skin.
-                            </p>
+
                         </div>
 
                         {/* Social Media Links */}
@@ -277,30 +276,16 @@ const Footer = () => {
                 </div>
             </div>
 
-            {/* SEO Content Section */}
+
+
+            {/* Brand Description Section */}
             <div>
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-12 lg:pb-16 pt-8 lg:pt-12">
-                    <div className="max-w-6xl mx-auto flex flex-col gap-8">
-                        <div>
-                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-white mb-3">Plenora Brand Description</h3>
-                            <p className="text-sm md:text-base text-[#f7f5f0] leading-relaxed">
-                                Plenora Scientific Skin is a skincare brand dedicated to combining the power of science with the purity of thoughtfully selected ingredients. Our mission is to create effective, high-quality skincare solutions that nourish, protect, and enhance your skin's natural beauty. Every formula is developed with a focus on innovation, safety, and visible results, helping you achieve healthy, radiant skin with confidence.
-                            </p>
-                        </div>
-
-                        <div>
-                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-white mb-3">Plenora Scientific Skin — Where Science Meets Beautiful Skin.</h3>
-                            <p className="text-sm md:text-base text-[#f7f5f0] leading-relaxed">
-                                Bestselling Skin Glow kit - Experience the perfect blend of science and skincare with the Plenora Scientific Skin Bestselling Skin Glow Kit—your daily ritual for naturally glowing, healthy-looking skin.
-                            </p>
-                        </div>
-
-                        <div>
-                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-white mb-3">Key Benefits:</h3>
-                            <p className="text-sm md:text-base text-[#f7f5f0] leading-relaxed">
-                                • Brightens dull and tired-looking skin, Deeply hydrates and nourishes, Improves skin texture and smoothness, Promotes an even, radiant complexion, Suitable for most skin types, Ideal for everyday skincare.
-                            </p>
-                        </div>
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-4">
+                    <div className="max-w-4xl mx-auto flex flex-col items-center">
+                        <h3 className="text-xl md:text-2xl font-serif font-bold text-white mb-3 text-center tracking-wide">Plenora Brand Description</h3>
+                        <p className="text-base md:text-lg text-[#a3b3ac] leading-relaxed text-center">
+                            Elevating your natural beauty with Plenora's scientific skincare. Our meticulously crafted formulas combine botanical purity with clinical precision for radiant, healthy skin.
+                        </p>
                     </div>
                 </div>
             </div>

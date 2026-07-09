@@ -63,7 +63,7 @@ const Contact = () => {
                             </div>
                             <h3 className="font-bold text-gray-900 mb-2">Phone</h3>
                             <p className="text-gray-600">+91 74488 33345</p>
-                            <p className="text-sm text-gray-500 mt-1">Mon-Sat, 9 AM - 6 PM</p>
+                            <p className="text-sm text-gray-500 mt-1">Mon-Sun, 8 AM - 10 PM</p>
                         </div>
 
                         <div className="bg-white border border-gray-200 rounded-lg p-6 text-center">
@@ -89,8 +89,8 @@ const Contact = () => {
                                 <FiClock className="w-8 h-8 text-primary" />
                             </div>
                             <h3 className="font-bold text-gray-900 mb-2">Working Hours</h3>
-                            <p className="text-gray-600">9:00 AM - 6:00 PM</p>
-                            <p className="text-sm text-gray-500 mt-1">Monday to Saturday</p>
+                            <p className="text-gray-600">8:00 AM - 10:00 PM</p>
+                            <p className="text-sm text-gray-500 mt-1">Monday to Sunday</p>
                         </div>
                     </div>
                 </div>
@@ -265,7 +265,7 @@ const Contact = () => {
                                             Ambattur, Chennai 600058
                                         </p>
                                         <p className="text-gray-700">
-                                            <strong>Hours:</strong> Mon-Sat, 9:00 AM - 6:00 PM
+                                            <strong>Hours:</strong> Mon-Sun, 8:00 AM - 10:00 PM
                                         </p>
                                     </div>
                                 </div>
