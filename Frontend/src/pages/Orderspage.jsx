@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { FaBox, FaCheckCircle, FaTruck, FaTimesCircle, FaClock, FaMapMarkerAlt, FaRupeeSign, FaCalendar, FaShoppingBag, FaChevronDown, FaChevronUp, FaCreditCard, FaSearch, FaHistory, FaDownload, FaArrowLeft, FaShieldAlt } from 'react-icons/fa';
 import { MdOutlineReceipt, MdFilterList, MdErrorOutline, MdClose, MdCloudUpload, MdAccountBalance, MdQrCodeScanner, MdOutlinePrivacyTip } from 'react-icons/md';
 import API from '../../api';
@@ -82,6 +83,9 @@ const OrdersPage = () => {
     const [statusFilter, setStatusFilter] = useState('all');
     const [error, setError] = useState('');
 
+    const [searchParams] = useSearchParams();
+    const orderIdParam = searchParams.get('orderId');
+
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const ordersPerPage = 6;
@@ -111,6 +115,18 @@ const OrdersPage = () => {
     useEffect(() => {
         fetchOrders();
     }, []);
+
+    useEffect(() => {
+        if (orderIdParam && orders.length > 0) {
+            setSearchTerm(orderIdParam);
+            const specificOrder = orders.find(
+                o => o._id === orderIdParam || o._id.slice(-8).toUpperCase() === orderIdParam.toUpperCase()
+            );
+            if (specificOrder) {
+                setSelectedOrder(specificOrder);
+            }
+        }
+    }, [orderIdParam, orders]);
 
     const fetchOrders = async () => {
         try {

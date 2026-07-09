@@ -80,7 +80,7 @@ const Contact = () => {
                                 <FiMapPin className="w-8 h-8 text-primary" />
                             </div>
                             <h3 className="font-bold text-gray-900 mb-2">Address</h3>
-                            <p className="text-gray-600 text-sm">Flat 407, Manchester Apartment</p>
+                            <p className="text-gray-600 text-sm">Manchester Apartment</p>
                             <p className="text-sm text-gray-500 mt-1">Athipet, Chennai 600058</p>
                         </div>
 
@@ -260,7 +260,7 @@ const Contact = () => {
                                     </p>
                                     <div className="space-y-2 text-sm">
                                         <p className="text-gray-700">
-                                            Flat 407, Manchester Apartment<br />
+                                            Manchester Apartment<br />
                                             Chelliamman Koil Street, Athipet<br />
                                             Ambattur, Chennai 600058
                                         </p>

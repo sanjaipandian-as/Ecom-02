@@ -35,7 +35,7 @@ const Affiliate = () => {
         },
         {
             question: "How do I qualify for this program?",
-            answer: "Bloggers, publishers and content creators with a qualifying website or mobile app can participate in this program."
+            answer: "Bloggers, publishers and content creators with a qualifying website can participate in this program."
         },
         {
             question: "How do I sign up to the program?",

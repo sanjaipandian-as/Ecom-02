@@ -635,7 +635,10 @@ const Searchbar = () => {
                 {/* CENTER SECTION: Logo */}
                 <div className="flex-shrink-0 flex items-center justify-center lg:flex-1">
                     <button
-                        onClick={() => handleNavigation('/')}
+                        onClick={() => {
+                            handleNavigation('/');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
                         className="flex items-center gap-3 group transition-transform duration-300 active:scale-95"
                     >
                         <div className="h-12 sm:h-16 flex items-center justify-center">
