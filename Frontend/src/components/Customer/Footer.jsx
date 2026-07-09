@@ -148,7 +148,10 @@ const Footer = () => {
                                     secondaryColor="#f7f5f0"
                                 />
                             </div>
-                            <p className="text-sm text-[#a3b3ac] leading-relaxed mb-6 pe-4 lg:pe-8">
+                            <p 
+                                className="text-sm text-[#a3b3ac] leading-relaxed mb-6 pe-4 lg:pe-8"
+                                style={{ fontFamily: '"Playfair Display", serif' }}
+                            >
                                 Plenora Scientific Skin is a skincare brand dedicated to combining the power of science with the purity of thoughtfully selected ingredients. Our mission is to create effective, high-quality skincare solutions that nourish, protect, and enhance your skin's natural beauty. Every formula is developed with a focus on innovation, safety, and visible results, helping you achieve healthy, radiant skin with confidence.
                             </p>
                         </div>

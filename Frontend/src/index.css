@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'Boston Angel';
   src: url('/Fonts/Boston Angel Regular.ttf') format('truetype'),
-       url('/Fonts/Boston Angel Regular.otf') format('opentype');
+    url('/Fonts/Boston Angel Regular.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -10,7 +10,7 @@
 @font-face {
   font-family: 'Boston Angel';
   src: url('/Fonts/Boston Angel Medium.ttf') format('truetype'),
-       url('/Fonts/Boston Angel Medium.otf') format('opentype');
+    url('/Fonts/Boston Angel Medium.otf') format('opentype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -19,7 +19,7 @@
 @font-face {
   font-family: 'Boston Angel';
   src: url('/Fonts/Boston Angel Bold.ttf') format('truetype'),
-       url('/Fonts/Boston Angel Bold.otf') format('opentype');
+    url('/Fonts/Boston Angel Bold.otf') format('opentype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -28,7 +28,7 @@
 @font-face {
   font-family: 'Boston Angel';
   src: url('/Fonts/Boston Angel Bold.ttf') format('truetype'),
-       url('/Fonts/Boston Angel Bold.otf') format('opentype');
+    url('/Fonts/Boston Angel Bold.otf') format('opentype');
   font-weight: 800;
   font-style: normal;
   font-display: swap;
@@ -37,7 +37,7 @@
 @font-face {
   font-family: 'Boston Angel';
   src: url('/Fonts/Boston Angel Light.ttf') format('truetype'),
-       url('/Fonts/Boston Angel Light.otf') format('opentype');
+    url('/Fonts/Boston Angel Light.otf') format('opentype');
   font-weight: 300;
   font-style: normal;
   font-display: optional;
@@ -46,7 +46,7 @@
 @font-face {
   font-family: 'Boston Angel';
   src: url('/Fonts/Boston Angel Thin.ttf') format('truetype'),
-       url('/Fonts/Boston Angel Thin.otf') format('opentype');
+    url('/Fonts/Boston Angel Thin.otf') format('opentype');
   font-weight: 100;
   font-style: normal;
   font-display: optional;
@@ -71,7 +71,7 @@
   --color-emerald-light: #2b4c3c;
   --color-pale-green: #e2ece7;
   --color-dark-pale-green: #6d9b7a;
-  
+
   --color-gold-champagne: #c5a880;
   --color-gold-lustrous: #b4925a;
   --color-gold-deep: #8c734b;
@@ -151,6 +151,7 @@ h6 {
     opacity: 0;
     transform: translateY(16px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -158,8 +159,13 @@ h6 {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes scaleUp {
@@ -167,6 +173,7 @@ h6 {
     opacity: 0;
     transform: scale(0.97);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -178,6 +185,7 @@ h6 {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -205,6 +213,7 @@ h6 {
   from {
     transform: translateX(-100%);
   }
+
   to {
     transform: translateX(0);
   }
