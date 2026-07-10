@@ -1,10 +1,21 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useSearchParams } from "react-router-dom"
-import React, { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useSearchParams, useLocation } from "react-router-dom"
+import React, { Suspense, lazy, useEffect } from 'react';
 import AppSkeleton from './components/Common/AppSkeleton';
 import ServerWakeup from './components/Common/ServerWakeup';
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import './App.css'
+
+// ScrollToTop component to reset page scroll on route changes
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
 
 // Lazy-load ALL route components for code splitting
 const Homepage = lazy(() => import('./pages/Homepage'));
@@ -62,6 +73,7 @@ const RegisterRedirect = () => {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <DocumentTitleUpdater />
       <Suspense fallback={<AppSkeleton />}>
         <Routes>

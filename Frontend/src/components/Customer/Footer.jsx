@@ -274,7 +274,7 @@ const Footer = () => {
                                 <FaEnvelope className="w-4 h-4 text-gold-champagne flex-shrink-0" />
                                 <a
                                     href="mailto:plenorascientificskin@gmail.com"
-                                    className="text-[#a3b3ac] hover:text-gold-lustrous text-xs md:text-sm uppercase tracking-[0.05em] transition-colors focus:outline-none"
+                                    className="text-[#a3b3ac] hover:text-gold-lustrous text-xs md:text-sm lowercase break-all transition-colors focus:outline-none"
                                 >
                                     plenorascientificskin@gmail.com
                                 </a>
