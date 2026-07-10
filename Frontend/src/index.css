@@ -56,14 +56,15 @@
 
 @theme {
   /* High-Authority Branding */
-  --font-sans: 'Boston Angel', serif;
-  --font-plus: 'Boston Angel', serif;
+  --font-sans: 'Playfair Display', serif;
+  --font-plus: 'Playfair Display', serif;
 
   /* Financial & Premium Numerical */
-  --font-outfit: 'Boston Angel', serif;
+  --font-outfit: 'Playfair Display', serif;
 
   /* Precision UI */
-  --font-inter: 'Boston Angel', serif;
+  --font-inter: 'Playfair Display', serif;
+  --font-serif: 'Playfair Display', serif;
 
   /* Premium Luxury Brand Colors */
   --color-emerald-deep: #0b1410;
@@ -93,7 +94,7 @@
 }
 
 body {
-  font-family: 'Boston Angel', serif;
+  font-family: 'Playfair Display', serif !important;
   background-color: #faf9f6;
   color: #1c1c1c;
   -webkit-font-smoothing: antialiased;
@@ -106,9 +107,14 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Boston Angel', serif;
+  font-family: 'Boston Angel', serif !important;
   font-weight: 800;
   letter-spacing: -0.01em;
+}
+
+/* Playfair Display for all body/normal text */
+p, span, a, li, td, th, label, input, textarea, select, button, div {
+  font-family: 'Playfair Display', serif !important;
 }
 
 /* Hide scrollbars globally but keep functionality */
