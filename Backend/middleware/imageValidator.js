@@ -40,10 +40,10 @@ const ALLOWED_MAGIC_TYPES = [
 ];
 
 // Dimension bounds for images
-const MIN_WIDTH = 50;
-const MIN_HEIGHT = 50;
-const MAX_WIDTH = 8192;
-const MAX_HEIGHT = 8192;
+const MIN_WIDTH = 800;
+const MIN_HEIGHT = 800;
+const MAX_WIDTH = 4096;
+const MAX_HEIGHT = 4096;
 
 /**
  * Clean up all uploaded tmp files from a request.
@@ -106,7 +106,7 @@ export const validateImages = async (req, res, next) => {
         await cleanupTmpFiles(files);
         return res.status(400).json({
           message: `File "${file.originalname}" is too large: ${metadata.width}×${metadata.height}px. ` +
-                   `Maximum allowed: ${MAX_WIDTH}×${MAX_HEIGHT}px.`
+                   `Maximum allowed: ${MAX_WIDTH}×${MAX_HEIGHT}px (4K). Please resize the image before uploading.`
         });
       }
 
@@ -114,7 +114,7 @@ export const validateImages = async (req, res, next) => {
         await cleanupTmpFiles(files);
         return res.status(400).json({
           message: `File "${file.originalname}" is too small: ${metadata.width}×${metadata.height}px. ` +
-                   `Minimum required: ${MIN_WIDTH}×${MIN_HEIGHT}px.`
+                   `Minimum required: ${MIN_WIDTH}×${MIN_HEIGHT}px. Please use a higher quality image.`
         });
       }
     }

@@ -41,7 +41,7 @@ export class LocalStorageDriver extends StorageService {
    * Hero banners need full-width, category icons are small thumbnails.
    */
   static CATEGORY_DEFAULTS = {
-    products:   { maxWidth: 1200, quality: 80 },
+    products:   { maxWidth: 2048, quality: 85 },
     categories: { maxWidth: 256,  quality: 80 },
     hero:       { maxWidth: 1920, quality: 85 },
   };
