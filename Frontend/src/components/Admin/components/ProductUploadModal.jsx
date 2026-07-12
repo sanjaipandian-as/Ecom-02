@@ -130,29 +130,35 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
 
     useEffect(() => {
         if (isOpen) {
-            if (productToEdit) {
-                setFormData({
-                    ...productToEdit,
-                    category: productToEdit.category || { main: '', sub: '' },
-                    pricing: productToEdit.pricing || { mrp: '', cost: '', selling_price: '' },
-                    tags: productToEdit.tags || [],
-                    specifications: productToEdit.specifications || [],
-                    colors: productToEdit.colors || [],
-                    sizes: productToEdit.sizes || [],
-                    images: productToEdit.images || [],
-                    sku: productToEdit.sku || '',
-                    displayWeight: productToEdit.displayWeight || '',
-                    productType: productToEdit.productType || '',
-                    howToUse: productToEdit.howToUse || '',
-                    ingredients: productToEdit.ingredients || '',
-                });
-                setPreviewImages(productToEdit.images || []);
-            } else {
-                resetForm();
+            const isDifferentProduct = productToEdit && formData._id !== productToEdit._id;
+            const isOpeningNew = !productToEdit && formData._id;
+            const isFirstLoad = !formData.name && !formData.sku;
+
+            if (isDifferentProduct || isOpeningNew || isFirstLoad) {
+                if (productToEdit) {
+                    setFormData({
+                        ...productToEdit,
+                        category: productToEdit.category || { main: '', sub: '' },
+                        pricing: productToEdit.pricing || { mrp: '', cost: '', selling_price: '' },
+                        tags: productToEdit.tags || [],
+                        specifications: productToEdit.specifications || [],
+                        colors: productToEdit.colors || [],
+                        sizes: productToEdit.sizes || [],
+                        images: productToEdit.images || [],
+                        sku: productToEdit.sku || '',
+                        displayWeight: productToEdit.displayWeight || '',
+                        productType: productToEdit.productType || '',
+                        howToUse: productToEdit.howToUse || '',
+                        ingredients: productToEdit.ingredients || '',
+                    });
+                    setPreviewImages(productToEdit.images || []);
+                } else {
+                    resetForm();
+                }
+                setActiveTab('general');
             }
-            setActiveTab('general');
         }
-    }, [productToEdit, isOpen]);
+    }, [productToEdit, isOpen, formData._id]);
 
     const resetForm = () => {
         setFormData({
