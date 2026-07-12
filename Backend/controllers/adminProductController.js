@@ -254,14 +254,24 @@ export const updateProduct = async (req, res) => {
     let imageRelativePaths = [];
 
     // Keep existing images (these are relative paths already in MongoDB)
+    const baseUrl = (process.env.UPLOADS_BASE_URL || '').replace(/\/+$/, '');
+    const cleanImagePath = (img) => {
+      if (baseUrl && img.startsWith(baseUrl)) {
+        return img.replace(new RegExp(`^${baseUrl}/?`), '');
+      }
+      return img;
+    };
+
     if (req.body['existingImages[]']) {
-      imageRelativePaths = Array.isArray(req.body['existingImages[]'])
+      const rawImages = Array.isArray(req.body['existingImages[]'])
         ? req.body['existingImages[]']
         : [req.body['existingImages[]']];
+      imageRelativePaths = rawImages.map(cleanImagePath);
     } else if (req.body.existingImages) {
-      imageRelativePaths = Array.isArray(req.body.existingImages)
+      const rawImages = Array.isArray(req.body.existingImages)
         ? req.body.existingImages
         : [req.body.existingImages];
+      imageRelativePaths = rawImages.map(cleanImagePath);
     }
 
     // Upload new images via StorageService

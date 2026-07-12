@@ -73,6 +73,19 @@ const AdminProductUpload = () => {
             return;
         }
 
+        // --- Frontend File Validation ---
+        const MAX_IMAGE_MB = 20;
+        const MAX_VIDEO_MB = 200;
+        for (const file of files) {
+            const isVid = file.type.startsWith('video/');
+            const maxBytes = isVid ? MAX_VIDEO_MB * 1024 * 1024 : MAX_IMAGE_MB * 1024 * 1024;
+            const label = isVid ? `${MAX_VIDEO_MB}MB` : `${MAX_IMAGE_MB}MB`;
+            if (file.size > maxBytes) {
+                toast.error(`"${file.name}" is too large. ${isVid ? 'Videos' : 'Images'} must be under ${label}.`);
+                return;
+            }
+        }
+
         setImages(prev => [...prev, ...files]);
 
         files.forEach(file => {
@@ -341,7 +354,7 @@ const AdminProductUpload = () => {
                                         )}
                                     </div>
                                     <p className="text-[11px] font-bold text-slate-400 bg-slate-50 p-4 rounded-none border border-slate-200 text-center uppercase tracking-wide font-hero">
-                                        ✨ High-quality square images and videos preferred. Max 5.
+                                        ✨ Use square images (800×800px or more) for best results. Images: max 20MB · Videos: max 200MB
                                     </p>
                                 </div>
                             </div>

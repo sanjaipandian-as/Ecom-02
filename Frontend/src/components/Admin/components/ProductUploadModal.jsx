@@ -202,6 +202,29 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
 
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);
+
+        // --- Frontend File Validation ---
+        const MAX_IMAGE_MB = 20;
+        const MAX_VIDEO_MB = 200;
+        
+        const currentTotal = formData.images.length + newImages.length;
+        if (currentTotal + files.length > 8) {
+            toast.error(`Maximum 8 files allowed in total. You can only add ${8 - currentTotal} more file(s).`);
+            e.target.value = ''; // clear input
+            return;
+        }
+
+        for (const file of files) {
+            const isVid = file.type.startsWith('video/');
+            const maxBytes = isVid ? MAX_VIDEO_MB * 1024 * 1024 : MAX_IMAGE_MB * 1024 * 1024;
+            const label = isVid ? `${MAX_VIDEO_MB}MB` : `${MAX_IMAGE_MB}MB`;
+            if (file.size > maxBytes) {
+                toast.error(`"${file.name}" is too large. ${isVid ? 'Videos' : 'Images'} must be under ${label}.`);
+                e.target.value = ''; // clear input
+                return;
+            }
+        }
+
         setNewImages(prev => [...prev, ...files]);
 
         const newPreviews = files.map(file => {
@@ -209,6 +232,8 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
             return URL.createObjectURL(file) + (isVid ? '#video' : '#image');
         });
         setPreviewImages(prev => [...prev, ...newPreviews]);
+        
+        e.target.value = ''; // clear input so same files can be selected again if removed
     };
 
     const removeImage = (index) => {
@@ -284,7 +309,7 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
             return;
         }
         if (totalImages > 8) {
-            toast.error('Maximum 8 files allowed');
+            toast.error('Maximum 8 files allowed in total (including existing files)');
             return;
         }
 
@@ -689,7 +714,7 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
                                             <FaCloudUploadAlt className="text-4xl text-indigo-600" />
                                         </div>
                                         <h4 className="text-xl font-bold text-slate-900 font-hero mb-2 group-hover:text-indigo-650 transition-colors">Upload Photos & Videos</h4>
-                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 font-hero">Supports Images & Videos (Min 2, Max 8)</p>
+                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 font-hero">Supports Images (max 20MB each) & Videos (max 200MB each) · Min 2, Max 8 files</p>
                                         <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-none border text-[10px] font-bold uppercase tracking-widest transition-all font-hero ${previewImages.length >= 2 && previewImages.length <= 8 ? 'bg-emerald-50 text-emerald-600 border-emerald-150' : 'bg-red-50 text-red-700 border-red-150 animate-pulse'}`}>
                                             {previewImages.length} / 8 Selected
                                         </div>

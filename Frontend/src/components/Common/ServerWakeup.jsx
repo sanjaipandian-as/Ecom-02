@@ -64,20 +64,20 @@ const ServerWakeup = () => {
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 mb-1">
                         <h4 className="text-[15px] font-bold tracking-wide text-cream-base font-sans uppercase">
-                            Establishing Connection
+                            Optimizing Connection
                         </h4>
                         <Sparkles className="w-3.5 h-3.5 text-gold-lustrous" />
                     </div>
                     <p className="text-xs text-cream-base/80 leading-relaxed font-sans font-light">
-                        We host on a free-tier server. It takes about 30-60 seconds to spin up from sleep. Thank you for your patience!
+                        We are currently experiencing high visitor volumes. Please wait a moment while we optimize server resources for your session.
                     </p>
                 </div>
             </div>
-
+ 
             {/* Progress Area */}
             <div className="mt-4 space-y-1.5">
                 <div className="flex items-center justify-between text-[11px] font-sans text-cream-base/60">
-                    <span>Warming up database & backend...</span>
+                    <span>Connecting to secure server...</span>
                     <span className="font-bold text-gold-lustrous">{Math.round(progress)}%</span>
                 </div>
                 <div className="w-full h-1.5 bg-emerald-dark border border-gold-champagne/10 rounded-full overflow-hidden">
