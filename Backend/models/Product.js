@@ -226,22 +226,13 @@ const ProductSchema = new Schema(
         const baseUrl = (process.env.UPLOADS_BASE_URL || '').replace(/\/+$/, '');
 
         if (ret.images && Array.isArray(ret.images)) {
-          // 1. Filter out files that do not exist on disk
-          const existingImages = ret.images.filter(imgPath => {
-            if (!imgPath) return false;
-            // Remote URLs are external, assume they exist
-            if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return true;
-            
-            const uploadsRoot = process.env.UPLOADS_ROOT || './uploads';
-            const absolutePath = path.resolve(uploadsRoot, imgPath);
-            return fs.existsSync(absolutePath);
-          });
-
-          // 2. Map to public URLs (preserving original order)
-          ret.images = existingImages.map(imgPath => {
-            if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return imgPath;
-            return `${baseUrl}/${imgPath}`;
-          });
+          // Map to public URLs (preserving original order)
+          ret.images = ret.images
+            .filter(imgPath => !!imgPath)
+            .map(imgPath => {
+              if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return imgPath;
+              return `${baseUrl}/${imgPath}`;
+            });
         }
 
         // Force discount_percentage to 0 if selling price is >= MRP
@@ -262,20 +253,13 @@ const ProductSchema = new Schema(
         const baseUrl = (process.env.UPLOADS_BASE_URL || '').replace(/\/+$/, '');
 
         if (ret.images && Array.isArray(ret.images)) {
-          const existingImages = ret.images.filter(imgPath => {
-            if (!imgPath) return false;
-            if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return true;
-            
-            const uploadsRoot = process.env.UPLOADS_ROOT || './uploads';
-            const absolutePath = path.resolve(uploadsRoot, imgPath);
-            return fs.existsSync(absolutePath);
-          });
-
           // Map to public URLs (preserving original order)
-          ret.images = existingImages.map(imgPath => {
-            if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return imgPath;
-            return `${baseUrl}/${imgPath}`;
-          });
+          ret.images = ret.images
+            .filter(imgPath => !!imgPath)
+            .map(imgPath => {
+              if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return imgPath;
+              return `${baseUrl}/${imgPath}`;
+            });
         }
 
         // Force discount_percentage to 0 if selling price is >= MRP

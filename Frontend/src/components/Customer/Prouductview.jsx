@@ -231,6 +231,14 @@ const Productview = () => {
         return valid?.length ? valid : [placeholderImg];
     }, [product]);
 
+    const handleNextImage = useCallback(() => {
+        setSelectedImage((prev) => (prev + 1) % productImages.length);
+    }, [productImages.length]);
+
+    const handlePrevImage = useCallback(() => {
+        setSelectedImage((prev) => (prev - 1 + productImages.length) % productImages.length);
+    }, [productImages.length]);
+
     const sellingPrice = product?.pricing?.selling_price || 0;
     const mrp = product?.pricing?.mrp || 0;
     const discount = mrp > sellingPrice ? Math.round(((mrp - sellingPrice) / mrp) * 100) : 0;
@@ -339,13 +347,39 @@ const Productview = () => {
                                 />
                             )}
                             {discount > 0 && (
-                                <div className="absolute top-6 left-6 bg-rose-500 text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-lg">
+                                <div className="absolute top-6 left-6 bg-rose-500 text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-lg z-10">
                                     {discount}% OFF
                                 </div>
                             )}
+                            {productImages.length > 1 && (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handlePrevImage();
+                                        }}
+                                        className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white text-gray-700 hover:text-black rounded-full flex items-center justify-center transition-all shadow-md z-20"
+                                        aria-label="Previous image"
+                                    >
+                                        <FaChevronLeft className="text-xs" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleNextImage();
+                                        }}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white text-gray-700 hover:text-black rounded-full flex items-center justify-center transition-all shadow-md z-20"
+                                        aria-label="Next image"
+                                    >
+                                        <FaChevronRight className="text-xs" />
+                                    </button>
+                                </>
+                            )}
                             <button 
                                 onClick={toggleWishlist}
-                                className="absolute top-6 right-6 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-gray-400 hover:text-rose-500 transition-all shadow-md group/wish"
+                                className="absolute top-6 right-6 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-gray-400 hover:text-rose-500 transition-all shadow-md group/wish z-10"
                             >
                                 {isInWishlist ? <FaHeart className="text-rose-500 text-xl" /> : <FaRegHeart className="text-xl group-hover/wish:scale-110" />}
                             </button>
@@ -593,9 +627,9 @@ const Productview = () => {
                                 </div>
                                 <div className="flex flex-wrap justify-center gap-2 px-4">
                                     {product.ingredients ? (
-                                        product.ingredients.split(',').map((ing, i) => (
+                                        product.ingredients.split(/[,\n]+/).map(ing => ing.trim()).filter(Boolean).map((ing, i) => (
                                             <div key={i} className="px-4 py-2 bg-white border border-gray-100 rounded-full text-[10px] font-bold text-gray-600 shadow-xs hover:shadow-sm hover:border-[#8c6d45] transition-all cursor-default">
-                                                {ing.trim()}
+                                                {ing}
                                             </div>
                                         ))
                                     ) : (

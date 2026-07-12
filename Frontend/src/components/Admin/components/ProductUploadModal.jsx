@@ -206,12 +206,21 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
         // --- Frontend File Validation ---
         const MAX_IMAGE_MB = 20;
         const MAX_VIDEO_MB = 200;
+        
+        const currentTotal = formData.images.length + newImages.length;
+        if (currentTotal + files.length > 8) {
+            toast.error(`Maximum 8 files allowed in total. You can only add ${8 - currentTotal} more file(s).`);
+            e.target.value = ''; // clear input
+            return;
+        }
+
         for (const file of files) {
             const isVid = file.type.startsWith('video/');
             const maxBytes = isVid ? MAX_VIDEO_MB * 1024 * 1024 : MAX_IMAGE_MB * 1024 * 1024;
             const label = isVid ? `${MAX_VIDEO_MB}MB` : `${MAX_IMAGE_MB}MB`;
             if (file.size > maxBytes) {
                 toast.error(`"${file.name}" is too large. ${isVid ? 'Videos' : 'Images'} must be under ${label}.`);
+                e.target.value = ''; // clear input
                 return;
             }
         }
@@ -223,6 +232,8 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
             return URL.createObjectURL(file) + (isVid ? '#video' : '#image');
         });
         setPreviewImages(prev => [...prev, ...newPreviews]);
+        
+        e.target.value = ''; // clear input so same files can be selected again if removed
     };
 
     const removeImage = (index) => {
@@ -298,7 +309,7 @@ const ProductUploadModal = ({ isOpen, onClose, onSuccess, productToEdit }) => {
             return;
         }
         if (totalImages > 8) {
-            toast.error('Maximum 8 files allowed');
+            toast.error('Maximum 8 files allowed in total (including existing files)');
             return;
         }
 
