@@ -65,7 +65,7 @@ export const createPaymentOrder = async (req, res) => {
     if (totalAmount <= 0) return res.status(400).json({ message: "Transaction total is 0 or negative. Verify pricing." });
 
     // ⭐ HIGH-3 FIX: Taxes are inclusive, so grand total is item total + shipping fee
-    const shippingFee = totalAmount > 999 ? 0 : 99;
+    const shippingFee = totalAmount >= 999 ? 0 : 85;
     const grandTotal = totalAmount + shippingFee;
 
     const options = {
@@ -168,7 +168,7 @@ export const verifyPayment = async (req, res) => {
 
     // ⭐ SECURITY FIX (VULN-3): Verify Razorpay paid amount matches server-calculated total
     // Taxes are inclusive, so expected total is subtotal + shipping fee
-    const verifyShippingFee = serverCalculatedTotal > 999 ? 0 : 99;
+    const verifyShippingFee = serverCalculatedTotal >= 999 ? 0 : 85;
     const expectedGrandTotal = serverCalculatedTotal + verifyShippingFee;
 
     try {
