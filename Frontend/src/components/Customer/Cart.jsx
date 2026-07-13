@@ -173,8 +173,7 @@ const Cart = () => {
     );
 
     const tax = 0; // Tax is included in MRP
-    const shipping = useMemo(() => subtotal >= 999 ? 0 : 85, [subtotal]);
-    const total = useMemo(() => subtotal + shipping, [subtotal, shipping]);
+    const total = useMemo(() => subtotal, [subtotal]);
 
     const savings = useMemo(() =>
         selectedCartItems.reduce((total, item) => {
@@ -491,12 +490,6 @@ const Cart = () => {
                                             <span className="text-gray-500">Estimated Tax</span>
                                             <span className="font-medium text-gray-500">Included</span>
                                         </div>
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-gray-500">Shipping</span>
-                                            <span className={shipping === 0 ? "font-bold text-green-600 uppercase tracking-tighter" : "font-semibold text-gray-900"}>
-                                                {shipping === 0 ? 'Free' : `₹${shipping.toFixed(2)}`}
-                                            </span>
-                                        </div>
 
                                         {savings > 0 && (
                                             <div className="flex justify-between text-sm bg-green-50 p-3 rounded-lg text-green-700">
@@ -508,7 +501,9 @@ const Cart = () => {
                                         <div className="pt-6 border-t border-gray-100 flex justify-between items-end">
                                             <div className="space-y-1">
                                                 <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Amount</p>
-                                                <p className="text-3xl font-bold text-gray-900 tracking-tighter">₹{total.toFixed(2)}</p>
+                                                <p className="text-3xl font-bold text-gray-900 tracking-tighter">
+                                                    ₹{subtotal.toFixed(2)}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>

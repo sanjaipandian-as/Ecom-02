@@ -435,7 +435,7 @@ const Checkout = () => {
     };
 
     const subtotal = calculateTotal();
-    const shippingFee = subtotal > 999 ? 0 : 99;
+    const shippingFee = subtotal >= 999 ? 0 : (selectedMethod === 'cod' ? 100 : 85);
     const total = subtotal + shippingFee;
 
     // ---- Loading State ----
