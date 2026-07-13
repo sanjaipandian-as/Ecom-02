@@ -161,7 +161,7 @@ const OrdersPage = () => {
 
         // Validation for Refund Details (Standard for COD, Optional for Online via Manual Toggle)
         let refundDetails = null;
-        if (activeOrder?.paymentMethod === 'cod' || useManualRefund) {
+        if ((activeOrder?.paymentMethod === 'cod' && actionType !== 'cancel') || useManualRefund) {
             if (refundType === 'upi') {
                 if (!refundUpi.trim()) {
                     alert('Please provide your UPI ID for settlement.');
@@ -817,7 +817,7 @@ const OrdersPage = () => {
                     <div className="bg-white rounded-3xl w-full max-w-xl overflow-hidden shadow-2xl border border-slate-100 animate-slideUp">
                         {/* Header */}
                         <div className={`relative px-8 py-8 text-white overflow-hidden ${actionType === 'cancel'
-                            ? 'bg-gradient-to-br from-rose-600 to-pink-600'
+                            ? 'bg-gradient-to-br from-slate-800 to-slate-950'
                             : 'bg-gradient-to-br from-[#1f3b2d] via-[#172d22] to-[#1f3b2d]'
                             }`}>
                             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl" />
@@ -952,101 +952,103 @@ const OrdersPage = () => {
                                 )}
 
                                 {/* Refund Details */}
-                                <div>
-                                    <div className="flex items-center justify-between mb-3">
-                                        <h4 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider font-sans">
-                                            {actionType === 'return' ? '4.' : '2.'} Refund Method
-                                        </h4>
-                                        <div className="flex items-center gap-2 px-2.5 py-0.5 bg-emerald-50 rounded-full border border-emerald-100">
-                                            <span className="text-[8px] font-bold text-emerald-700 uppercase tracking-wider">Secure Transfer</span>
-                                        </div>
-                                    </div>
-
-                                    {(orders.find(o => o._id === actionOrderId)?.paymentMethod === 'cod' || useManualRefund) ? (
-                                        <div className="bg-slate-50 rounded-2xl p-5 border border-slate-150">
-                                            <div className="flex gap-2 p-1 bg-white rounded-xl border border-slate-150 mb-4">
-                                                <button
-                                                    onClick={() => setRefundType('upi')}
-                                                    className={`flex-1 py-2 rounded-lg transition-all text-[9px] font-bold uppercase tracking-wider ${refundType === 'upi' ? 'bg-[#1f3b2d] text-white shadow' : 'text-slate-400 hover:text-slate-600'}`}
-                                                >
-                                                    UPI ID
-                                                </button>
-                                                <button
-                                                    onClick={() => setRefundType('bank')}
-                                                    className={`flex-1 py-2 rounded-lg transition-all text-[9px] font-bold uppercase tracking-wider ${refundType === 'bank' ? 'bg-[#1f3b2d] text-white shadow' : 'text-slate-400 hover:text-slate-600'}`}
-                                                >
-                                                    Bank Account
-                                                </button>
+                                {!(actionType === 'cancel' && orders.find(o => o._id === actionOrderId)?.paymentMethod === 'cod') && (
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h4 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider font-sans">
+                                                {actionType === 'return' ? '4.' : '2.'} Refund Method
+                                            </h4>
+                                            <div className="flex items-center gap-2 px-2.5 py-0.5 bg-emerald-50 rounded-full border border-emerald-100">
+                                                <span className="text-[8px] font-bold text-emerald-700 uppercase tracking-wider">Secure Transfer</span>
                                             </div>
+                                        </div>
 
-                                            {refundType === 'upi' ? (
-                                                <input
-                                                    type="text"
-                                                    placeholder="Enter UPI ID (e.g. name@bank)"
-                                                    value={refundUpi}
-                                                    onChange={(e) => setRefundUpi(e.target.value)}
-                                                    className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10 focus:outline-none font-bold text-sm text-slate-700 shadow-sm transition-all"
-                                                />
-                                            ) : (
-                                                <div className="space-y-2.5">
+                                        {(orders.find(o => o._id === actionOrderId)?.paymentMethod === 'cod' || useManualRefund) ? (
+                                            <div className="bg-slate-50 rounded-2xl p-5 border border-slate-150">
+                                                <div className="flex gap-2 p-1 bg-white rounded-xl border border-slate-150 mb-4">
+                                                    <button
+                                                        onClick={() => setRefundType('upi')}
+                                                        className={`flex-1 py-2 rounded-lg transition-all text-[9px] font-bold uppercase tracking-wider ${refundType === 'upi' ? 'bg-[#1f3b2d] text-white shadow' : 'text-slate-400 hover:text-slate-600'}`}
+                                                    >
+                                                        UPI ID
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setRefundType('bank')}
+                                                        className={`flex-1 py-2 rounded-lg transition-all text-[9px] font-bold uppercase tracking-wider ${refundType === 'bank' ? 'bg-[#1f3b2d] text-white shadow' : 'text-slate-400 hover:text-slate-600'}`}
+                                                    >
+                                                        Bank Account
+                                                    </button>
+                                                </div>
+
+                                                {refundType === 'upi' ? (
                                                     <input
                                                         type="text"
-                                                        placeholder="Account Holder Name"
-                                                        value={refundAccount.beneficiaryName}
-                                                        onChange={(e) => setRefundAccount({ ...refundAccount, beneficiaryName: e.target.value })}
-                                                        className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10 focus:outline-none font-bold text-sm text-slate-700 shadow-sm"
+                                                        placeholder="Enter UPI ID (e.g. name@bank)"
+                                                        value={refundUpi}
+                                                        onChange={(e) => setRefundUpi(e.target.value)}
+                                                        className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10 focus:outline-none font-bold text-sm text-slate-700 shadow-sm transition-all"
                                                     />
-                                                    <div className="grid grid-cols-2 gap-2.5">
+                                                ) : (
+                                                    <div className="space-y-2.5">
                                                         <input
                                                             type="text"
-                                                            placeholder="Account Number"
-                                                            value={refundAccount.accountNumber}
-                                                            onChange={(e) => setRefundAccount({ ...refundAccount, accountNumber: e.target.value })}
-                                                            className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10 focus:outline-none font-bold text-sm text-slate-700"
+                                                            placeholder="Account Holder Name"
+                                                            value={refundAccount.beneficiaryName}
+                                                            onChange={(e) => setRefundAccount({ ...refundAccount, beneficiaryName: e.target.value })}
+                                                            className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10 focus:outline-none font-bold text-sm text-slate-700 shadow-sm"
                                                         />
-                                                        <input
-                                                            type="text"
-                                                            placeholder="IFSC Code"
-                                                            value={refundAccount.ifscCode}
-                                                            onChange={(e) => setRefundAccount({ ...refundAccount, ifscCode: e.target.value.toUpperCase() })}
-                                                            className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10 focus:outline-none font-bold text-sm text-slate-700"
-                                                        />
+                                                        <div className="grid grid-cols-2 gap-2.5">
+                                                            <input
+                                                                type="text"
+                                                                placeholder="Account Number"
+                                                                value={refundAccount.accountNumber}
+                                                                onChange={(e) => setRefundAccount({ ...refundAccount, accountNumber: e.target.value })}
+                                                                className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10 focus:outline-none font-bold text-sm text-slate-700"
+                                                            />
+                                                            <input
+                                                                type="text"
+                                                                placeholder="IFSC Code"
+                                                                value={refundAccount.ifscCode}
+                                                                onChange={(e) => setRefundAccount({ ...refundAccount, ifscCode: e.target.value.toUpperCase() })}
+                                                                className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:border-[#1f3b2d] focus:ring-4 focus:ring-[#1f3b2d]/10 focus:outline-none font-bold text-sm text-slate-700"
+                                                            />
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            )}
+                                                )}
 
-                                            {useManualRefund && (
-                                                <button
-                                                    onClick={() => setUseManualRefund(false)}
-                                                    className="w-full mt-4 text-[9px] font-bold text-rose-500 uppercase tracking-widest hover:text-rose-600 transition-all"
-                                                >
-                                                    ← Revert to Original Payment Method
-                                                </button>
-                                            )}
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-4">
-                                            <div className="bg-slate-900 rounded-[2.5rem] p-7 shadow-xl relative overflow-hidden group">
-                                                <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/20 rounded-full blur-3xl" />
-                                                <div className="relative z-10">
-                                                    <div className="flex items-center gap-2 mb-2">
-                                                        <span className="px-2 py-0.5 bg-rose-500/20 text-rose-400 text-[8px] font-bold rounded uppercase tracking-widest">Auto Refund</span>
-                                                        <span className="text-[10px] font-bold text-white uppercase italic">Original Payment Method</span>
-                                                    </div>
-                                                    <p className="text-xs font-bold text-slate-300 leading-relaxed">
-                                                        Refund will be processed automatically to your <span className="text-white">original payment source</span> within 5-7 working days.
-                                                    </p>
-                                                </div>
+                                                {useManualRefund && (
+                                                    <button
+                                                        onClick={() => setUseManualRefund(false)}
+                                                        className="w-full mt-4 text-[9px] font-bold text-rose-500 uppercase tracking-widest hover:text-rose-600 transition-all"
+                                                    >
+                                                        ← Revert to Original Payment Method
+                                                    </button>
+                                                )}
                                             </div>
-                                            <button
-                                                onClick={() => setUseManualRefund(true)}
-                                                className="w-full py-4 bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:bg-white transition-all"
-                                            >
-                                                Use different refund method?
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
+                                        ) : (
+                                            <div className="space-y-4">
+                                                <div className="bg-slate-900 rounded-[2.5rem] p-7 shadow-xl relative overflow-hidden group">
+                                                    <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/20 rounded-full blur-3xl" />
+                                                    <div className="relative z-10">
+                                                        <div className="flex items-center gap-2 mb-2">
+                                                            <span className="px-2 py-0.5 bg-rose-500/20 text-rose-400 text-[8px] font-bold rounded uppercase tracking-widest">Auto Refund</span>
+                                                            <span className="text-[10px] font-bold text-white uppercase italic">Original Payment Method</span>
+                                                        </div>
+                                                        <p className="text-xs font-bold text-slate-300 leading-relaxed">
+                                                            Refund will be processed automatically to your <span className="text-white">original payment source</span> within 5-7 working days.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={() => setUseManualRefund(true)}
+                                                    className="w-full py-4 bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:bg-white transition-all"
+                                                >
+                                                    Use different refund method?
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -1063,9 +1065,7 @@ const OrdersPage = () => {
                                 disabled={submitting}
                                 className={`flex-1 w-full py-5 rounded-[2rem] font-bold text-xs uppercase tracking-widest transition-all ${submitting
                                     ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
-                                    : actionType === 'cancel'
-                                        ? 'bg-rose-500 text-white hover:bg-rose-600'
-                                        : 'bg-slate-900 text-white hover:bg-slate-800'
+                                    : 'bg-slate-900 text-white hover:bg-slate-800'
                                     }`}
                             >
                                 {submitting ? 'Submitting...' : `Submit ${actionType === 'cancel' ? 'Cancellation' : 'Return'} Request`}
